@@ -1,0 +1,26 @@
+<div id='showParam' class='visible' style="display:none">
+	<div id="TabParam">
+		<ul class="nav nav-pills">
+			<li class="active">
+				<a class="nav-link active" href="#1a" data-toggle="tab">Mes colles</a>
+			</li>
+			<li><a class="nav-link" href="#2a" data-toggle="tab">Mes classes</a>
+			</li>
+			<li><a class="nav-link" href="#3a" data-toggle="tab">Mon compte</a>
+			</li>
+		</ul>
+
+		<div class="tab-content clearfix">
+			<div class="tab-pane active" id="1a"  >
+          <% include partialsParamColles/mesColles%>
+					<% include partialsParamColles/formAddColleClasse%>
+			</div>
+			<div class="tab-pane" id="2a">
+        <% include partialsParamClasses/mesClasses%>
+			</div>
+			<div class="tab-pane" id="3a">
+      <p>Mon compte : A faire</p>
+			</div>
+		</div>
+	</div>
+</div>

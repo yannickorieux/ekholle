@@ -1,0 +1,47 @@
+<div id='showParam' class='visible' style="display:block">
+
+
+	<div id="Tab" class="container">
+		<ul class="nav nav-pills">
+			<li class="active">
+				<a class="nav-link active" href="#1a" data-toggle="tab">Les classes</a>
+			</li>
+			<li><a class="nav-link" href="#2a" data-toggle="tab">Les professeurs</a>
+			</li>
+			<li><a class="nav-link" href="#3a" data-toggle="tab">Les élèves</a>
+		</ul>
+
+		<div class="tab-content clearfix">
+			<div class="tab-pane active" id="1a">
+				<ul class="nav nav-pills">
+					<li class="active"><a class="nav-link" data-toggle="tab" href="#subtab1">Structure</a></li>
+					<li><a class="nav-link active" data-toggle="tab" href="#subtab2">Matières</a></li>
+					<li><a class="nav-link" data-toggle="tab" href="#subtab3">Équipes</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="subtab1" class="tab-pane fade">
+						<% include partialsClasses/structure%>
+
+
+					</div>
+					<div id="subtab2" class="tab-pane fade">
+						<% include partialsClasses/matieres%>
+					</div>
+					<div id="subtab3" class="tab-pane fade">
+						<% include partialsClasses/equipesClasses%>
+						<% include partialsClasses/formAddMatiere%>
+					</div>
+				</div>
+
+			</div>
+			<div class="tab-pane" id="2a">
+				<% include professeurs%>
+					<% include formModifierProfesseur%>
+			</div>
+			<div class="tab-pane" id="3a">
+				<% include eleves%>
+			</div>
+
+		</div>
+	</div>
+</div>

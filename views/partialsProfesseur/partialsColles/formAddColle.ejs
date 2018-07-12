@@ -1,0 +1,49 @@
+<div id="addColle" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addColleForm" role="form">
+        <fieldset>
+          <div class="modal-header">
+            <h4 class="modal-title">Ajouter une colle</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+          </div>
+          <div class="container modal-body">
+            <div id="dataListe2" class="dataListe" data-type="eleve" data-message='Sélectionner un élève dans la liste' data-placeholder='Choisir un élève'></div>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group has-feedback has-clear">
+                  <label for="note">Note :</label>
+                  <input class="form-control" type="number" id="note" required name="note" step="0.1" min="0" max="20" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group has-feedback has-clear">
+                  <label>Date:</label>
+                  <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                    <input id="dateColle" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row form-group has-feedback has-clear">
+              <label for="sujet">Sujet :</label>
+              <input class="form-control" type="text" id="sujet" name="sujet" />
+            </div>
+            <div class="row form-group has-feedback has-clear">
+              <label for="commentaires">Commentaires :</label>
+              <textarea class="form-control" type="text" id="commentaires" name="commentaires"></textarea>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ENREGISTRER</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

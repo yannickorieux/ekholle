@@ -1,0 +1,31 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">e-khôlle</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <%if (role === 'admin') { %>
+               <% include ../partialsAdmin/navAdmin %>
+          <% } %>
+
+          <%if (role === 'professeur') { %>
+             <% include ../partialsProfesseur/navProfesseur %>
+              <% } %>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <% if (typeof user!='undefined') { %>
+        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Bienvenue,  <%= user %>  <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/preferences"><i class="icon-cog"></i> Preferences</a></li>
+            <li><a href="/support"><i class="icon-envelope"></i> Contact Support</a></li>
+            <li class="divider"></li>
+            <li><a href="/users/logout"><i class="icon-off"></i> Logout</a></li>
+          </ul>
+        </li>
+        <% } %>
+    </ul>
+  </div>
+</nav>

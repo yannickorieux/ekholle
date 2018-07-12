@@ -1,0 +1,37 @@
+<div id='showColles' class='visible'>
+	<div id="TabColle" class="container">
+		<ul class="nav nav-pills">
+			<li class="active">
+				<a class="nav-link active" href="#1ac" data-toggle="tab">Ajout Colle</a>
+			</li>
+			<li><a class="nav-link" href="#2ac" data-toggle="tab">Résultats</a>
+			</li>
+			<li><a class="nav-link" href="#3ac" data-toggle="tab">Heures effectuées</a>
+		</ul>
+
+		<div class="tab-content clearfix">
+			<div class="tab-pane active" id="1ac">
+				<% include partialsColles/addColles%>
+			</div>
+			<div class="tab-pane" id="2ac">
+				<ul class="nav nav-pills">
+					<li class="active"><a class="nav-link" data-toggle="tab" href="#subtab1c">Récapitulatif</a></li>
+					<li><a class="nav-link active" data-toggle="tab" href="#subtab2c">Notes</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="subtab1c" class="tab-pane fade">
+						<% include partialsColles/recapitulatif%>
+					</div>
+					<div id="subtab2c" class="tab-pane fade">
+							<% include partialsColles/resultats%>
+					</div>
+				</div>
+
+			</div>
+			<div class="tab-pane" id="3ac">
+				<p>test</p>
+			</div>
+		</div>
+	</div>
+	<% include partialsColles/formAddColle%>
+</div>

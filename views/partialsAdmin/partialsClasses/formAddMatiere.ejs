@@ -1,0 +1,25 @@
+<div id="addMatiereClasse" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addMatiereForm" role="form">
+        <fieldset>
+          <div class="modal-header">
+            <h4 class="modal-title">Ajouter une matière</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+          </div>
+          <div class="modal-body">
+            <div id="dataListe2" class="dataListe" data-type="matiere" data-message='Sélectionner une matière dans la liste' data-placeholder='Choisir une matière'></div>
+            <div id="dataListe3" class="dataListe" data-type="professeur" data-message='Sélectionner un professeur dans la liste' data-placeholder='Choisir un professeur'></div>
+            <div class="form-group has-feedback has-clear">
+              <label for="durée">Duré interrogation (mn):</label>
+              <input class="form-control" type="number" id="duree" required name="duree" step="1" min="0" value="20" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ENREGISTRER</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
