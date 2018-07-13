@@ -23,7 +23,8 @@ let equipesClasses = (function() {
   });
 
 
-  $('#dataListe1Select').on('change', function() {
+  $('#dataListe1Form').submit(function(e) {
+    e.preventDefault();
     let classe = dataListe.getName(el1)
     let id = dataListe.getId(el1)
     if (classe !== '') {

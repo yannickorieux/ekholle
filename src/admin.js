@@ -36,7 +36,7 @@ let admin = (function() {
     let dataListe = require('./dataListe/dataListe.js');
 
     let el1 = document.querySelector('#dataListe1')
-    dataListe.set(el1);
+    dataListe.set(el1 , { 'form' : true});
     $.get("/admin/tableClassesJSON/", (data) => {
       dataListe.setDataListe(el1,data);
     });

@@ -34,9 +34,17 @@ function menu(){
    */
 
   self.init = function(){
+    document.getElementById("modalAddClasse").addEventListener('click', function() {
+      $('#addClasseProfesseur').modal();
+    });
+
+    document.getElementById("modalAddColle").addEventListener('click', function() {
+      $('#addColle').modal();
+    });
+
     //on initialise les dataListes
     let el1 = document.querySelector('#dataListe1') //liste des colles/classe  du professeur : addColles
-    dataListe.set(el1);
+    dataListe.set(el1 , { 'form' : true});
     let el2 = document.querySelector('#dataListe2') //liste des élèves formAddColle
     dataListe.set(el2);
     let el3 = document.querySelector('#dataListe3')  //liste des classes partialsParamColles/formAddColleClasse

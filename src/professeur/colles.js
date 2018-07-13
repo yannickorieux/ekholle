@@ -61,11 +61,11 @@ let colles = (function() {
   ************************************************************
         */
   colleSelect = function() {
-    $('#dataListe1Select').on('change', function() {
+    $('#dataListe1Form').submit(function(e) {
+      e.preventDefault();
       let el1 = document.getElementById('dataListe1') //liste des collesClasse du professeur
       let colle = dataListe.getName(el1);
       let idColle = dataListe.getId(el1);
-      console.log(idColle);
       if(idColle !='' && typeof idColle !=='undefined'){
         $.post("/professeur/listeElevesJSON/", {
           'idColle': idColle,
@@ -145,12 +145,25 @@ let colles = (function() {
         {
           data: 'sujet'
         },
+        {
+          data: null,
+          className: "center",
+          defaultContent: '<a href="" class="editor_supp">Edit</a>'
+        }
       ],
     });
 
     table.clear().draw();
     table.rows.add(liste); // Add new data
     table.columns.adjust().draw(); // Redraw the DataTable
+
+    // Edit record
+    $('#tableColles').on('click', 'a.editor_supp', function(e) {
+      e.preventDefault();
+      console.log($(this).closest('tr'));
+      // utiliser un data-action='modifier' ou data-action='supprimer'
+      $('#addColle').modal();
+    });
 
   };
 

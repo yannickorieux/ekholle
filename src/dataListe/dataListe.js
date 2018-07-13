@@ -16,22 +16,33 @@ let dataListe = (function() {
    **************************
    */
 
-  self.set = function(element) {
+  self.set = function(element, options ={ 'form' : false }) {
     let id = element.id;
     let idListe = id + "liste";
     let idSelect = id + "Select";
     let idhidden = id + "answer-hidden";
-    let type = $(element).data("type")
-    let placeholder = $(element).data("placeholder")
-    html = []
-    html.push(
-      "<div class='form-group has-feedback has-clear'><div> \
-       <input type='text' list=" + idListe + " id=" + idSelect + "  autocomplete='off' required value='' class='form-control' placeholder='" + placeholder + "' name=" + type + " > <input type='hidden' required value='' name='answer' id=" + idhidden + " > \
-       </div><datalist id=" + idListe + " ></datalist></div>"
-    )
+    let type = $(element).data("type");
+    let placeholder = $(element).data("placeholder");
+    let html='';
+    let idForm='';
+    if(options.form===true){
+      idForm = id + "Form";
+      html = "<form id=" + idForm + "></form>"
+      $(element).empty();
+      $(element).append(html);
+      element=element.childNodes[0];
+    }
+
+    html = "<div class='form-group'>\
+       <input type='text' list=" + idListe + " id=" + idSelect + "  autocomplete='off' required value='' class='form-control' placeholder='" + placeholder + "' name='" + type + "'><input type='hidden' required value='' name='answer' id=" + idhidden + " /> \
+       <datalist id=" + idListe + " ></datalist></div>"
 
     $(element).empty();
     $(element).append(html);
+    if(options.form===true){
+      $('#'+idSelect).wrap("<div class='input-group tintin'></div>");
+      $('#'+idSelect).after('<a href="#" class="input-group-append"><button class="btn btn-primary" type="submit">Valider</button></a>');
+    };
   }
   /*
   **************************
@@ -42,7 +53,6 @@ let dataListe = (function() {
   self.setDataListe = function(element, data) {
     let id = element.id;
     let type = $(element).data("type")
-    console.log(type);
     html = '';
     if (data.length === 0) {
       // $("#error").html("<p>Vous n'avez pas encore de matières dans la base</p><p>Créer une nouvlle matière</p>");
@@ -87,7 +97,7 @@ let dataListe = (function() {
     let inputId = id + 'Select';
     let inputHiddenId = id + 'answer-hidden';
     let message = $(idElement).data("message")
-    document.querySelector('#' + inputId).addEventListener('input', function(e) {
+    document.querySelector('#' + inputId).addEventListener('input' , function(e){
       let input = e.target,
         list = input.getAttribute('list'),
         options = document.querySelectorAll('#' + list + ' option'),
