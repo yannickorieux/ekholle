@@ -13,7 +13,7 @@ mongoose.Promise = global.Promise;
 //connect to MongoDB
 const promise = mongoose.connect('mongodb://localhost/usersKholles');
 const db = mongoose.connection;
-
+//mongoose.set('debug',true);
 //handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {

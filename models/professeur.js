@@ -28,11 +28,17 @@ let ProfesseurSchema = new mongoose.Schema({
     type: Boolean,
      default: false
    },
-   matieres: [{
+   colles: [{
      type: mongoose.Schema.Types.ObjectId,
      ref: "ColleurMatiere",
      required: true
    }],
+   coordoMatieres : [{
+     type: mongoose.Schema.Types.ObjectId,
+     ref: "MatiereClasse",
+     required: true
+   }],
+
    grade : {
      type: String,
      default: ''
@@ -41,12 +47,6 @@ let ProfesseurSchema = new mongoose.Schema({
      type: String,
      default: ''
    },
-   disciplines : [
-     {
-       type: mongoose.Schema.Types.ObjectId,
-       ref: "Matiere",
-     }
-   ]
 
 });
 
@@ -86,7 +86,7 @@ ProfesseurSchema.statics.authenticate = function(Professeur,login, password, cal
 //hashing a password before saving it to the database
 ProfesseurSchema.pre('save', function(next) {
   let user = this;
-  if (!user.isModified('password')) return next();
+  if (!user.changePwd) return next();
 
   bcrypt.hash(user.password, 10, function(err, hash) {
     if (err) {

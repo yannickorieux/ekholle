@@ -1,4 +1,56 @@
 
+html{
+  font-size: 0.85rem;
+}
+
+main{
+  padding-top : 20px;
+}
+
+
+/*-------------------------
+	Style datatables
+--------------------------*/
+
+
+td.details-control {
+    background: url('./plus.png') no-repeat center center;
+    background-size: 20px 20px;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('./moins.png') no-repeat center center;
+    background-size: 20px 20px;
+}
+
+
+
+.navbar {
+  background-color:  #006666 !important;
+  min-height: 80px;
+  margin : 0px;
+}
+
+
+.navbar .navbar-brand  {
+  color: #ffa100;
+}
+
+.navbar .navbar-brand :hover  {
+  color: #fff ;
+}
+
+.navbar .navbar-nav li a {
+  color: #ffa100 !important;
+}
+.navbar .navbar-nav li a :hover{
+  color: #fff ;
+}
+
+.dropdown-toggle {
+  color: #ffa100;
+}
+
 
 /*-------------------------
 	Style menu principal

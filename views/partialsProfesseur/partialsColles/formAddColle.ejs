@@ -1,7 +1,7 @@
-<div id="addColle" class="modal fade">
-  <div class="modal-dialog">
+<div id="addColleModal" class="modal  fade" tabindex="-1" role="dialog" aria-labelledby="addColle" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <form id="addColleForm" role="form">
+      <form id="addColleForm" data-mode="ajouter" data-idcolle="" role="form">
         <fieldset>
           <div class="modal-header">
             <h4 class="modal-title">Ajouter une colle</h4>
@@ -10,13 +10,14 @@
           <div class="container modal-body">
             <div id="dataListe2" class="dataListe" data-type="eleve" data-message='Sélectionner un élève dans la liste' data-placeholder='Choisir un élève'></div>
             <div class="row">
-              <div class="col-sm-6">
-                <div class="form-group has-feedback has-clear">
+              <div class="col-md-6">
+                <!-- <div class="form-group has-feedback has-clear">
                   <label for="note">Note :</label>
                   <input class="form-control" type="number" id="note" required name="note" step="0.1" min="0" max="20" />
-                </div>
+                </div> -->
+                <div id="dataListe6" class="dataListe" data-type="note"></div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-md-6">
                 <div class="form-group has-feedback has-clear">
                   <label>Date:</label>
                   <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
@@ -29,15 +30,22 @@
               </div>
             </div>
 
-            <div class="row form-group has-feedback has-clear">
-              <label for="sujet">Sujet :</label>
-              <input class="form-control" type="text" id="sujet" name="sujet" />
+            <div class="row">
+              <div class="col-md-12">
+              <div class="form-group has-feedback has-clear">
+                <label for="sujet">Sujet :</label>
+                <input class="form-control" type="text" id="sujet" name="sujet">
+              </div>
+              </div>
+              <div class="col-md-12">
+                <label for="obsCoordo">Commentaires à destination du coordonnateur de la discipline :</label>
+                <textarea class="form-control" id="obsCoordo"></textarea>
+              </div>
+              <div class="col-md-12">
+                <label for="obsEleve">Commentaires à destination de l'élève :</label>
+                <textarea class="form-control" id="obsEleve"></textarea>
+              </div>
             </div>
-            <div class="row form-group has-feedback has-clear">
-              <label for="commentaires">Commentaires :</label>
-              <textarea class="form-control" type="text" id="commentaires" name="commentaires"></textarea>
-            </div>
-
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">ENREGISTRER</button>

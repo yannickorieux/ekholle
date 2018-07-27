@@ -29,7 +29,7 @@ let equipesClasses = (function() {
     let id = dataListe.getId(el1)
     if (classe !== '') {
       $('#showTableEquipeClasse').css("display", "block");
-      afficheClasse(classe);
+      refreshTableEquipeClasse(classe);
     } else {
       $('#showTableEquipeClasse').css("display", "none");
     }
@@ -56,7 +56,7 @@ let equipesClasses = (function() {
       } else {
         document.getElementById('addMatiereForm').reset();
         $('#addMatiereClasse').modal('hide');
-        afficheClasse(classe);
+        refreshTableEquipeClasse(classe);
       }
     });
   });
@@ -67,57 +67,60 @@ let equipesClasses = (function() {
         Script pour afficher une classe
    **************************
    */
-  afficheClasse = function(classe) {
+
+   function initDataTablesEquipeClasse() {
+     liste = [];
+     let table = $('#tableEquipeClasse').DataTable({
+       retrieve: true,
+       data: liste,
+       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
+       language: {
+         processing: "Traitement en cours...",
+         search: "Rechercher&nbsp;:",
+         lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
+         info: "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+         infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+         infoFiltered: "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+         infoPostFix: "",
+         loadingRecords: "Chargement en cours...",
+         zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+         emptyTable: "Aucune donnée disponible dans le tableau",
+         paginate: {
+           first: "Premier",
+           previous: "Pr&eacute;c&eacute;dent",
+           next: "Suivant",
+           last: "Dernier"
+         },
+         aria: {
+           sortAscending: ": activer pour trier la colonne par ordre croissant",
+           sortDescending: ": activer pour trier la colonne par ordre décroissant"
+         }
+       },
+
+       columns: [{
+           data: 'matiere.nom'
+         },
+         {
+             data: null,
+             render: function(data, type, row) {
+               // Combine the first and last names into a single table field
+               return data.professeur.nom + ' ' + data.professeur.prenom;
+             },
+           },
+         {
+           data: 'duree'
+         },
+       ],
+     });
+   };
+
+  refreshTableEquipeClasse = function(classe) {
     $.post("/admin/tableEquipeClasseJSON/", {
       'classe': classe
     }, (data) => {
-      let liste = data;
-      if (typeof liste === 'undefined') {
-        liste = []
-      };
-
-      let table = $('#tableEquipeClasse').DataTable({
-        retrieve: true,
-        data: liste,
-        // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
-        language: {
-          processing: "Traitement en cours...",
-          search: "Rechercher&nbsp;:",
-          lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
-          info: "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-          infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
-          infoFiltered: "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
-          infoPostFix: "",
-          loadingRecords: "Chargement en cours...",
-          zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
-          emptyTable: "Aucune donnée disponible dans le tableau",
-          paginate: {
-            first: "Premier",
-            previous: "Pr&eacute;c&eacute;dent",
-            next: "Suivant",
-            last: "Dernier"
-          },
-          aria: {
-            sortAscending: ": activer pour trier la colonne par ordre croissant",
-            sortDescending: ": activer pour trier la colonne par ordre décroissant"
-          }
-        },
-
-        columns: [{
-            data: 'matiere'
-          },
-          {
-            data: 'professeur'
-          },
-          {
-            data: 'duree'
-          },
-        ],
-      });
-
-      table.clear().draw();
-      table.rows.add(liste); // Add new data
-      table.columns.adjust().draw(); // Redraw the DataTable
+      $('#tableEquipeClasse').DataTable().clear().draw();
+      $('#tableEquipeClasse').DataTable().rows.add(data); // Add new data
+      $('#tableEquipeClasse').DataTable().columns.adjust().draw(); // Redraw the DataTable
     });
   };
 
@@ -129,7 +132,7 @@ let equipesClasses = (function() {
    */
 
   self.init = function() {
-
+    initDataTablesEquipeClasse();
   }
 
   return self;

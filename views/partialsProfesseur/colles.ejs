@@ -1,10 +1,11 @@
 <div id='showColles' class='visible'>
+	<h3>Ajout et synthèse des heures de colles effectuées</h3>
 	<div id="TabColle" class="container">
 		<ul class="nav nav-pills">
 			<li class="active">
 				<a class="nav-link active" href="#1ac" data-toggle="tab">Ajout Colle</a>
 			</li>
-			<li><a class="nav-link" href="#2ac" data-toggle="tab">Résultats</a>
+			<li><a class="nav-link" href="#2ac" data-toggle="tab">Coordonnateur discipline</a>
 			</li>
 			<li><a class="nav-link" href="#3ac" data-toggle="tab">Heures effectuées</a>
 		</ul>
@@ -15,12 +16,12 @@
 			</div>
 			<div class="tab-pane" id="2ac">
 				<ul class="nav nav-pills">
-					<li class="active"><a class="nav-link" data-toggle="tab" href="#subtab1c">Récapitulatif</a></li>
-					<li><a class="nav-link active" data-toggle="tab" href="#subtab2c">Notes</a></li>
+					<li class="active"><a class="nav-link" data-toggle="tab" href="#subtab1c">Synthèse</a></li>
+					<li><a class="nav-link active" data-toggle="tab" href="#subtab2c">Résultats</a></li>
 				</ul>
 				<div class="tab-content">
 					<div id="subtab1c" class="tab-pane fade">
-						<% include partialsColles/recapitulatif%>
+						<% include partialsColles/synthese%>
 					</div>
 					<div id="subtab2c" class="tab-pane fade">
 							<% include partialsColles/resultats%>

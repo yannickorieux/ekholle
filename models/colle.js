@@ -32,7 +32,13 @@ let ColleSchema = new mongoose.Schema({
   },
   duree: {
     type: Number,
-  }
+  },
+  obsEleve: {
+    type: String,
+  },
+  obsCoordo: {
+    type: String,
+  },
 },{ collection: 'colles' });
 
 

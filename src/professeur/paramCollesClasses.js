@@ -14,10 +14,10 @@ let paramCollesClasses = (function() {
         Choix de l'élève et de la colle à partir d'une dataListe
   ************************************************************
       */
-      let el3=document.getElementById('dataListe3') //liste des classes
-      dataListe.selectId(el3);
-      let el4=document.getElementById('dataListe4') //liste des classesmatieres
-      dataListe.selectId(el4);
+  let el3 = document.getElementById('dataListe3') //liste des classes
+  dataListe.selectId(el3);
+  let el4 = document.getElementById('dataListe4') //liste des classesmatieres
+  dataListe.selectId(el4);
 
 
   /*
@@ -29,19 +29,16 @@ let paramCollesClasses = (function() {
         Choix de la classe pour ensuite choisir la matière dans modal form
   ************************************************************
         */
-  $('#dataListe3Select').on('change', function() {
-    let classe = dataListe.getName(el3)
-    let idClasse = dataListe.getId(el3)
-    if (classe != '') {
-      $('.choixMatiere').css("display", "block");
-    } else {
-      $('.choixMatiere').css("display", "none");
-    }
+  $('#dataListe3Form').submit(function(e) {
+    e.preventDefault();
+    let classe = dataListe.getName(el3);
+    let idClasse = dataListe.getId(el3);
     $.post("/professeur/listeMatiereClasseJSON/", {
       'idClasse': idClasse,
     }, (data) => {
-      let el=document.getElementById('dataListe4')
-      dataListe.setDataListe(el,data);
+      let el4 = document.getElementById('dataListe4')
+      dataListe.setDataListe(el4, data);
+      dataListe.display(el4, true);
     });
   });
 
@@ -56,9 +53,13 @@ let paramCollesClasses = (function() {
         */
   $('#addClasseForm').submit(function(e) {
     e.preventDefault();
-    let el=document.getElementById('dataListe4')
-    let idClasseMatiere = dataListe.getId(el)
+    let classe = dataListe.getName(el3);
+    let idClasse = dataListe.getId(el3);
+    let e4 = document.getElementById('dataListe4')
+    let idClasseMatiere = dataListe.getId(e4)
+    console.log(idClasseMatiere);
     $.post("/professeur/addMatiereProfesseurJSON/", {
+      'idClasse': idClasse,
       'idProfesseur': idProfesseur,
       'idClasseMatiere': idClasseMatiere,
     }, (message) => {
@@ -67,8 +68,9 @@ let paramCollesClasses = (function() {
         $('#erreur').modal();
       } else {
         $('#addClasseProfesseur').modal('hide');
-        self.displayTable();
+        self.refreshTableMesCollesClasses();
       }
+      dataListe.display(el4, false);
       document.getElementById('addClasseForm').reset();
     });
   });
@@ -78,17 +80,14 @@ let paramCollesClasses = (function() {
     //Mettre à jour la liste des classes
 
     $.get("/admin/tableClassesJSON/", (data) => {
-      let el3=document.getElementById('dataListe3')
-      dataListe.setDataListe(el3,data);
+      let el3 = document.getElementById('dataListe3')
+      dataListe.setDataListe(el3, data);
     });
   }
 
 
-  function afficheMesCollesClasses(data) {
-    let liste = data;
-    if (typeof liste === 'undefined') {
-      liste = []
-    };
+  function initDataTablesMesCollesClasses() {
+    let liste = [];
     let table = $('#tableMesCollesClasses').DataTable({
 
       retrieve: true,
@@ -124,17 +123,17 @@ let paramCollesClasses = (function() {
           data: 'matiere'
         },
         {
-          data: 'professeur'
+          data: null,
+          render: function(data, type, row) {
+            // Combine the first and last names into a single table field
+            return data.nom + ' ' + data.prenom;
+          },
         },
         {
           data: 'duree'
         },
       ],
     });
-
-    table.clear().draw();
-    table.rows.add(liste); // Add new data
-    table.columns.adjust().draw(); // Redraw the DataTable
   };
 
 
@@ -144,21 +143,31 @@ let paramCollesClasses = (function() {
   ************************************************************
         */
 
-
-
-  self.displayTable = function() {
+  /*
+  ********************************************************************
+    Mise à jour de la table des colles
+  ************************************************************
+    */
+  self.refreshTableMesCollesClasses = function() {
     $.post("/professeur/tableMesCollesClassesJSON/", {
       'idProfesseur': idProfesseur,
     }, (data) => {
-      afficheMesCollesClasses(data);
-      let el4=document.getElementById('dataListe4') //liste des classes professeurs
-      dataListe.setDataListe(el4, data);
+      $('#tableMesCollesClasses').DataTable().clear().draw();
+      $('#tableMesCollesClasses').DataTable().rows.add(data); // Add new data
+      $('#tableMesCollesClasses').DataTable().columns.adjust().draw(); // Redraw the DataTable
+      let el1 = document.getElementById('dataListe1') //liste des colles du professeur
+      dataListe.setDataListe(el1, data); //on met a jour la dataliste
+      let el4 = document.getElementById('dataListe4') // on masque la liste des matieres/classes
+      dataListe.display(el4, false); // on la masque
     });
-  };
+  }
+
+
 
 
   self.init = () => {
     getListeClasses();
+    initDataTablesMesCollesClasses();
   }
 
   return self;

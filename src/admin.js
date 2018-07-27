@@ -22,6 +22,10 @@ let admin = (function() {
      $("#showParam").css("display", "block");
    });
 
+   $('#navCompte').on('click', function() {
+     $(".visible").css("display", "none");
+     $("#modifyPassword").css("display", "block");
+   });
 
  }
 
@@ -37,21 +41,20 @@ let admin = (function() {
 
     let el1 = document.querySelector('#dataListe1')
     dataListe.set(el1 , { 'form' : true});
-    $.get("/admin/tableClassesJSON/", (data) => {
-      dataListe.setDataListe(el1,data);
-    });
-
-    let el2 = document.querySelector('#dataListe2')
-    dataListe.set(el2);
-    let el3 = document.querySelector('#dataListe3')
-    dataListe.set(el3);
-
-
     let el4 = document.querySelector('#dataListe4')
     dataListe.set(el4);
+
     $.get("/admin/tableClassesJSON/", (data) => {
-      dataListe.setDataListe(el4, data);
+      dataListe.setDataListe(el1,data);
+      dataListe.setDataListe(el4,data);
     });
+
+     //liste matiere
+    let el2 = document.querySelector('#dataListe2')
+    dataListe.set(el2);
+    //liste professeur
+    let el3 = document.querySelector('#dataListe3')
+    dataListe.set(el3);
 
     $('input').clearer(); //permet de réinitialiser les input
 

@@ -1,8 +1,8 @@
 let colles = (function() {
-  let self = {};
-  let idProfesseur = $('body').data("idprofesseur")
-  let dataListe = require('../dataListe/dataListe.js');
 
+  let self = {};
+  let idProfesseur =  document.body.getAttribute("data-idprofesseur");
+  let dataListe = require('../dataListe/dataListe.js');
 
 
   /*
@@ -22,69 +22,120 @@ let colles = (function() {
 
 
   /*
+  ********************************************************************
+        Choix d'une matiere pour le colleur et récupération de la liste des élèves
+  ************************************************************
+  */
+
+  $('#dataListe1Form').submit(function(e) {
+    e.preventDefault();
+    let el1 = document.getElementById('dataListe1') //liste des collesClasse du professeur
+    let colle = dataListe.getName(el1);
+    let idColle = dataListe.getId(el1);
+    if (idColle != '' && typeof idColle !== 'undefined') {
+      $.post("/professeur/listeElevesJSON/", {
+        'idColle': idColle,
+        'idProfesseur': idProfesseur,
+      }, (data) => {
+        let el2 = document.getElementById('dataListe2')
+        dataListe.setDataListe(el2, data);
+        if (colle != '') {
+          $('#tabGestionColles').css("display", "block");
+          refreshTableColle(idColle);
+        } else {
+          $('#tabGestionColles').css("display", "none");
+        }
+      });
+    }
+  });
+
+
+
+  /*
   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
-  Validation du formulaire pour ajouter une colle **
+  Validation du formulaire pour ajouterModifier  une colle **
   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
   */
-  addColleForm = function() {
-    $('#addColleForm').submit(function(e) {
-      e.preventDefault();
-      let el1 = document.getElementById('dataListe1')
+
+  $('#addColleForm').submit(function(e) {
+    e.preventDefault();
+    let el1 = document.getElementById('dataListe1')
+    let idMatiereColle = dataListe.getId(el1);
+    let el2 = document.getElementById('dataListe2')
+    let idEleve = dataListe.getId(el2);
+    let date = document.getElementById('dateColle').value;
+    let el6 = document.getElementById('dataListe6')
+    let note = dataListe.getNote(el6);
+    let sujet = document.getElementById('sujet').value;
+    let obsCoordo = document.getElementById('obsCoordo').value;
+    let obsEleve = document.getElementById('obsEleve').value;
+    let mode = document.getElementById('addColleForm').getAttribute("data-mode");
+    let idColle = '';
+    if (mode === 'modifier') {
+      idColle = document.getElementById('addColleForm').getAttribute("data-idcolle")
+    }
+    $.post("/professeur/addOrModColle/", {
+      "date": date,
+      "idEleve": idEleve,
+      "idMatiereColle": idMatiereColle,
+      "idProfesseur": idProfesseur,
+      "note": note,
+      "sujet": sujet,
+      "obsCoordo": obsCoordo,
+      "obsEleve": obsEleve,
+      "mode": mode, // mode : ajout ou modification d'une colle
+      "idColle": idColle //utile en cas de modif
+    }, () => {
+      let el1 = document.getElementById('dataListe1');
       let idColle = dataListe.getId(el1);
-      let el2 = document.getElementById('dataListe2')
-      let idEleve = dataListe.getId(el2);
-      let date = document.getElementById('dateColle').value;
-      let note = document.getElementById('note').value;
-      let sujet = document.getElementById('sujet').value;;
-      $.post("/professeur/addColleJSON/", {
-        "date": date,
-        "idEleve": idEleve,
-        "idColle": idColle,
-        "idProfesseur": idProfesseur,
-        "note": note,
-        "sujet": sujet,
-      }, () => {
-        let el1 = document.getElementById('dataListe1')
-        let idColle = dataListe.getId(el1);
-        let colle = dataListe.getName(el1);
-        document.getElementById('addColleForm').reset()
-        $('#addColle').modal('hide');
-        self.displayColles(idColle);
-      });
+      $('#addColleModal').modal('hide');
+      //on rafraichit la table
+      refreshTableColle(idMatiereColle);
     });
-  }
+  });
+
 
 
   /*
   ********************************************************************
-        Choix d'une matiere pour le colleur et récupération de la liste des élèves
+    Mise à jour de la table des colles
   ************************************************************
-        */
-  colleSelect = function() {
-    $('#dataListe1Form').submit(function(e) {
-      e.preventDefault();
-      let el1 = document.getElementById('dataListe1') //liste des collesClasse du professeur
-      let colle = dataListe.getName(el1);
-      let idColle = dataListe.getId(el1);
-      if(idColle !='' && typeof idColle !=='undefined'){
-        $.post("/professeur/listeElevesJSON/", {
-          'idColle': idColle,
-        }, (data) => {
-          let el2 = document.getElementById('dataListe2')
-          dataListe.setDataListe(el2, data);
-          if (colle != '') {
-            $('#tabGestionColles').css("display", "block");
-            self.displayColles(idColle);
-          } else {
-            $('#tabGestionColles').css("display", "none");
-          }
-        });
-      }
+    */
+  refreshTableColle = function(idMatiereColle) {
+    $.post("/professeur/tableCollesJSON/", {
+      'idMatiereColle': idMatiereColle,
+      'idProfesseur': idProfesseur,
+    }, (data) => {
+      $('#tableColles').DataTable().clear().draw();
+      $('#tableColles').DataTable().rows.add(data); // Add new data
+      $('#tableColles').DataTable().columns.adjust().draw(); // Redraw the DataTable
     });
   }
 
 
 
+  /*
+  ********************************************************************
+    Suppression d'une colle
+  ************************************************************
+    */
+  suppColle = function(idMatiereColle, idColle) {
+    $.post("/professeur/suppColle/", {
+      "idColle": idColle,
+        "idProfesseur": idProfesseur,
+        "idMatiereColle": idMatiereColle
+    }, () => {
+      refreshTableColle(idMatiereColle);
+    })
+  }
+
+
+
+  /*
+  ********************************************************************
+    Obtention de la liste des colles/matieres et mise à jour de la dataliste pour le professeur
+  ************************************************************
+    */
   function getListeColles() {
     $.post("/professeur/tableMesCollesClassesJSON/", {
       'idProfesseur': idProfesseur,
@@ -94,18 +145,32 @@ let colles = (function() {
     });
   }
 
+
+
   /*
   **************************
       fonction permettant d'afficher la liste des colles pour une matière/classe donnée
    **************************
    */
-  function afficheTableColles(data) {
 
-    let liste = data;
-    if (typeof liste === 'undefined') {
-      liste = []
-    };
+  function format(d) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+      '<tr>' +
+      '<td>obs. coordo:</td>' +
+      '<td>' + d.obsCoordo + '</td>' +
+      '</tr>' +
+      '<tr>' +
+      '<td>obs. élève:</td>' +
+      '<td>' + d.obsEleve + '</td>' +
+      '</tr>' +
+      '</table>';
+  };
 
+
+  function initDataTables() {
+    liste = []
+    $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableColles').DataTable({
       retrieve: true,
       data: liste,
@@ -133,8 +198,13 @@ let colles = (function() {
         }
       },
 
-      columns: [{
-          data: 'nom'
+      columns: [
+        {
+          data: null,
+          render: function(data, type, row) {
+            // Combine the first and last names into a single table field
+            return data.nom + ' ' + data.prenom;
+          },
         },
         {
           data: 'note'
@@ -146,25 +216,71 @@ let colles = (function() {
           data: 'sujet'
         },
         {
+          "className": 'details-control',
+          "orderable": false,
+          "data": null,
+          "defaultContent": ''
+        },
+        {
           data: null,
           className: "center",
-          defaultContent: '<a href="" class="editor_supp">Edit</a>'
+          defaultContent: '<a href="" class="editor_modif">Edit</a>/<a href="" class="editor_supp">Supp</a>'
         }
       ],
     });
 
-    table.clear().draw();
-    table.rows.add(liste); // Add new data
-    table.columns.adjust().draw(); // Redraw the DataTable
 
     // Edit record
-    $('#tableColles').on('click', 'a.editor_supp', function(e) {
+    $('#tableColles').on('click', 'a.editor_modif', function(e) {
       e.preventDefault();
-      console.log($(this).closest('tr'));
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      let element = row.data();
+      let idColle = element.idColle;
+      let nom = element.nom;
+      let note = element.note;
+      let date = element.date;
+      let sujet = element.sujet;
+      let obsEleve = element.obsEleve;
+      let obsCoordo = element.obsCoordo;
       // utiliser un data-action='modifier' ou data-action='supprimer'
-      $('#addColle').modal();
+      document.getElementById('addColleForm').setAttribute("data-mode", "modifier");
+      document.getElementById('addColleForm').setAttribute("data-idcolle", idColle);
+      let el2 = document.getElementById('dataListe2')
+      dataListe.readOnly(el2, true);
+      dataListe.setName(el2, nom);
+      $(document.getElementById('dateColle')).val(date);
+      $(document.getElementById('sujet')).val(sujet);
+      $(document.getElementById('obsEleve')).val(obsEleve);
+      $(document.getElementById('obsCoordo')).val(obsCoordo);
+      let el6 = document.getElementById('dataListe6')
+      dataListe.setLaNote(el6,note);
+
+      $('#addColleModal').modal();
     });
 
+    // Supp record
+    $('#tableColles').on('click', 'a.editor_supp', function(e) {
+      e.preventDefault();
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      let element = row.data();
+      suppColle(element.idMatiereColle,  element.idColle);
+    });
+
+    $('#tableColles tbody').on('click', 'td.details-control', function() {
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      if (row.child.isShown()) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+      } else {
+        // Open this row
+        row.child(format(row.data())).show();
+        tr.addClass('shown');
+      }
+    });
   };
 
 
@@ -172,22 +288,23 @@ let colles = (function() {
   ********************************************************************
         PUBLIC
   ************************************************************
-        */
+  */
 
 
   self.init = () => {
+    //$('#addColleModal').on('shown.bs.modal', function() {
+    //   $('.summernote').summernote({
+    //     toolbar: [
+    //       ['style', ['bold', 'italic', 'underline', 'strike']],
+    //       ['para', ['ul', 'ol']],
+    //     ],
+    //     styleWithSpan: false,
+    //   });
+    // })
     getListeColles();
-    addColleForm();
-    colleSelect();
+    initDataTables();
   };
 
-  self.displayColles = function(idMatiere) {
-    $.post("/professeur/tableCollesJSON/", {
-      'idMatiere': idMatiere,
-    }, (data) => {
-      afficheTableColles(data);
-    });
-  };
 
   return self;
 
