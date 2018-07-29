@@ -178,6 +178,29 @@ let dataListe = (function() {
 dtaliste spéciale pour gérer la notation de 0 à 20
  */
 
+ self.selectNotes = function(idElement) {
+   let id = idElement.id;
+   let inputId = id + 'Select';
+   let message = "note invalide"
+   document.querySelector('#' + inputId).addEventListener('input', function(e) {
+     let input = e.target,
+       list = input.getAttribute('list'),
+       options = document.querySelectorAll('#' + list + ' option'),
+       label = input.value;
+
+     input.setCustomValidity(message);
+     for (let i = 0; i < options.length; i++) {
+       let option = options[i];
+
+       if (option.value == label) {
+         input.setCustomValidity('');
+         break;
+       }
+     }
+   });
+ };
+
+
    self.setNotes = function(element) {
      //créé une dataliste pour les notes de 0 à 20 + n.n. (non noté et abs)
      let id = element.id;

@@ -76,7 +76,6 @@ router.post('/addMatiereProfesseurJSON/', login.isLoggedIn, function(req, res) {
   let Matiere = require('../models/matiere')(req.etab);
   let Professeur = require('../models/professeur')(req.etab);
   let Structure = require('../models/structure')(req.etab);
-  console.log(req.body);
   Structure.update({
     "_id": req.body.idClasse
   }, {

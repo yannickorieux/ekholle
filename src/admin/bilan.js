@@ -46,14 +46,14 @@ let bilan = (function() {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
-            return data.prenom + ' ' + data.nom;
+            return data.nom + ' ' + data.prenom;
           },
         },
         {
           data: 'grade'
         },
         {
-          data: 'nombre'
+          data: 'count'
         },
         {
           data: 'heures'

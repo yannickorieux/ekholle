@@ -1,5 +1,8 @@
 var mongoose = require('mongoose');
 
+function duree(){
+  return 30
+}
 
 let StructureSchema = new mongoose.Schema({
   nom: {
@@ -23,10 +26,12 @@ let StructureSchema = new mongoose.Schema({
       ref: "Professeur",
       required: true
     },
+
     duree: {
       type: Number,
-      default: 20
+      default: duree()
     },
+
     option: [] , //liste des eleves (num INE ) ne suivant pas l'option
     colleurs: [{
       professeur: {

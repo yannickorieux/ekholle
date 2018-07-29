@@ -10,16 +10,17 @@ let colles = (function() {
         PRIVE
   ************************************************************
 ********************************************************************
-      Choix de l'élève et de la colle à partir d'une dataListe
+      validation des datalistes
 ************************************************************
     */
 
 
-  let el1 = document.getElementById('dataListe1') //liste des collesClasse du professeur
+  let el1 = document.getElementById('dataListe1') //validation de la liste des collesClasse du professeur
   dataListe.selectId(el1)
-  let el2 = document.getElementById('dataListe2') //liste des élèves
+  let el2 = document.getElementById('dataListe2') //validation de la  liste des élèves
   dataListe.selectId(el2)
-
+  let el6 = document.getElementById('dataListe6') //liste des notes
+  dataListe.selectNotes(el6)
 
   /*
   ********************************************************************

@@ -50,13 +50,17 @@ let structure = (function() {
              data: 'nom'
            },
            {
-             data: 'niveau'
+             data: 'classe[0].niveau'
            },
            {
              data: 'total'
            },
            {
-             data: 'taux'
+               data: null,
+               render: function(data, type, row) {
+                 // Combine the first and last names into a single table field
+                 return '';
+               },
            },
          ],
        });
