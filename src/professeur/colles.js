@@ -64,9 +64,17 @@ let colles = (function() {
     let idMatiereColle = dataListe.getId(el1);
     let el2 = document.getElementById('dataListe2')
     let idEleve = dataListe.getId(el2);
-    let date = document.getElementById('dateColle').value;
+    let date = moment(document.getElementById('dateColle').value,'DD/MM/YYYY').startOf('day');
     let el6 = document.getElementById('dataListe6')
     let note = dataListe.getNote(el6);
+    let noNote='';
+    if(isNaN(parseInt(note))){
+      noNote=note;
+      note=null;
+    }
+    else{
+      note=parseInt(note);
+    }
     let sujet = document.getElementById('sujet').value;
     let obsCoordo = document.getElementById('obsCoordo').value;
     let obsEleve = document.getElementById('obsEleve').value;
@@ -76,11 +84,12 @@ let colles = (function() {
       idColle = document.getElementById('addColleForm').getAttribute("data-idcolle")
     }
     $.post("/professeur/addOrModColle/", {
-      "date": date,
+      "date": moment(date).format(),
       "idEleve": idEleve,
       "idMatiereColle": idMatiereColle,
       "idProfesseur": idProfesseur,
       "note": note,
+      "noNote": noNote,
       "sujet": sujet,
       "obsCoordo": obsCoordo,
       "obsEleve": obsEleve,
@@ -208,10 +217,22 @@ let colles = (function() {
           },
         },
         {
-          data: 'note'
+          data: null,
+          render: function(data, type, row) {
+            if(data.note===null){
+              return data.noNote;
+            }
+            return data.note;
+          },
         },
         {
-          data: 'date'
+          data: "date",
+           render: function(data, type, row){
+               if(type === "sort" || type === "type"){
+                   return data;
+               }
+               return moment(data).format("DD/MM/YYYY");
+           }
         },
         {
           data: 'sujet'
@@ -228,7 +249,11 @@ let colles = (function() {
           defaultContent: '<a href="" class="editor_modif">Edit</a>/<a href="" class="editor_supp">Supp</a>'
         }
       ],
-    });
+    },
+    {
+      "order": [[ 2, "desc" ]]
+    }
+  );
 
 
     // Edit record
@@ -240,6 +265,7 @@ let colles = (function() {
       let idColle = element.idColle;
       let nom = element.nom;
       let note = element.note;
+      if(element.note===null){note =element.noNote;}
       let date = element.date;
       let sujet = element.sujet;
       let obsEleve = element.obsEleve;
@@ -250,7 +276,7 @@ let colles = (function() {
       let el2 = document.getElementById('dataListe2')
       dataListe.readOnly(el2, true);
       dataListe.setName(el2, nom);
-      $(document.getElementById('dateColle')).val(date);
+      $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY'));
       $(document.getElementById('sujet')).val(sujet);
       $(document.getElementById('obsEleve')).val(obsEleve);
       $(document.getElementById('obsCoordo')).val(obsCoordo);

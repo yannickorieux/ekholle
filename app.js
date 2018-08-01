@@ -11,7 +11,7 @@ const MongoStore = require('connect-mongo')(session);
 
 mongoose.Promise = global.Promise;
 //connect to MongoDB
-const promise = mongoose.connect('mongodb://localhost/usersKholles');
+const promise = mongoose.connect('mongodb://localhost/dbEKholle');
 const db = mongoose.connection;
 //mongoose.set('debug',true);
 //handle mongo error
@@ -24,9 +24,10 @@ db.once('open', function () {
 const app = express();
 
 const sessionMiddleware = session({
-  secret: 'work hard',
+  secret: 'jeDetesteLeJardinage',
   resave: true,
   saveUninitialized: false,
+  cookie: {maxAge: 3600000},
   store: new MongoStore({
     mongooseConnection: db
   })
@@ -41,8 +42,10 @@ let sessionFlash = function(req, res, next) {
   res.locals.messages = req.flash();
   next();
 }
+
 app.use(flash());
 app.use(sessionFlash); //utile pour redirect
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -53,14 +56,39 @@ const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
 const professeurRouter = require('./routes/professeur');
 
+let listeEtab=['bergson','test']
+
 let reWriteUrl = function(req, res, next) {
-  let etab=req.headers['host'].split('.')[0];
-  if(typeof etab === 'undefined'){
-    req.etab=''
+  let etab=req.url.split('/').pop();
+  if (typeof req.session.etab!=='undefined'){
+    //attention si session deja enregistree
+    if(etab===req.session.etab){
+      return res.redirect('/users');
+    }
+    else if(listeEtab.indexOf(etab)!==-1){
+      //on change d'etablissement et celui-ci est present dans la base
+      req.session.etab=etab;
+      return res.redirect('/users');
+    }
+    else{
+      // etablissement non reconnu
+      return next();
+    }
   }
-  req.etab=etab;
-  console.log(req.etab);
-  next();
+  else{
+    //session non enregistree
+    if(listeEtab.indexOf(etab)!==-1){
+      //l'etab est dans la base je peux l'inscrire dans la session
+      req.session.etab=etab;
+      return res.redirect('/users');
+    }
+    else{
+      // url non reconnu
+      res.locals.message ="Veuillez vous connecter avec l'url de votre établissement";
+      res.locals.error="Veuillez vous connecter avec l'url de votre établissement";
+      res.render('error');
+    }
+  }
 }
 
 app.use(logger('dev'));

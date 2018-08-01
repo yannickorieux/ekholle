@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
 
-function duree(){
-  return 30
-}
 
 let StructureSchema = new mongoose.Schema({
   nom: {
@@ -15,6 +12,18 @@ let StructureSchema = new mongoose.Schema({
     type: Number
   },
 
+  extraPeriode : {
+    type : Boolean,
+    default : false
+  },
+  periode  :{
+    debut : {
+      type: Date
+    },
+    fin : {
+      type: Date
+    }
+  },
   matieres: [{
     matiere: {
       type: mongoose.Schema.Types.ObjectId,
@@ -29,7 +38,11 @@ let StructureSchema = new mongoose.Schema({
 
     duree: {
       type: Number,
-      default: duree()
+      default: 20
+    },
+    dureeExc: {
+      type: Number,
+      default: 20
     },
 
     option: [] , //liste des eleves (num INE ) ne suivant pas l'option
@@ -46,16 +59,16 @@ let StructureSchema = new mongoose.Schema({
           required: true
         },
         note: {
+          type: Number,
+        },
+        noNote: {
           type: String,
         },
         sujet: {
           type: String,
         },
         date: {
-          type: String,
-        },
-        duree: {
-          type: Number,
+          type: Date,
         },
         obsEleve: {
           type: String,

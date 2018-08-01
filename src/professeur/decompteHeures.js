@@ -1,20 +1,25 @@
-let bilan = (function() {
+let decompteHeures = (function() {
 
   let self = {};
+  let idProfesseur = document.body.getAttribute("data-idprofesseur");
+
 
   /*
-  **************************
-        PRIVATE
-   **************************
-   */
+  ********************************************************************
+        PRIVE
+  ************************************************************
+*/
 
-  /*
-  **************************
-        Script pour afficher le bilan des heures effectuées sur une période
-   **************************
-   */
-  afficheBilan = function(data) {
-    let liste = data;
+
+
+
+
+
+
+  function initDataDecompteHeures() {
+
+    liste = []
+    $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableDecompte').DataTable({
       retrieve: true,
       data: liste,
@@ -46,11 +51,8 @@ let bilan = (function() {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
-            return data.nom + ' ' + data.prenom;
+            return data.classe + '-' + data.matiere;
           },
-        },
-        {
-          data: 'grade'
         },
         {
           data: 'count'
@@ -64,32 +66,37 @@ let bilan = (function() {
           },
 
       ],
-      order: [
-        [0, "asc"]
-      ],
     });
-
-    table.clear().draw();
-    table.rows.add(liste); // Add new data
-    table.columns.adjust().draw(); // Redraw the DataTable
 
   };
 
-
   /*
-  **************************
+  ********************************************************************
         PUBLIC
-   **************************
-   */
-
-  self.init = function() {
-    $.get("/admin/decompteHeuresJSON/", (data) => {
-      afficheBilan(data);
+  ************************************************************
+  */
+  /*
+  ********************************************************************
+    Mise à jour de la table des colles
+  ************************************************************
+    */
+  self.refreshTableDecompteHeures = function() {
+    $.post("/professeur/tableDecompteHeuresJSON/",{'idProfesseur' : idProfesseur} , (data) => {
+      console.log(data);
+      $('#tableDecompte').DataTable().clear().draw();
+      $('#tableDecompte').DataTable().rows.add(data); // Add new data
+      $('#tableDecompte').DataTable().columns.adjust().draw(); // Redraw the DataTable
     });
   }
 
+
+  self.init = () => {
+    initDataDecompteHeures();
+  };
+
+
   return self;
+
 })();
 
-
-module.exports = bilan;
+module.exports = decompteHeures;

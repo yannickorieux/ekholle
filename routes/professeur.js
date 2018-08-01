@@ -10,13 +10,18 @@ page index professeur
 **************************
 */
 router.get('/', login.isLoggedIn, function(req, res, next) {
-  res.render('professeur.ejs', {
-    title: 'e-khôlle - professeur',
-    user: req.prenom + '-' + req.nom,
-    role: req.session.role,
-    id: req._id,
-    etab: req.etab,
-  });
+  if (req.session.role === 'professeur') {
+    res.render('professeur.ejs', {
+      title: 'e-khôlle - professeur',
+      user: req.prenom + '-' + req.nom,
+      role: req.session.role,
+      id: req._id,
+      etab: req.session.etab,
+    });
+  } else {
+    res.redirect('/' + req.session.role);
+  }
+
 });
 
 
@@ -35,9 +40,9 @@ association matiere/classe avec le professeur coordo de discipline pour datalist
 */
 
 router.post('/listeMatiereClasseJSON/', login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
-  let Matiere = require('../models/matiere')(req.etab);
-  let Professeur = require('../models/professeur')(req.etab);
+  let Structure = require('../models/structure')(req.session.etab);
+  let Matiere = require('../models/matiere')(req.session.etab);
+  let Professeur = require('../models/professeur')(req.session.etab);
   Structure.findOne({
     "_id": req.body.idClasse
   }, {
@@ -73,9 +78,9 @@ ajoute une colle à un professeur en l'associant à une matiere/classe
 **************************
 */
 router.post('/addMatiereProfesseurJSON/', login.isLoggedIn, function(req, res) {
-  let Matiere = require('../models/matiere')(req.etab);
-  let Professeur = require('../models/professeur')(req.etab);
-  let Structure = require('../models/structure')(req.etab);
+  let Matiere = require('../models/matiere')(req.session.etab);
+  let Professeur = require('../models/professeur')(req.session.etab);
+  let Structure = require('../models/structure')(req.session.etab);
   Structure.update({
     "_id": req.body.idClasse
   }, {
@@ -109,9 +114,9 @@ table pour afficher les matieres/classes du colleur
 **************************
 */
 router.post('/tableMesCollesClassesJSON/', login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
-  let matiere = req.etab + '_matieres';
-  let professeur = req.etab + '_professeurs'
+  let Structure = require('../models/structure')(req.session.etab);
+  let matiere = req.session.etab + '_matieres';
+  let professeur = req.session.etab + '_professeurs'
   Structure.aggregate([{
         $unwind: "$matieres"
       },
@@ -153,7 +158,7 @@ router.post('/tableMesCollesClassesJSON/', login.isLoggedIn, function(req, res) 
       },
       {
         $project: {
-          idMatiereColleur : '$_id',
+          idMatiereColleur: '$_id',
           classe: 1,
           idClasseMatiere: 1,
           duree: 1,
@@ -178,8 +183,8 @@ liste des élèves à coller pour la matière choisie ar le colleur
 */
 
 router.post('/listeElevesJSON/', login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
-  let eleves = req.etab + '_eleves';
+  let Structure = require('../models/structure')(req.session.etab);
+  let eleves = req.session.etab + '_eleves';
   Structure.aggregate([{
       $unwind: "$matieres"
     },
@@ -200,14 +205,21 @@ router.post('/listeElevesJSON/', login.isLoggedIn, function(req, res) {
       }
     },
     {
+      $unwind: "$eleves"
+    },
+    {
       $project: {
-        eleves: {
-          _id: 1,
-          nom: 1,
-          prenom: 1
-        }
+        _id: "$eleves._id",
+        nom: "$eleves.nom",
+        prenom: "$eleves.prenom",
       }
     },
+    {
+      $sort: {
+        nom: 1,
+        prenom: 1
+      }
+    }
   ]).exec(function(err, data) {
 
     // if (typeof data == 'undefined') {
@@ -237,13 +249,14 @@ router.post('/listeElevesJSON/', login.isLoggedIn, function(req, res) {
     //     })
     //   });
     //
-    res.send(data[0].eleves);
+
+    res.send(data);
   })
 });
 
 
 ajoutColle = function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
+  let Structure = require('../models/structure')(req.session.etab);
   // il faut au prealable filtrer sur la matiere de la colle
   Structure.update({
       'matieres._id': req.body.idMatiereColle
@@ -251,6 +264,7 @@ ajoutColle = function(req, res) {
       $push: {
         'matieres.$[el1].colleurs.$[el2].colles': {
           'note': req.body.note,
+          'noNote': req.body.noNote,
           'sujet': req.body.sujet,
           'date': req.body.date,
           'obsCoordo': req.body.obsCoordo,
@@ -279,7 +293,7 @@ ajoutColle = function(req, res) {
 
 
 modifColle = function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
+  let Structure = require('../models/structure')(req.session.etab);
   // il faut au prealable filtrer sur la matiere de la colle
 
   Structure.update({
@@ -287,6 +301,7 @@ modifColle = function(req, res) {
     }, {
       $set: {
         'matieres.$[el1].colleurs.$[el2].colles.$[el3].note': req.body.note,
+        'matieres.$[el1].colleurs.$[el2].colles.$[el3].noNote': req.body.noNote,
         'matieres.$[el1].colleurs.$[el2].colles.$[el3].date': req.body.date,
         'matieres.$[el1].colleurs.$[el2].colles.$[el3].sujet': req.body.sujet,
         'matieres.$[el1].colleurs.$[el2].colles.$[el3].obsCoordo': req.body.obsCoordo,
@@ -306,7 +321,6 @@ modifColle = function(req, res) {
     })
     .exec(function(err, result) {
       if (err) return console.error(err);
-      console.log(result);
     });
   res.send();
 }
@@ -333,7 +347,7 @@ Suppression d'une colle dans la base
 
 
 router.post('/suppColle/', login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
+  let Structure = require('../models/structure')(req.session.etab);
   // il faut au prealable filtrer sur la matiere de la colle
   Structure.update({}, {
     $pull: {
@@ -360,8 +374,8 @@ table pour afficher la liste des colles dans une matière du colleur
 
 
 router.post('/tableCollesJSON/', login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
-  let eleves = req.etab + '_eleves';
+  let Structure = require('../models/structure')(req.session.etab);
+  let eleves = req.session.etab + '_eleves';
   Structure.aggregate([{
       $unwind: "$matieres"
     },
@@ -401,6 +415,7 @@ router.post('/tableCollesJSON/', login.isLoggedIn, function(req, res) {
         idMatiereColle: '$matiere',
         idColle: "$colles._id",
         note: "$colles.note",
+        noNote: "$colles.noNote",
         sujet: "$colles.sujet",
         date: "$colles.date",
         obsCoordo: "$colles.obsCoordo",
@@ -410,6 +425,7 @@ router.post('/tableCollesJSON/', login.isLoggedIn, function(req, res) {
       }
     },
   ]).exec(function(err, data) {
+
     if (err) return console.error(err);
     res.send(data);
   });
@@ -429,9 +445,9 @@ table pour afficher la liste des colleurs du coordo
 */
 
 router.post('/tableMesClassesJSON/', login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
-  let matiere = req.etab + '_matieres';
-  let professeur = req.etab + '_professeurs'
+  let Structure = require('../models/structure')(req.session.etab);
+  let matiere = req.session.etab + '_matieres';
+  let professeur = req.session.etab + '_professeurs'
   Structure.aggregate([{
       $unwind: "$matieres"
     },
@@ -487,8 +503,8 @@ liste des classes du coordonateur
 **************************
 */
 router.post("/tableClassesCoordoJSON/", login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.etab);
-  let matieres = req.etab + '_matieres';
+  let Structure = require('../models/structure')(req.session.etab);
+  let matieres = req.session.etab + '_matieres';
   Structure.aggregate([{
         $unwind: "$matieres"
       },
@@ -537,10 +553,10 @@ table pour afficher la liste des colles dans une matière donnee pour le coordo
 **************************
 */
 router.post('/tableCollesCoordoJSON/', login.isLoggedIn, function(req, res) {
-  console.log(req.body);
-  let Structure = require('../models/structure')(req.etab);
-  let eleves = req.etab + '_eleves';
-  let professeurs = req.etab + '_professeurs';
+
+  let Structure = require('../models/structure')(req.session.etab);
+  let eleves = req.session.etab + '_eleves';
+  let professeurs = req.session.etab + '_professeurs';
   Structure.aggregate([{
       $unwind: "$matieres"
     },
@@ -551,19 +567,19 @@ router.post('/tableCollesCoordoJSON/', login.isLoggedIn, function(req, res) {
     },
     {
       $project: {
-        colleurs : "$matieres.colleurs",
+        colleurs: "$matieres.colleurs",
       }
     },
     {
-        $unwind: "$colleurs"
+      $unwind: "$colleurs"
     },
     {
-        $unwind: "$colleurs.colles"
+      $unwind: "$colleurs.colles"
     },
     {
       $project: {
-        idColleur : "$colleurs._id",
-        colles : "$colleurs.colles"
+        idColleur: "$colleurs._id",
+        colles: "$colleurs.colles"
       }
     },
     {
@@ -593,6 +609,7 @@ router.post('/tableCollesCoordoJSON/', login.isLoggedIn, function(req, res) {
         idMatiereColle: '$matiere',
         idColle: "$colles._id",
         note: "$colles.note",
+        noNote: "$colles.noNote",
         sujet: "$colles.sujet",
         date: "$colles.date",
         obsCoordo: "$colles.obsCoordo",
@@ -603,10 +620,193 @@ router.post('/tableCollesCoordoJSON/', login.isLoggedIn, function(req, res) {
         prenomP: "$professeurs.prenom",
       }
     },
-  ]).exec(function(err,data) {
-        if (err) return console.error(err);
-        res.send(data);
+  ]).exec(function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
   });
+});
+
+/*
+**************************
+table pour afficher les résultats et moyenne pour les classes du coordo
+**************************
+*/
+router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+  let eleves = req.session.etab + '_eleves';
+  Structure.aggregate([{
+      $unwind: "$matieres"
+    },
+    {
+      $match: {
+        'matieres._id': ObjectId(req.body.idClasseMatiere)
+      }
+    },
+    {
+      $project: {
+        colleurs: "$matieres.colleurs",
+      }
+    },
+    {
+      $unwind: "$colleurs"
+    },
+    {
+      $unwind: "$colleurs.colles"
+    },
+    {
+      $project: {
+        colles: "$colleurs.colles",
+        idE: "$colleurs.colles.eleve",
+        notesModif: {
+          $cond: [{
+              $ne: ["$colleurs.colles.note", null]
+            },
+            '$colleurs.colles.note',
+            '$colleurs.colles.noNote'
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: '$idE', //$region is the column name in collection
+        notes: {
+          $push: '$notesModif'
+        },
+        moyenne: {
+          $avg: "$colles.note"
+        },
+      },
+    },
+    {
+      $sort: {
+        moyenne: 1
+      }
+    },
+    {
+      $lookup: {
+        from: eleves,
+        localField: "_id",
+        foreignField: "_id",
+        as: "eleves"
+      }
+    },
+    {
+      $unwind: "$eleves"
+    },
+    {
+      $project: {
+        moyenne: 1,
+        notes: "$notes",
+        nomE: "$eleves.nom",
+        prenomE: "$eleves.prenom",
+      }
+    },
+  ]).exec(function(err, data) {
+
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
+/*
+**************************
+table pour afficher le bilan des heures réalisées par le colleur
+**************************
+*/
+
+router.post("/tableDecompteHeuresJSON/", login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+  let matieres = req.session.etab + '_matieres'
+  Structure.aggregate([{
+        $unwind: "$matieres"
+      },
+      {
+        $unwind: "$matieres.colleurs"
+      },
+      {
+        $unwind: "$matieres.colleurs.colles"
+      },
+      {
+        $match: {
+          'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
+        }
+      },
+      {
+        $project: {
+          classe: "$nom",
+          matiere: "$matieres.matiere",
+          extraPeriode: 1,
+          debut: '$periode.debut',
+          fin: '$periode.fin',
+          professeur: "$matieres.colleurs._id",
+          colles: "$matieres.colleurs.colles",
+          classeMatiere: "$matieres._id",
+          date: "$colles.date",
+          duree: {
+            $cond: [
+
+              {
+                $and: [{
+                    $eq: ["$extraPeriode", true]
+                  },
+                  {
+                    $gte: ["$matieres.colleurs.colles.date", "$periode.debut"]
+                  }, {
+                    $lte: ["$matieres.colleurs.colles.date", "$periode.fin"]
+                  }
+                ]
+              },
+
+              '$matieres.dureeExc',
+              '$matieres.duree'
+            ]
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            classeMatiere: '$classeMatiere',
+            duree: '$duree',
+            classe: '$classe',
+            matiere: '$matiere',
+          }, //$region is the column name in collection
+          count: {
+            $sum: 1
+          },
+          heures: {
+            $sum: '$duree'
+          },
+
+        },
+      },
+      {
+        $lookup: {
+          from: matieres,
+          localField: "_id.matiere",
+          foreignField: "_id",
+          as: "matieres"
+        }
+      },
+      {
+        $unwind: "$matieres"
+      },
+      {
+        $project: {
+          _id :0,
+          classe: "$_id.classe",
+          matiere: "$matieres.nom",
+          count: 1,
+          heures :1,
+        }
+      },
+    ])
+    .exec(function(err, data) {
+
+      if (err) return console.error(err);
+      res.json(data);
+    });
 });
 
 module.exports = router;

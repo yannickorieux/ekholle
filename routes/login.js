@@ -1,19 +1,13 @@
-const User = require('../models/user');
-
-
-// const Professeur = require('../models/professeur');
-// const Admin = require('../models/admin');
-
 
 module.exports = {
   // route middleware  pour verifier que chaque utilisateur est connecté
   isLoggedIn: function isLoggedIn(req, res, next) {
     let Login;
     if (req.session.role === 'professeur') {
-      let Professeur = require('../models/professeur')(req.etab);
+      let Professeur = require('../models/professeur')(req.session.etab);
       Login = Professeur;
     } else if (req.session.role === 'admin') {
-      let Admin = require('../models/admin')(req.etab);
+      let Admin = require('../models/admin')(req.session.etab);
       Login = Admin;
     } else {
       return res.redirect('/users');

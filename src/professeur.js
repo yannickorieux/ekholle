@@ -1,6 +1,7 @@
 let professeur = (function() {
 
   let self = {};
+  let idProfesseur = document.body.getAttribute("data-idprofesseur");
   let dataListe = require('./dataListe/dataListe.js');
   /*
   **************************
@@ -12,6 +13,8 @@ let professeur = (function() {
 
     //parametrage colleur - professeur
     let paramCollesClasses = require('./professeur/paramCollesClasses.js');
+    //affichage du decompte
+    let decompteHeures = require('./professeur/decompteHeures.js');
 
     $('#navColles').on('click', function() {
       $(".visible").css("display", "none");
@@ -24,11 +27,35 @@ let professeur = (function() {
       $("#showParam").css("display", "block");
     });
 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      let id=this.getAttribute("href");
+      if(id==='#3ac'){
+        decompteHeures.refreshTableDecompteHeures()
+      }
+    });
+
+
     $('#navCompte').on('click', function() {
       $(".visible").css("display", "none");
       $("#modifyPassword").css("display", "block");
     });
 
+  }
+
+  /*
+  ********************************************************************
+    Obtention de la liste de mes classes en tant que coordo
+  ************************************************************
+    */
+  function getListeClassesCoordo() {
+    $.post("/professeur/tableClassesCoordoJSON/", {
+      'idProfesseur': idProfesseur,
+    }, (data) => {
+      let el5 = document.getElementById('dataListe5')
+      dataListe.setDataListe(el5, data);
+      let el7 = document.getElementById('dataListe7')
+      dataListe.setDataListe(el7, data);
+    });
   }
 
   /*
@@ -80,8 +107,15 @@ let professeur = (function() {
     let el6 = document.querySelector('#dataListe6') //liste des notes
     dataListe.setNotes(el6);
 
+    let el7 = document.querySelector('#dataListe7') //liste des classes matières du coordonateur de discipline
+    dataListe.set(el7, {
+      'form': true
+    });
 
     $('input').clearer(); //permet de réinitialiser les input
+
+    //remplir la dataliste du coordo
+    getListeClassesCoordo()
     //parametrage colleur - professeur
     let paramCollesClasses = require('./professeur/paramCollesClasses.js');
     paramCollesClasses.init();
@@ -95,7 +129,9 @@ let professeur = (function() {
     synthese.init();
     let resultats = require('./professeur/resultats.js');
     resultats.init();
-    //paramCollesClasses.init();
+    let decompteHeures = require('./professeur/decompteHeures.js');
+    decompteHeures.init();
+
     menu();
     $('#datetimepicker1').datetimepicker({
       format: 'L'

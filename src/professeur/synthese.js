@@ -32,19 +32,6 @@ let synthese = (function() {
       $('#tabCollesCoordo').css("display", "none");
     }
   });
-  /*
-  ********************************************************************
-    Obtention de la liste de mes classes en tant que coordo
-  ************************************************************
-    */
-  function getListeClassesCoordo() {
-    $.post("/professeur/tableClassesCoordoJSON/", {
-      'idProfesseur': idProfesseur,
-    }, (data) => {
-      let el5 = document.getElementById('dataListe5')
-      dataListe.setDataListe(el5, data);
-    });
-  }
 
 
 
@@ -133,11 +120,23 @@ let synthese = (function() {
           return data.nomP + ' ' + data.prenomP;
         },
       },
-        {
-          data: 'note'
+      {
+        data: null,
+        render: function(data, type, row) {
+          if(data.note===null){
+            return data.noNote;
+          }
+          return data.note;
         },
+      },
         {
-          data: 'date'
+          data: "date",
+           render: function(data, type, row){
+               if(type === "sort" || type === "type"){
+                   return data;
+               }
+               return moment(data).format("DD/MM/YYYY");
+           }
         },
         {
           "className": 'details-control',
@@ -171,7 +170,6 @@ let synthese = (function() {
 
 
   self.init = () => {
-    getListeClassesCoordo()
     initDataTablesCoordo();
   };
 

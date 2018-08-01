@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const login = require('./login');
-
+const moment = require('moment')
 
 
 router.get('/', login.isLoggedIn, function(req, res, next) {
-  res.render('admin.ejs', {
-    title: 'e-khôlle - administration',
-    user: req.prenom + '-' + req.nom,
-    role: req.session.role,
-  });
+  if (req.session.role ==='admin'){
+    res.render('admin.ejs', {
+      title: 'e-khôlle - administration',
+      user: req.prenom + '-' + req.nom,
+      role: req.session.role,
+    });
+  }
+  else{res.redirect('/'+req.session.role);}
 });
 
 
@@ -51,7 +54,6 @@ router.get('/tableStructureJSON/', login.isLoggedIn, function(req, res) {
     }
   ]).exec(function(err, data) {
     if (err) return console.error(err);
-    console.log(data);
     res.json(data);
   });
 });
@@ -95,35 +97,101 @@ router.get('/tableClassesJSON/', login.isLoggedIn, function(req, res) {
  */
 router.post('/tableEquipeClasseJSON/', login.isLoggedIn, function(req, res) {
   let Structure = require('../models/structure')(req.etab);
-  let Matiere = require('../models/matiere')(req.etab);
-  let Professeur = require('../models/professeur')(req.etab);
-  Structure.findOne({
-    "nom": req.body.classe
-  }, {
-    'matieres.matiere': 1,
-    'matieres.professeur': 1,
-    'matieres.duree': 1
-  }).populate({
-    path: 'matieres.matiere',
-    model: Matiere,
-    select: {
-      'nom': 1,
-      '_id': 0
-    }
-  }).populate({
-    path: 'matieres.professeur',
-    model: Professeur,
-    select: {
-      'nom': 1,
-      'prenom': 1,
-      '_id': 0
-    }
-  }).exec(function(err, data) {
+  let professeurs = req.etab + '_professeurs'
+  let matieres = req.etab + '_matieres'
+  Structure.aggregate([{
+      $match: {
+        'nom': req.body.classe
+      }
+    },
+    {
+      $unwind: '$matieres'
+    },
+    {
+      $project: {
+        extraPeriode: "$extraPeriode",
+        periode: '$periode',
+        duree: "$matieres.duree",
+        dureeExc: "$matieres.dureeExc",
+        classe: "$nom",
+        matiere: "$matieres.matiere",
+        professeur: "$matieres.professeur",
+      }
+    },
+    {
+      $lookup: {
+        from: matieres,
+        localField: "matiere",
+        foreignField: "_id",
+        as: "matiere"
+      }
+    },
+    {
+      $lookup: {
+        from: professeurs,
+        localField: "professeur",
+        foreignField: "_id",
+        as: "professeur"
+      }
+    },
+    {
+      $unwind: '$matiere'
+    },
+    {
+      $unwind: '$professeur'
+    },
+    {
+      $project: {
+        extraPeriode: 1,
+        debutPeriode: '$periode.debut',
+        finPeriode: '$periode.fin',
+        classe: 1,
+        duree: 1,
+        dureeExc: 1,
+        matiere: "$matiere.nom",
+        nom: "$professeur.nom",
+        prenom: "$professeur.prenom",
+      }
+    },
+  ]).exec(function(err, data) {
     if (err) return console.error(err);
-    if (typeof data.matieres === 'undefined') {
-      data.matieres = [];
+    res.json(data);
+  });
+});
+
+/*
+**************************
+       gestion des periodes
+ **************************
+ */
+router.post('/changeExtraPeriode/', login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.etab)
+  Structure.findOneAndUpdate({
+    _id: req.body.idClasse
+  }, {
+    $set: {
+      'extraPeriode': req.body.extraPeriode
     }
-    res.json(data.matieres);
+  }).exec(function(err, structure) {
+    if (err) return console.error(err);
+    res.json();
+  });
+});
+
+router.post('/defExtraPeriode/', login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.etab)
+  Structure.findOneAndUpdate({
+    _id: req.body.idClasse
+  }, {
+    $set: {
+      'periode': {
+        'debut': moment(req.body.debutPeriode, 'DD/MM/YYYY').startOf('day'),
+        'fin': moment(req.body.finPeriode, 'DD/MM/YYYY').startOf('day')
+      }
+    }
+  }).exec(function(err, structure) {
+    if (err) return console.error(err);
+    res.json();
   });
 });
 
@@ -226,8 +294,10 @@ router.get('/tableProfesseursJSON/', login.isLoggedIn, function(req, res) {
       }
     }, ])
     .exec(function(err, data) {
+      let listeProfesseurs = data;
       if (err) return console.error(err);
       let Structure = require('../models/structure')(req.etab);
+      let matieres = req.etab + '_matieres'
       Structure.aggregate([{
             $unwind: "$matieres"
           },
@@ -236,103 +306,41 @@ router.get('/tableProfesseursJSON/', login.isLoggedIn, function(req, res) {
           },
           {
             $lookup: {
-              from: data,
-              localField: "matieres.colleurs.professeur",
+              from: matieres,
+              localField: "matieres.matiere",
               foreignField: "_id",
-              as: "professeur"
+              as: "matiere"
+            }
+          },
+          {
+            $unwind: "$matiere"
+          },
+          {
+            $project: {
+              classe: "$nom",
+              matiere: "$matiere.nom",
+              colleur: "$matieres.colleurs._id",
             }
           },
         ])
         .exec(function(err, data) {
           if (err) return console.error(err);
-          console.log(data);
-          // let data = [];
-          // professeurs.forEach(function(value) {
-          //   let colles = [];
-          //   value.colles.forEach(function(value) {
-          //     colles.push({
-          //       'classe': value.matiere.classe.nom,
-          //       'matiere': value.matiere.matiere.nom
-          //     })
-          //   })
-          //   data.push({
-          //     "_id": value._id,
-          //     "prenom": value.prenom,
-          //     "nom": value.nom,
-          //     "login": value.login,
-          //     "password": value.password,
-          //     "changePwd": value.changePwd,
-          //     "grade": value.grade,
-          //     "email": value.email,
-          //     "colles": colles,
-          //   })
-          // });
-          res.json(data);
+          listeProfesseurs.forEach(function(elem) {
+            let obj = data.filter(e => e.colleur == String(elem._id));
+            if (typeof obj != 'undefined') {
+              obj.forEach(function(o) {
+                elem.colles.push({
+                  'classe': o.classe,
+                  'matiere': o.matiere,
+                });
+              });
+            }
+          });
+          res.json(listeProfesseurs);
         });
     });
 });
 
-
-// let Professeur = require('../models/professeur')(req.etab)
-// let MatiereClasse = require('../models/matiereClasse')(req.etab);
-// let ColleurMatiere = require('../models/colleurMatiere')(req.etab);
-// let Classe = require('../models/classe')(req.etab);
-// let Matiere = require('../models/matiere')(req.etab);
-// Professeur.find().populate({
-//     path: 'colles',
-//     model: ColleurMatiere,
-//     select: {
-//       '_id': 1
-//     },
-//     populate: [{
-//       path: 'matiere',
-//       model: MatiereClasse,
-//       select: {
-//         '_id': 1
-//       },
-//       populate: [{
-//           path: 'classe',
-//           model: Classe,
-//           select: {
-//             'nom': 1
-//           },
-//         },
-//         {
-//           path: 'matiere',
-//           model: Matiere,
-//           select: {
-//             'nom': 1
-//           },
-//         }
-//       ]
-//     }]
-//   })
-//   .exec(function(err, professeurs) {
-//     if (err) return console.error(err);
-//     let data = [];
-//     professeurs.forEach(function(value) {
-//       let colles = [];
-//       value.colles.forEach(function(value) {
-//         colles.push({
-//           'classe': value.matiere.classe.nom,
-//           'matiere': value.matiere.matiere.nom
-//         })
-//       })
-//       data.push({
-//         "_id": value._id,
-//         "prenom": value.prenom,
-//         "nom": value.nom,
-//         "login": value.login,
-//         "password": value.password,
-//         "changePwd": value.changePwd,
-//         "grade": value.grade,
-//         "email": value.email,
-//         "colles": colles,
-//       })
-//     });
-//     res.json(data);
-//   });
-// });
 /*
 **************************
       FIN GESTION PROFESSEURS
@@ -355,43 +363,70 @@ router.get("/decompteHeuresJSON/", login.isLoggedIn, function(req, res) {
       {
         $unwind: "$matieres.colleurs"
       },
-
       {
-        $group: {
-          _id: '$matieres.colleurs._id', //$region is the column name in collection
-          count: {
-            $sum: {
-              $size: '$matieres.colleurs.colles'
-            }
-          },
-          // heures: {
-          //   $sum: '$duree'
-          // }
-        },
+        $unwind: "$matieres.colleurs.colles"
       },
       {
+        $project: {
+          extraPeriode: 1,
+          debut: '$periode.debut',
+          fin: '$periode.fin',
+          professeur: "$matieres.colleurs._id",
+          colles: "$matieres.colleurs.colles",
+          date: "$colles.date",
+          duree: {
+            $cond: [
+
+              {
+                $and: [{
+                    $eq: ["$extraPeriode", true]
+                  },
+                  {
+                    $gte: ["$matieres.colleurs.colles.date", "$periode.debut"]
+                  }, {
+                    $lte: ["$matieres.colleurs.colles.date", "$periode.fin"]
+                  }
+                ]
+              },
+
+            '$matieres.dureeExc',
+            '$matieres.duree'
+                ]
+          }
+        }
+      }, {
+        $group: {
+          _id: {
+            professeur: '$professeur',
+            duree: '$duree'
+          }, //$region is the column name in collection
+          count: {
+            $sum: 1
+          },
+          heures: {
+            $sum: '$duree'
+          }
+        },
+      }, {
         $lookup: {
           from: professeur,
-          localField: "_id",
+          localField: "_id.professeur",
           foreignField: "_id",
           as: "professeur"
         }
-      },
-      {
+      }, {
         $unwind: "$professeur"
-      },
-      {
+      }, {
         $project: {
           nom: "$professeur.nom",
           prenom: "$professeur.prenom",
           grade: "$professeur.grade",
           count: 1,
-          heures: 'a faire'
+          heures: 1
         }
       },
     ])
     .exec(function(err, data) {
-      console.log(data);
       if (err) return console.error(err);
       res.json(data);
     });

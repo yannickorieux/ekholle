@@ -98,11 +98,11 @@ let dataListe = (function() {
         }
       } else if (type === 'eleve') {
         for (i = 0; i < data.length; i++) {
-          html += "<option data-value='" + data[i]._id + "'>" + data[i].prenom + ' ' + data[i].nom + "</option>";
+          html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + ' ' + data[i].prenom + "</option>";
         }
       } else if (type === 'professeur') {
         for (i = 0; i < data.length; i++) {
-          html += "<option data-value='" + data[i]._id + "'>" + data[i].prenom + ' ' + data[i].nom + "</option>";
+          html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + ' ' + data[i].prenom + "</option>";
         }
       } else if (type === 'classe') {
         for (i = 0; i < data.length; i++) {

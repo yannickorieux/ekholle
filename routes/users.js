@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const login = require('./login');
-// const User = require('../models/user');
-// const Professeur = require('../models/professeur');
-// const Admin = require('../models/admin');
+
+
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -20,10 +19,10 @@ router.post('/login', function(req, res, next) {
   let Login;
   if (req.body.login && req.body.logpassword) {
     if (req.body.statut === 'professeur') {
-      let Professeur = require('../models/professeur')(req.etab);
+      let Professeur = require('../models/professeur')(req.session.etab);
       Login = Professeur;
     } else if (req.body.statut === 'admin') {
-      let Admin = require('../models/admin')(req.etab);
+      let Admin = require('../models/admin')(req.session.etab);
       Login = Admin;
     }
     Login.authenticate(Login, req.body.login, req.body.logpassword, function(error, user) {
@@ -33,6 +32,7 @@ router.post('/login', function(req, res, next) {
       } else {
         req.session.userId = user._id;
         req.session.role = req.body.statut;
+        console.log(req.session.role);
         if (req.body.statut === 'professeur') {
           return res.redirect('/professeur');
         } else if (req.body.statut === 'admin') {
@@ -106,11 +106,13 @@ router.post('/login', function(req, res, next) {
 router.get('/logout', function(req, res, next) {
   if (req.session) {
     // delete session object
+    let etab=req.session.etab;
     req.session.destroy(function(err) {
       if (err) {
         return next(err);
       } else {
-        return res.redirect('/users');
+        // on peut de nouveau creer une session
+        return res.redirect('/'+etab);
       }
     });
   }
@@ -123,13 +125,12 @@ modifier le mot de passe
 **************************
 */
 router.post('/modifyPassword', login.isLoggedIn, function(req, res, next) {
-  console.log(req.body);
   let Login;
   if (req.session.role === 'professeur') {
-    let Professeur = require('../models/professeur')(req.etab);
+    let Professeur = require('../models/professeur')(req.session.etab);
     Login = Professeur;
   } else if (req.session.role === 'admin') {
-    let Admin = require('../models/admin')(req.etab);
+    let Admin = require('../models/admin')(req.session.etab);
     Login = Admin;
   }
   Login.findById(req.session.userId)
@@ -166,7 +167,7 @@ ajouter un professeur
 **************************
 */
 router.post('/creerProfesseur', login.isLoggedIn, function(req, res, next) {
-  let Professeur = require('../models/professeur')(req.etab);
+  let Professeur = require('../models/professeur')(req.session.etab);
   let login = req.body.login;
   Professeur.find({
       'login': {
@@ -190,7 +191,7 @@ router.post('/creerProfesseur', login.isLoggedIn, function(req, res, next) {
 
 
 router.post('/validerProfesseur', login.isLoggedIn, function(req, res, next) {
-  let Professeur = require('../models/professeur')(req.etab);
+  let Professeur = require('../models/professeur')(req.session.etab);
   let professeur = new Professeur({
     'prenom': req.body.prenom,
     'nom': req.body.nom,
