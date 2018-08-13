@@ -1,0 +1,36 @@
+<div id="addPeriodeModal" class="modal  fade" tabindex="-1" role="dialog" aria-labelledby="addColle" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="addPeriodeForm" data-mode="ajouter" data-id="" data-idprevious="" data-idnext="" role="form">
+        <fieldset>
+          <div class="modal-header">
+            <h4 class="modal-title">Ajouter une période</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+          </div>
+          <div class="container modal-body">
+            <div class="form-group has-feedback has-clear">
+              <label for="sujet">Description période :</label>
+              <input id='descriptionPeriode' class="form-control" type="text" required name="description" placeholder="ex : ramassage toussaint">
+            </div>
+            <div class="form-group has-feedback has-clear">
+              <label for="debutPeriode">Début de la période :</label>
+              <input id='debutPeriode' class="form-control" type="text"  name="debutPeriode" readonly>
+            </div>
+            <div class="form-group has-feedback has-clear">
+              <label>Fin de la période :</label>
+              <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                <input  id='finPeriode' required type="text" class="form-control datetimepicker-input" required data-target="#datetimepicker3" name='finPeriode' />
+                <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ENREGISTRER</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

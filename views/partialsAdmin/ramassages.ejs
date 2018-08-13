@@ -1,0 +1,30 @@
+<div id='showBilan' class='visible' style="display:none">
+
+	<div id="Tab" class="container">
+		<ul class="nav nav-pills">
+			<li class="nav-item pill-1 active">
+				<a class="nav-link" href="#1b" data-toggle="tab">Définition des périodes</a>
+			</li>
+			<li class="nav-item pill-1 ">
+				<a class="nav-link" href="#2b" data-toggle="tab">Décompte des heures</a>
+			</li>
+			<li class='nav-item pill-1' >
+				<a class="nav-link" href="#3b" data-toggle="tab">Statistiques</a>
+			</li>
+		</ul>
+
+		<div class="tab-content ">
+			<div class="tab-pane active" id="1b">
+				<% include partialsRamassages/periodes%>
+			</div>
+			<div class="tab-pane" id="2b">
+				<% include partialsRamassages/decompteHeures%>
+			</div>
+			<div class="tab-pane" id="3b">
+
+			</div>
+
+		</div>
+	</div>
+	<% include partialsRamassages/formAddPeriode%>
+</div>

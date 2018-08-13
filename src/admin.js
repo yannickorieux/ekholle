@@ -11,8 +11,6 @@ let admin = (function() {
  menu = function(){
 
    $('#navBilan').on('click', function() {
-     let bilan = require('./admin/bilan.js');
-     bilan.init();
      $(".visible").css("display", "none");
      $("#showBilan").css("display", "block");
    });
@@ -56,6 +54,10 @@ let admin = (function() {
     let el3 = document.querySelector('#dataListe3')
     dataListe.set(el3);
 
+    //liste des Periodes
+    let el5 = document.querySelector('#dataListe5')
+    dataListe.set(el5,{ 'form' : true});
+
     $('input').clearer(); //permet de réinitialiser les input
 
 
@@ -64,12 +66,17 @@ let admin = (function() {
     let eleves=  require('./admin/param/eleves.js');
     let matieres=  require('./admin/param/matieres.js');
     let equipesClasses=  require('./admin/param/equipesClasses.js');
+    let decompteHeures = require('./admin/ramassages/decompteHeures.js');
+    let periodes = require('./admin/ramassages/periodes.js');
+
 
     structure.init();
     professeurs.init();
     eleves.init();
     matieres.init();
     equipesClasses.init();
+    decompteHeures.init();
+    periodes.init();
     menu();
   }
   return self;

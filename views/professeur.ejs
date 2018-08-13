@@ -5,17 +5,20 @@
 
   </head>
   <body data-page="professeur" data-idprofesseur=<%= id %> >
-    <header>
-      <% include partials/header %>
-    </header>
-    <main class="container">
-      <% include partialsProfesseur/parametrage%>
-      <% include partialsProfesseur/colles%>
-      <% include partials/password %>
-      <% include partials/erreur %>
-    </main>
-    <footer>
-      <% include partials/footer %>
-    </footer>
+    <div class="container">
+      <header>
+        <% include partials/header %>
+      </header>
+      <main>
+        <% include partialsProfesseur/parametrage%>
+        <% include partialsProfesseur/colles%>
+        <% include partials/password %>
+        <% include partials/erreur %>
+        <% include partials/formContact %>
+      </main>
+      <footer>
+        <% include partials/footer %>
+      </footer>
+    </div>
   </body>
 </html>

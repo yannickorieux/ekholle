@@ -136,8 +136,8 @@ let equipesClasses = (function() {
           table.columns(3).visible(true);
           button.setAttribute("data-action", "supprimer");
           button.innerHTML = 'Supprimer la période';
-          let debutPeriode=$('#datetimepicker7').find("input").val(moment(data[0].debutPeriode).format('DD/MM/YYYY'));
-          let finPeriode=$('#datetimepicker8').find("input").val(moment(data[0].finPeriode).format('DD/MM/YYYY'));
+          $('#datetimepicker7').find("input").val(moment(data[0].debutPeriode).format('DD/MM/YYYY'));
+          $('#datetimepicker8').find("input").val(moment(data[0].finPeriode).format('DD/MM/YYYY'));
           document.getElementById("defExtraPeriode").style.display = "block";
         }
       }

@@ -1,23 +1,54 @@
-<h3>Choisir une classe :</h3>
-
-<div class="row">
-  <div class="col-md-6">
-    <div id="dataListe7" class="dataListe" data-type="classematierecoordo" data-message='Sélectionner une classe dans la liste' data-placeholder='Choisir une discipline'></div>
+<div class="container">
+  <h3>Choisir une classe :</h3>
+  <div class="row">
+    <div class="col-md-6">
+      <div id="dataListe7" class="dataListe" data-type="classematierecoordo" data-message='Sélectionner une classe dans la liste' data-placeholder='Choisir une discipline'></div>
+    </div>
   </div>
-</div>
 
-<div id="tabResultatsCoordo" style="display:none;">
-  <h3>Bilan sur une période</h3>
-  <div>
-    <table class="display table-striped table-bordered"  style="width:100%" id="tableResultatsCoordo">
-      <thead>
-        <tr>
-          <th width="35%">Elève</th>
-          <th width="35%">Notes</th>
-          <th width="15%">Moyenne</th>
-          <th width="15%">Rang</th>
-        </tr>
-      </thead>
-    </table>
+  <div id="tabResultatsCoordo" style="display:none;">
+    <h3>Sélectionner une période</h3>
+    <form id="periodeResultatsForm" role="form">
+      <fieldset>
+        <div class="row">
+          <div class='col-md-4'>
+            <div class="form-group">
+              <div class="input-group date" id="datetimepickerRes1" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" required data-target="#datetimepickerRes1" />
+                <div class="input-group-append" data-target="#datetimepickerRes1" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='col-md-4'>
+            <div class="form-group">
+              <div class="input-group date" id="datetimepickerRes2" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" required data-target="#datetimepickerRes2" />
+                <div class="input-group-append" data-target="#datetimepickerRes2" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class='col-md-3'>
+            <button type='submit' class="btn btn-primary" id="periodeRes">Valider</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+    <div>
+      <table class="display table-striped table-bordered"  style="width:100%" id="tableResultatsCoordo">
+        <thead>
+          <tr>
+            <th width="35%">Elève</th>
+            <th width="35%">Notes</th>
+            <th width="15%">Moyenne</th>
+            <th width="15%">Rang</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
   </div>
 </div>

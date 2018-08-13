@@ -1,0 +1,71 @@
+/* change the colors */
+$primary: teal;
+$danger: #dd0000;
+$success: lime;
+$warning: orange;
+$info: aqua;
+
+$body-bg: #f3f3f0;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+
+
+body {
+    padding-top: 10px;
+}
+
+main{
+   padding-top: 30px;
+}
+section {
+    min-height: 90vh;
+}
+
+
+/* not active */
+.nav-pills .pill-1 .nav-link:not(.active) {
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+
+
+/* active (faded) */
+.nav-pills .pill-1 .nav-link {
+    background-color: rgba(255, 0, 0, 0.5);
+    color: white;
+}
+
+
+.tab-content {
+  border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 10px;
+}
+
+.nav-tabs {
+    margin-bottom: 0;
+}
+
+
+div.dataTables_wrapper {
+        margin: 50px auto;
+    }
+
+
+
+/*-------------------------
+	Style datatables
+--------------------------*/
+
+
+td.details-control {
+    background: url('./plus.png') no-repeat center center;
+    background-size: 20px 20px;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('./moins.png') no-repeat center center;
+    background-size: 20px 20px;
+}

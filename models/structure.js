@@ -70,6 +70,9 @@ let StructureSchema = new mongoose.Schema({
         date: {
           type: Date,
         },
+        dateSaisie: {
+          type: Date,
+        },
         obsEleve: {
           type: String,
         },

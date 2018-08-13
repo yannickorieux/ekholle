@@ -65,6 +65,7 @@ let colles = (function() {
     let el2 = document.getElementById('dataListe2')
     let idEleve = dataListe.getId(el2);
     let date = moment(document.getElementById('dateColle').value,'DD/MM/YYYY').startOf('day');
+    let dateSaisie = moment(document.getElementById('dateSaisie').innerHTML,'DD/MM/YYYY').startOf('day');
     let el6 = document.getElementById('dataListe6')
     let note = dataListe.getNote(el6);
     let noNote='';
@@ -85,6 +86,7 @@ let colles = (function() {
     }
     $.post("/professeur/addOrModColle/", {
       "date": moment(date).format(),
+      "dateSaisie": moment(dateSaisie).format(),
       "idEleve": idEleve,
       "idMatiereColle": idMatiereColle,
       "idProfesseur": idProfesseur,
@@ -207,10 +209,11 @@ let colles = (function() {
           sortDescending: ": activer pour trier la colonne par ordre décroissant"
         }
       },
-
+     order: [],
       columns: [
         {
           data: null,
+          orderable : false,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
             return data.nom + ' ' + data.prenom;
@@ -218,6 +221,7 @@ let colles = (function() {
         },
         {
           data: null,
+          orderable : false,
           render: function(data, type, row) {
             if(data.note===null){
               return data.noNote;
@@ -228,14 +232,18 @@ let colles = (function() {
         {
           data: "date",
            render: function(data, type, row){
-               if(type === "sort" || type === "type"){
-                   return data;
-               }
                return moment(data).format("DD/MM/YYYY");
-           }
+           },
         },
         {
-          data: 'sujet'
+          data: 'sujet',
+          orderable : false,
+        },
+        {
+          data: "dateSaisie",
+           render: function(data, type, row){
+               return moment(data).format("DD/MM/YYYY");
+           }
         },
         {
           "className": 'details-control',
@@ -250,9 +258,6 @@ let colles = (function() {
         }
       ],
     },
-    {
-      "order": [[ 2, "desc" ]]
-    }
   );
 
 
@@ -263,10 +268,11 @@ let colles = (function() {
       var row = table.row(tr);
       let element = row.data();
       let idColle = element.idColle;
-      let nom = element.nom;
+      let nom = element.nom + ' ' + element.prenom ;
       let note = element.note;
       if(element.note===null){note =element.noNote;}
       let date = element.date;
+      let dateSaisie = element.dateSaisie;
       let sujet = element.sujet;
       let obsEleve = element.obsEleve;
       let obsCoordo = element.obsCoordo;
@@ -277,6 +283,7 @@ let colles = (function() {
       dataListe.readOnly(el2, true);
       dataListe.setName(el2, nom);
       $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY'));
+      document.getElementById('dateSaisie').innerHTML=moment().format('L');
       $(document.getElementById('sujet')).val(sujet);
       $(document.getElementById('obsEleve')).val(obsEleve);
       $(document.getElementById('obsCoordo')).val(obsCoordo);

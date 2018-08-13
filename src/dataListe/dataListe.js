@@ -122,6 +122,11 @@ let dataListe = (function() {
           html += "<option data-value='" + data[i].idClasseMatiere + "'>" + data[i].classe + '-' + data[i].matiere + "</option>";
         }
       }
+      else if (type === 'periodes') {
+        for (i = 0; i < data.length; i++) {
+          html += "<option data-value='" + data[i]._id + "'>" + data[i].description + " du : " + moment(data[i].debutPeriode).format('L') +  " au : " + moment(data[i].finPeriode).format('L') + "</option>";
+        }
+      }
     }
     setHTML(id, html);
   }

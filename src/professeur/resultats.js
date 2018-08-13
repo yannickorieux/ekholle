@@ -15,6 +15,26 @@ let resultats = (function() {
 ************************************************************
 */
 
+/*
+  Choix d 'une période '
+*/
+
+$('#datetimepickerRes1').datetimepicker({
+  format: 'L',
+});
+$('#datetimepickerRes2').datetimepicker({
+  format: 'L',
+  useCurrent: false
+});
+
+
+
+$("#datetimepickerRes1").on("change.datetimepicker", function(e) {
+  $('#datetimepickerRes2').datetimepicker('minDate', e.date);
+});
+$("#datetimepickerRes2").on("change.datetimepicker", function(e) {
+  $('#datetimepickerRes1').datetimepicker('maxDate', e.date);
+});
 
 
 /*
@@ -30,22 +50,33 @@ $('#dataListe7Form').submit(function(e) {
   let idClasseMatiere = dataListe.getId(el7);
   if (idClasseMatiere != '') {
     $('#tabResultatsCoordo').css("display", "block");
-    refreshTablesResultatsCoordo(idClasseMatiere);
   } else {
     $('#tabResultatsCoordo').css("display", "none");
   }
 });
 
-
+/*
+  Validation du formulaire pour résultat sur une période
+*/
+$('#periodeResultatsForm').submit(function(e) {
+  e.preventDefault();
+  let debutPeriode = moment($('#datetimepickerRes1').find("input").val(),'DD/MM/YYYY').format();
+  let finPeriode = moment($('#datetimepickerRes2').find("input").val(),'DD/MM/YYYY').format();
+  let el7 = document.getElementById('dataListe7') //liste des matieresClasse du coordo
+  let idClasseMatiere = dataListe.getId(el7);
+  refreshTablesResultatsCoordo(idClasseMatiere,debutPeriode,finPeriode);
+});
 
 /*
 ********************************************************************
   Mise à jour de la table des colles
 ************************************************************
   */
-refreshTablesResultatsCoordo = function(idClasseMatiere) {
+refreshTablesResultatsCoordo = function(idClasseMatiere,debutPeriode,finPeriode) {
   $.post("/professeur/tableResultatsCoordoJSON/", {
     'idClasseMatiere': idClasseMatiere,
+    'debutPeriode' : debutPeriode,
+    'finPeriode' : finPeriode,
   }, (data) => {
     let table = $('#tableResultatsCoordo').DataTable();
     table.clear().draw();
@@ -104,7 +135,12 @@ function initDataTablesResultatsCoordo() {
         },
       },
       {
-        data: 'moyenne'
+        data: null,
+        render: function(data, type, row) {
+          let moyenne=data.moyenne
+          if (moyenne){moyenne=moyenne.toFixed(2)}
+          return moyenne ;
+        },
       },
       {
         data: "rank",

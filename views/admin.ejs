@@ -4,18 +4,20 @@
       <% include partials/head %>
   </head>
   <body data-page="admin">
-    <header>
-      <% include partials/header %>
-    </header>
-    <main class="container">
-      <h1><%= title %></h1>
-      <% include partialsAdmin/parametrage%>
-      <% include partialsAdmin/bilan%>
-      <% include partials/password %>
-      <% include partials/erreur %>
-    </main>
-    <footer>
-      <% include partials/footer %>
-    </footer>
+    <div class="container">
+      <header>
+        <% include partials/header %>
+      </header>
+      <main>
+        <% include partialsAdmin/parametrage%>
+        <% include partialsAdmin/ramassages%>
+        <% include partials/password %>
+        <% include partials/erreur %>
+        <% include partials/formContact %>
+      </main>
+      <footer>
+        <% include partials/footer %>
+      </footer>
+    </div>
   </body>
 </html>

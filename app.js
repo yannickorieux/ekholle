@@ -58,17 +58,17 @@ const professeurRouter = require('./routes/professeur');
 
 let listeEtab=['bergson','test']
 
-let reWriteUrl = function(req, res, next) {
+let getEtab = function(req, res, next) {
   let etab=req.url.split('/').pop();
   if (typeof req.session.etab!=='undefined'){
     //attention si session deja enregistree
     if(etab===req.session.etab){
-      return res.redirect('/users');
+      return res.redirect('/');
     }
     else if(listeEtab.indexOf(etab)!==-1){
       //on change d'etablissement et celui-ci est present dans la base
       req.session.etab=etab;
-      return res.redirect('/users');
+      return res.redirect('/');
     }
     else{
       // etablissement non reconnu
@@ -80,7 +80,7 @@ let reWriteUrl = function(req, res, next) {
     if(listeEtab.indexOf(etab)!==-1){
       //l'etab est dans la base je peux l'inscrire dans la session
       req.session.etab=etab;
-      return res.redirect('/users');
+      return res.redirect('/');
     }
     else{
       // url non reconnu
@@ -99,7 +99,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
 app.use(express.static(path.join(__dirname, '/node_modules/bootstrap/dist')));
 app.use(express.static(__dirname + '/node_modules/summernote/dist'));
-app.use(reWriteUrl);
+app.use(getEtab);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);

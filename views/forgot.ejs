@@ -1,0 +1,84 @@
+<!-- views/pages/index.ejs -->
+<!DOCTYPE html>
+
+<head>
+  <% include partials/head %>
+</head>
+
+<body data-page="forgot">
+  <header>
+    <% include partials/header %>
+  </header>
+  <main>
+    <div class="container-fluid">
+      <div>
+        <h3>Changer de mot de passe</h3>
+        <% if (form=='forgot') { %>
+          <p id='form' hidden>forgot</p>
+          <% } else  { %>
+            <p id='form' hidden>reset</p>
+            <% } %>
+
+              <% if (locals.messages) { %>
+                <p style="color:red">
+                  <%=  locals.messages.msg  %>
+                </p>
+                <% } %>
+
+                  <div id='forgot' class="visible">
+                    <form action="/users/forgot" method="post">
+                      <div class="form-group ">
+                        <label>Votre profil</label>
+                        <div class="form-group">
+                          <select name="profil">
+                            <option value="professeur">Professeur</option>
+                            <option value="eleve">eleve</option>
+                            <option value="admin">admin</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>login</label>
+                        <input class="form-control" type="text" name="login" placeholder="votre login" required="">
+                      </div>
+                      <div class="form-group">
+                        <label>email</label>
+                        <input class="form-control" type="text" name="logemail" placeholder="E-mail" required="">
+                      </div>
+                      <div class="form-inline ">
+                        <div>
+                          <button type="submit" class="btn btn-primary">ENVOI</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div id='reset' class="visible">
+                    <h3>Nouveau mot de passe</h3>
+                    <div class="form-group">
+                      <form id="resetForm" data-token=''>
+                        <div class="form-group ">
+                          <label>Mot de passe</label>
+                          <input type="password" class="form-control" name="password" placeholder="Password" required="">
+                        </div>
+                        <div class="form-group">
+                          <label>Confirmer</label>
+                          <input type="password" class="form-control" name="passwordConf" placeholder="Confirm Password" required="">
+                        </div>
+                        <div class="form-inline ">
+                          <div>
+                            <button id='submitReset' type="submit" class="btn btn-primary">ENREGISTRER</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <% include partials/footer %>
+  </footer>
+</body>
+
+</html>

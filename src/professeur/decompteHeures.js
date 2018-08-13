@@ -51,7 +51,7 @@ let decompteHeures = (function() {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
-            return data.classe + '-' + data.matiere;
+            return data.classe + '-' + data.matiere + ' ( ' + data.duree + ' mn )';
           },
         },
         {
@@ -61,7 +61,7 @@ let decompteHeures = (function() {
             data: null,
             render: function(data, type, row) {
               // Combine the first and last names into a single table field
-              return Math.floor(data.heures / 60) + 'h' + data.heures % 60 + 'mn';
+              return Math.floor(data.heures / 60) + ' h ' + data.heures % 60 + ' mn';
             },
           },
 

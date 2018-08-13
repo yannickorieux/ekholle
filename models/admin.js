@@ -26,8 +26,24 @@ let AdminSchema = new mongoose.Schema({
   },
   changePwd: {
     type: Boolean,
-    default: false
+    default: false,
    },
+   annee :{
+     debut : {
+       type: Date
+     },
+     fin : {
+       type: Date
+     }
+   },
+   periodes : [
+     {
+       numPeriode : {type :String} ,
+       debutPeriode : {type :Date} ,
+       finPeriode : {type :Date} ,
+       description : {type :String} ,
+     }
+   ]
 });
 
 //authenticate input against database

@@ -47,6 +47,8 @@ let ProfesseurSchema = new mongoose.Schema({
      type: String,
      default: ''
    },
+   resetPasswordToken: String,
+   resetPasswordExpires: Date,
 
 });
 

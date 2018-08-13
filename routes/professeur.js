@@ -10,6 +10,7 @@ page index professeur
 **************************
 */
 router.get('/', login.isLoggedIn, function(req, res, next) {
+  console.log(req.session.role );
   if (req.session.role === 'professeur') {
     res.render('professeur.ejs', {
       title: 'e-khôlle - professeur',
@@ -258,6 +259,7 @@ router.post('/listeElevesJSON/', login.isLoggedIn, function(req, res) {
 ajoutColle = function(req, res) {
   let Structure = require('../models/structure')(req.session.etab);
   // il faut au prealable filtrer sur la matiere de la colle
+  console.log(req.body);
   Structure.update({
       'matieres._id': req.body.idMatiereColle
     }, {
@@ -267,6 +269,7 @@ ajoutColle = function(req, res) {
           'noNote': req.body.noNote,
           'sujet': req.body.sujet,
           'date': req.body.date,
+          'dateSaisie': req.body.dateSaisie,
           'obsCoordo': req.body.obsCoordo,
           'obsEleve': req.body.obsEleve,
           'eleve': {
@@ -418,14 +421,19 @@ router.post('/tableCollesJSON/', login.isLoggedIn, function(req, res) {
         noNote: "$colles.noNote",
         sujet: "$colles.sujet",
         date: "$colles.date",
+        dateSaisie: "$colles.dateSaisie",
         obsCoordo: "$colles.obsCoordo",
         obsEleve: "$colles.obsEleve",
         nom: "$eleves.nom",
         prenom: "$eleves.prenom",
       }
     },
+    {
+      $sort: {
+        date: -1
+      }
+    },
   ]).exec(function(err, data) {
-
     if (err) return console.error(err);
     res.send(data);
   });
@@ -620,6 +628,11 @@ router.post('/tableCollesCoordoJSON/', login.isLoggedIn, function(req, res) {
         prenomP: "$professeurs.prenom",
       }
     },
+    {
+      $sort: {
+        date: -1
+      }
+    },
   ]).exec(function(err, data) {
     if (err) return console.error(err);
     res.send(data);
@@ -632,6 +645,10 @@ table pour afficher les résultats et moyenne pour les classes du coordo
 **************************
 */
 router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
+  let debutPeriode=req.body.debutPeriode;
+  let finPeriode=req.body.finPeriode;
+  console.log(debutPeriode);
+  console.log(finPeriode);
   let Structure = require('../models/structure')(req.session.etab);
   let eleves = req.session.etab + '_eleves';
   Structure.aggregate([{
@@ -657,6 +674,7 @@ router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
       $project: {
         colles: "$colleurs.colles",
         idE: "$colleurs.colles.eleve",
+        date: "$colleurs.colles.date",
         notesModif: {
           $cond: [{
               $ne: ["$colleurs.colles.note", null]
@@ -666,6 +684,13 @@ router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
           ]
         }
       }
+    },
+    {
+      $match : {date: {
+        $gte: new Date(debutPeriode),
+        $lte: new Date(finPeriode)
+      }
+    }
     },
     {
       $group: {
@@ -703,7 +728,6 @@ router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
       }
     },
   ]).exec(function(err, data) {
-
     if (err) return console.error(err);
     res.send(data);
   });
@@ -797,6 +821,7 @@ router.post("/tableDecompteHeuresJSON/", login.isLoggedIn, function(req, res) {
           _id :0,
           classe: "$_id.classe",
           matiere: "$matieres.nom",
+          duree : "$_id.duree",
           count: 1,
           heures :1,
         }

@@ -80,6 +80,7 @@ let professeur = (function() {
       let el2 = document.getElementById('dataListe2')
       dataListe.readOnly(el2, false);
       document.getElementById('addColleForm').reset();
+      document.getElementById('dateSaisie').innerHTML=moment().format('L')
       $('#addColleModal').modal();
     });
 
@@ -133,6 +134,7 @@ let professeur = (function() {
     decompteHeures.init();
 
     menu();
+    //picker pour addColle
     $('#datetimepicker1').datetimepicker({
       format: 'L'
     });

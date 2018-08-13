@@ -21,9 +21,6 @@ module.exports = {
           if (user === null) {
             res.locals.messages = req.flash('msg', "Vous n'êtes pas connecté, veuillez vous identifier");
             return res.redirect('/login');
-          } else if (user.actif === false) {
-            res.locals.messages = req.flash('msg', "Votre compte n'est pas encore activé");
-            return res.redirect('/login');
           } else {
             req.nom = user.nom;
             req.prenom = user.prenom;

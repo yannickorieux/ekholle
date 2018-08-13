@@ -1,0 +1,51 @@
+<div class="container">
+  <h3>Année scolaire</h3>
+  <div>
+    <form id="defAnneeForm" role="form">
+      <fieldset>
+        <div class="row">
+          <div class='col-md-4'>
+            <div class="form-group">
+              <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" required data-target="#datetimepicker1" />
+                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='col-md-4'>
+            <div class="form-group">
+              <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" required data-target="#datetimepicker2" />
+                <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class='col-md-3'>
+            <button type='submit' class="btn btn-primary" id="sauverAnnée">Sauver/Modifier</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+	<div id='defPeriodesRamassages'  style="display:none;">
+    <h3>Dfinition des périodes de ramassage</h3>
+    <div>
+      <button class="btn btn-primary" id="buttonAddPeriode">Ajouter une période</button>
+      <table class="display table-striped table-bordered"  style="width:100%" id="tablePeriodes">
+        <thead>
+          <tr>
+            <th width="30%">Période</th>
+            <th width="30%">Début</th>
+            <th width="30%">Fin</th>
+            <th width="10%">Edit</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
