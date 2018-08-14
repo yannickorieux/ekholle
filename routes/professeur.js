@@ -440,6 +440,64 @@ router.post('/tableCollesJSON/', login.isLoggedIn, function(req, res) {
 });
 
 
+
+/*
+**************************
+table pour afficher les programes de colle du colleur
+**************************
+*/
+
+router.post('/tableProgrammeColleurJSON/', login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+  let professeurs = req.session.etab + '_professeurs';
+  Structure.aggregate([{
+      $unwind: "$matieres"
+    },
+    {
+      $unwind: "$matieres.colleurs"
+    },
+    {
+      $match: {
+          'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
+        }
+    },
+    {
+      $project: {
+        classe: "$nom",
+        idProf: "$matieres.professeur",
+        programme : "$matieres.programme",
+      }
+    },
+    {
+      $unwind: "$programme"
+    },
+    {
+      $lookup: {
+        from: professeurs,
+        localField: "idProf",
+        foreignField: "_id",
+        as: "professeurs"
+      }
+    },
+    {
+      $project: {
+        classe: 1,
+        idMat: 1,
+        nom : "$professeurs.nom",
+        prenom : "$professeurs.prenom",
+        debut : "$programme.debut",
+        fin : "$programme.fin",
+        titre: "$programme.titre",
+        detail: "$programme.detail",
+      }
+    },
+  ]).exec(function(err, data) {
+    console.log(data);
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
 /*
 **************************
  COORDO de discipline
@@ -647,8 +705,6 @@ table pour afficher les résultats et moyenne pour les classes du coordo
 router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
   let debutPeriode=req.body.debutPeriode;
   let finPeriode=req.body.finPeriode;
-  console.log(debutPeriode);
-  console.log(finPeriode);
   let Structure = require('../models/structure')(req.session.etab);
   let eleves = req.session.etab + '_eleves';
   Structure.aggregate([{
@@ -733,6 +789,132 @@ router.post('/tableResultatsCoordoJSON/', login.isLoggedIn, function(req, res) {
   });
 });
 
+/*
+**************************
+Ajout ou modification du programme de colle
+**************************
+*/
+
+
+ajoutProgramme = function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+    Structure.update({
+      'matieres._id': req.body.idClasseMatiere
+    }, {
+      $push: {
+        'matieres.$[el1].programme': {
+          'debut': req.body.debut,
+          'fin': req.body.fin,
+          'titre': req.body.titre,
+          'detail': req.body.detail,
+        }
+      }
+    }, {
+      arrayFilters: [{
+          'el1._id': ObjectId(req.body.idClasseMatiere)
+        },
+      ]
+    })
+    .exec(function(err, result) {
+      //on peut eventuellement renvoyer un message sur la reussite ou non
+      res.end();
+    });
+}
+
+modifProgramme = function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+  Structure.update({
+      'matieres._id': req.body.idClasseMatiere
+    }, {
+      $set: {
+        'matieres.$[el1].programme.$[el2].debut': req.body.debut,
+        'matieres.$[el1].programme.$[el2].fin': req.body.fin,
+        'matieres.$[el1].programme.$[el2].titre': req.body.titre,
+        'matieres.$[el1].programme.$[el2].detail': req.body.detail,
+      }
+    }, {
+      arrayFilters: [{
+          'el1._id': ObjectId(req.body.idClasseMatiere)
+        },
+        {
+          'el2._id': ObjectId(req.body.idProgramme)
+        }
+      ]
+    })
+    .exec(function(err, result) {
+      if (err) return console.error(err);
+    });
+  res.end();
+}
+
+
+
+router.post('/addOrModProgramme/', login.isLoggedIn, function(req, res) {
+  if (req.body.mode === 'ajouter') {
+    ajoutProgramme(req, res);
+  } else {
+    modifProgramme(req, res);
+  }
+});
+
+/*
+**************************
+Suppression d'un programme de colle
+**************************
+*/
+
+
+router.post('/suppProgramme/', login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+  Structure.update({}, {
+    $pull: {
+      'matieres.$[].programme': {
+        '_id': ObjectId(req.body.idProgramme)
+      }
+    }
+  }, {
+    'multi': true
+  }).exec(function(err, result) {
+    if (err) return console.error(err);
+    res.end();
+  });
+});
+
+/*
+**************************
+table pour afficher le programme du coordo
+**************************
+*/
+
+
+router.post('/tableProgrammeCoordoJSON/', login.isLoggedIn, function(req, res) {
+  let Structure = require('../models/structure')(req.session.etab);
+  Structure.aggregate([{
+      $unwind: "$matieres"
+    },
+    {
+      $match: {
+        'matieres._id': ObjectId(req.body.idClasseMatiere)
+      }
+    },
+    {
+        $unwind: "$matieres.programme"
+    },
+    {
+      $project: {
+        idClasseMatiere: "$matieres._id",
+        idProgramme: "$matieres.programme._id",
+        debut: "$matieres.programme.debut",
+        fin: "$matieres.programme.fin",
+        titre: "$matieres.programme.titre",
+        detail: "$matieres.programme.detail",
+      }
+    },
+  ]).exec(function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
 /*
 **************************
 table pour afficher le bilan des heures réalisées par le colleur

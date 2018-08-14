@@ -2,36 +2,55 @@
 	<div id="TabColle">
 		<ul class="nav nav-pills">
 			<li class="nav-item active pill-1">
-				<a class="nav-link active" href="#1ac" data-toggle="tab">Ajout Colle</a>
+				<a class="nav-link active" href="#1b" data-toggle="tab">Mes colles</a>
 			</li>
-			<li class="nav-item pill-1"><a class="nav-link" href="#2ac" data-toggle="tab">Coordonnateur discipline</a>
+			<li class="nav-item pill-1"><a class="nav-link" href="#2b" data-toggle="tab">Coordonnateur discipline</a>
 			</li>
-			<li class="nav-item pill-1"><a class="nav-link" href="#3ac" data-toggle="tab">Heures effectuées</a>
+			<li class="nav-item pill-1"><a class="nav-link" href="#3b" data-toggle="tab">Heures effectuées</a>
+				</li>
 		</ul>
 
 		<div class="tab-content">
-			<div class="tab-pane active" id="1ac">
-				<% include partialsColles/addColles%>
-			</div>
-			<div class="tab-pane" id="2ac">
+			<div class="tab-pane active" id="1b">
 				<ul class="nav nav-pills">
-					<li class="nav-item pill-1 active"><a class="nav-link " data-toggle="tab" href="#subtab1c">Synthèse</a></li>
-					<li class="nav-item pill-1"><a class="nav-link" data-toggle="tab" href="#subtab2c">Résultats</a></li>
+					<li class="nav-item pill-1"><a class="nav-link active" data-toggle="tab" href="#subtab1b1">Ajout colle</a></li>
+					<li class="nav-item pill-1"><a class="nav-link" data-toggle="tab" href="#subtab1b2">Programmes</a></li>
 				</ul>
 				<div class="tab-content">
-					<div id="subtab1c" class="tab-pane fade">
-						<% include partialsColles/synthese%>
+					<div id="subtab1b1" class="tab-pane fade active show">
+						<% include partialsColles/colleur/colles%>
 					</div>
-					<div id="subtab2c" class="tab-pane fade">
-							<% include partialsColles/resultats%>
+					<div id="subtab1b2" class="tab-pane fade">
+           <% include partialsColles/colleur/programme%>
+					</div>
+
+				</div>
+
+			</div>
+			<div class="tab-pane" id="2b">
+				<ul class="nav nav-pills">
+					<li class="nav-item pill-1 "><a class="nav-link active" data-toggle="tab" href="#subtab2b1">Synthèse</a></li>
+					<li class="nav-item pill-1"><a class="nav-link" data-toggle="tab" href="#subtab2b2">Résultats</a></li>
+					<li class="nav-item pill-1"><a class="nav-link" data-toggle="tab" href="#subtab2b3">Programme</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="subtab2b1" class="tab-pane fade active show">
+						<% include partialsColles/coordo/synthese%>
+					</div>
+					<div id="subtab2b2" class="tab-pane fade">
+							<% include partialsColles/coordo/resultats%>
+					</div>
+					<div id="subtab2b3" class="tab-pane fade">
+							<% include partialsColles/coordo/programme%>
 					</div>
 				</div>
 
 			</div>
-			<div class="tab-pane fade" id="3ac">
+			<div class="tab-pane fade" id="3b">
 					<% include partialsColles/decompteHeures%>
 			</div>
 		</div>
 	</div>
-	<% include partialsColles/formAddColle%>
+	<% include partialsColles/colleur/formAddColle%>
+	<% include partialsColles/coordo/formAddProgramme%>
 </div>

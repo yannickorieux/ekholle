@@ -1,0 +1,56 @@
+<div id="addProgrammeModal" class="modal  fade" tabindex="-1" role="dialog" aria-labelledby="addProgramme" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="addProgrammeForm" data-mode="ajouter" data-idprogramme="" role="form">
+        <fieldset>
+          <div class="modal-header">
+            <h4 class="modal-title">Ajouter un nouveau programme</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+          </div>
+          <div class="container modal-body">
+
+              <div class="row">
+                <div class='col-md-6'>
+                  <div class="form-group">
+                    <label>Du :</label>
+                    <div class="input-group date" id="datetimepickerProg1" data-target-input="nearest">
+                      <input type="text" id='debutProg' class="form-control datetimepicker-input" required data-target="#datetimepickerProg1" />
+                      <div class="input-group-append" data-target="#datetimepickerProg1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class='col-md-6'>
+                  <div class="form-group">
+                    <label>Au :</label>
+                    <div class="input-group date" id="datetimepickerProg2" data-target-input="nearest">
+                      <input type="text" id='finProg' class="form-control datetimepicker-input" required data-target="#datetimepickerProg2" />
+                      <div class="input-group-append" data-target="#datetimepickerProg2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                <div class="form-group has-feedback has-clear">
+                  <label for="titre">Titre :</label>
+                  <input class="form-control" type="text" id="titre" name="titre">
+                </div>
+                </div>
+                <div class="col-md-12">
+                  <label for="detailProg">Détail :</label>
+                  <textarea class="form-control" id="detailProg"></textarea>
+                </div>
+             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">ENREGISTRER</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

@@ -44,7 +44,14 @@ let StructureSchema = new mongoose.Schema({
       type: Number,
       default: 20
     },
-
+    programme : [
+      {
+        debut : {type :Date} ,
+        fin : {type :Date} ,
+        titre : {type :String} ,
+        detail : {type :String} ,
+      }
+    ],
     option: [] , //liste des eleves (num INE ) ne suivant pas l'option
     colleurs: [{
       professeur: {

@@ -38,7 +38,7 @@ let EleveSchema = new mongoose.Schema({
 });
 
 //authenticate input against database
-EleveSchema.statics.authenticate = function(login, password, callback) {
+EleveSchema.statics.authenticate = function(Eleve,login, password, callback) {
   Eleve.findOne({
       login : login
     })
@@ -46,7 +46,7 @@ EleveSchema.statics.authenticate = function(login, password, callback) {
       if (err) {
         return callback(err)
       } else if (!user) {
-        let err = new Error('Eleve non trouvé.');
+        let err = new Error('Elève non trouvé.');
         err.status = 401;
         return callback(err);
       }

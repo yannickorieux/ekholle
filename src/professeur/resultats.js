@@ -3,7 +3,7 @@ let resultats = (function() {
   let self = {};
   let dataListe = require('../dataListe/dataListe.js');
 
-  let el7 = document.getElementById('dataListe7') //liste des élèves
+  let el7 = document.getElementById('dataListe7') //liste des classes/matieres
   dataListe.selectId(el7)
 
 
@@ -135,12 +135,12 @@ function initDataTablesResultatsCoordo() {
         },
       },
       {
-        data: null,
-        render: function(data, type, row) {
-          let moyenne=data.moyenne
-          if (moyenne){moyenne=moyenne.toFixed(2)}
-          return moyenne ;
-        },
+        data: 'moyenne',
+        // render: function(data, type, row) {
+        //   let moyenne=data.moyenne
+        //   if (moyenne){moyenne=moyenne.toFixed(2)}
+        //   return moyenne ;
+        // },
       },
       {
         data: "rank",
@@ -149,12 +149,13 @@ function initDataTablesResultatsCoordo() {
     ],
     drawCallback: function () {
          api = this.api();
-         var arr = api.columns(2).data()[0];  //get array of column 3 (extn)
-         var sorted = arr.slice().sort(function(a,b){return b-a});
-         var ranks = arr.slice().map(function(v){ return sorted.indexOf(v)+1 });
+         let arr = api.columns(2).data()[0];  //get array of column 3 (extn)
+         let sorted = arr.slice().sort(function(a,b){return b-a});
+         let ranks = arr.slice().map(function(v){ return sorted.indexOf(v)+1 });
          // interate through each row
          api.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-           var data = this.data();
+           let data = this.data();
+           let moyenne=data.moyenne
            data.rank= ranks[arr.indexOf(data.moyenne)];  //set the rank column = the array index of the extn in the ranked array
          } );
        api.rows().invalidate();

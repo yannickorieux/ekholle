@@ -55,6 +55,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
 const professeurRouter = require('./routes/professeur');
+const eleveRouter = require('./routes/eleve');
 
 let listeEtab=['bergson','test']
 
@@ -104,6 +105,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/professeur', professeurRouter);
+app.use('/eleve', eleveRouter);
 
 
 // catch 404 and forward to error handler

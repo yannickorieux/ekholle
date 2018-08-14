@@ -546,7 +546,7 @@ router.post("/decompteHeuresJSON/", login.isLoggedIn, function(req, res) {
           }
         }, {
           $match: {
-            date: {
+            dateSaisie: {
               $gte: debutPeriode,
               $lt: finPeriode
             }

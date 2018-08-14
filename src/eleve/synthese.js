@@ -1,11 +1,8 @@
 let synthese = (function() {
 
   let self = {};
-  let idProfesseur = document.body.getAttribute("data-idprofesseur");
-  let dataListe = require('../dataListe/dataListe.js');
-
-  let el5 = document.getElementById('dataListe5') //liste des élèves
-  dataListe.selectId(el5)
+  let idEleve = document.body.getAttribute("data-ideleve");
+  let classe = document.body.getAttribute("data-classe");
 
 
   /*
@@ -14,43 +11,22 @@ let synthese = (function() {
   ************************************************************
 
 
-  /*
-  ********************************************************************
-        Choix de la matiere / classe du coordo
-  ************************************************************
-  */
 
-  $('#dataListe5Form').submit(function(e) {
-    e.preventDefault();
-    let el5 = document.getElementById('dataListe5') //liste des matieresClasse du coordo
-    let classeMatiere = dataListe.getName(el5);
-    let idClasseMatiere = dataListe.getId(el5);
-    if (idClasseMatiere != '') {
-      $('#tabCollesCoordo').css("display", "block");
-      refreshTableCoordo(idClasseMatiere);
-    } else {
-      $('#tabCollesCoordo').css("display", "none");
-    }
-  });
 
 
 
   /*
   **************************
-      fonction permettant d'afficher la liste des colles pour une matière/classe donnée
+      fonction permettant d'afficher la liste des colles
    **************************
    */
 
-  function formatCoordo(d) {
+  function format(d) {
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
       '<tr>' +
       '<td>Sujet:</td>' +
       '<td>' + d.sujet + '</td>' +
-      '</tr>' +
-      '<tr>' +
-      '<td>obs. coordo:</td>' +
-      '<td>' + d.obsCoordo + '</td>' +
       '</tr>' +
       '<tr>' +
       '<td>obs. élève:</td>' +
@@ -60,26 +36,11 @@ let synthese = (function() {
   };
 
 
-  /*
-  ********************************************************************
-    Mise à jour de la table des colles
-  ************************************************************
-    */
-  refreshTableCoordo = function(idClasseMatiere) {
-    $.post("/professeur/tableCollesCoordoJSON/", {
-      'idClasseMatiere': idClasseMatiere,
-    }, (data) => {
-      $('#tableCollesCoordo').DataTable().clear().draw();
-      $('#tableCollesCoordo').DataTable().rows.add(data); // Add new data
-      $('#tableCollesCoordo').DataTable().columns.adjust().draw(); // Redraw the DataTable
-    });
-  }
 
-
-  function initDataTablesCoordo() {
+  function initDataTablesColles() {
     liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
-    let table = $('#tableCollesCoordo').DataTable({
+    let table = $('#tableColles').DataTable({
       retrieve: true,
       data: liste,
       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
@@ -107,12 +68,8 @@ let synthese = (function() {
       },
       order: [],
       columns: [{
-        data: null,
+        data: 'matiere',
         orderable : false,
-        render: function(data, type, row) {
-          // Combine the first and last names into a single table field
-          return data.nomE + ' ' + data.prenomE;
-        },
       },
       {
         data: null,
@@ -150,7 +107,7 @@ let synthese = (function() {
       ]
     });
 
-    $('#tableCollesCoordo tbody').on('click', 'td.details-control', function() {
+    $('#tableColles tbody').on('click', 'td.details-control', function() {
       var tr = $(this).closest('tr');
       var row = table.row(tr);
       if (row.child.isShown()) {
@@ -159,12 +116,28 @@ let synthese = (function() {
         tr.removeClass('shown');
       } else {
         // Open this row
-        row.child(formatCoordo(row.data())).show();
+        row.child(format(row.data())).show();
         tr.addClass('shown');
       }
     });
   };
 
+
+  /*
+  ********************************************************************
+    Mise à jour de la table des colles
+  ************************************************************
+    */
+  refreshTableColles = function() {
+    $.post("/eleve/tableCollesJSON/", {
+      'idEleve': idEleve,
+      'classe': classe,
+    }, (data) => {
+      $('#tableColles').DataTable().clear().draw();
+      $('#tableColles').DataTable().rows.add(data); // Add new data
+      $('#tableColles').DataTable().columns.adjust().draw(); // Redraw the DataTable
+    });
+  }
   /*
   ********************************************************************
         PUBLIC
@@ -173,9 +146,9 @@ let synthese = (function() {
 
 
   self.init = () => {
-    initDataTablesCoordo();
+    initDataTablesColles();
+    refreshTableColles();
   };
-
 
   return self;
 

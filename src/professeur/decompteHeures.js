@@ -82,7 +82,6 @@ let decompteHeures = (function() {
     */
   self.refreshTableDecompteHeures = function() {
     $.post("/professeur/tableDecompteHeuresJSON/",{'idProfesseur' : idProfesseur} , (data) => {
-      console.log(data);
       $('#tableDecompte').DataTable().clear().draw();
       $('#tableDecompte').DataTable().rows.add(data); // Add new data
       $('#tableDecompte').DataTable().columns.adjust().draw(); // Redraw the DataTable

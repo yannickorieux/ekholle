@@ -9,7 +9,11 @@ module.exports = {
     } else if (req.session.role === 'admin') {
       let Admin = require('../models/admin')(req.session.etab);
       Login = Admin;
-    } else {
+    } else if (req.session.role === 'eleve') {
+      let Eleve = require('../models/eleve')(req.session.etab);
+      Login = Eleve;
+    }
+    else {
       return res.redirect('/users');
     }
     Login.findById(req.session.userId)

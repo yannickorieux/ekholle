@@ -30,6 +30,9 @@ router.post('/login', function(req, res, next) {
     } else if (req.body.profil === 'admin') {
       let Admin = require('../models/admin')(req.session.etab);
       Login = Admin;
+    } else if (req.body.profil === 'eleve') {
+      let Eleve = require('../models/eleve')(req.session.etab);
+      Login = Eleve;
     }
     Login.authenticate(Login, req.body.login, req.body.logpassword, function(error, user) {
       if (error || !user) {
@@ -42,6 +45,9 @@ router.post('/login', function(req, res, next) {
           return res.redirect('/professeur');
         } else if (req.body.profil === 'admin') {
           return res.redirect('/admin');
+        } else if (req.body.profil === 'eleve') {
+          req.session.classe = user.classe;
+          return res.redirect('/eleve');
         } else {
           return res.redirect('/');
         }
@@ -181,7 +187,7 @@ router.post('/forgot', function(req, res, next) {
           res.locals.messages = req.flash('msg', "Ce login n'est pas présent dans la base de l'application.");
           return res.redirect('/users/forgot');
         }
-        user.email=req.body.logemail
+        user.email = req.body.logemail
         user.resetPasswordToken = token;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
@@ -191,13 +197,17 @@ router.post('/forgot', function(req, res, next) {
       });
     },
     function(token, user, done) {
+      console.log(user.email);
+      console.log(req.body.profil);
+      console.log(req.headers.host);
+        console.log(token);
       var mailOptions = {
         to: user.email,
         from: 'administrateur@e-kholle.fr',
         subject: 'changer le mot de passe de votre comptr e-kholle',
         text: 'Vous avez reçu ce message car (vous ou un tiers) a fait une demande de modification du mot de passe de votre comte.\n\n' +
           'Coller le lien dans le navigateur  pour terminer le processus de modification :\n\n' +
-          'http://' + req.headers.host + '/users/reset/?etab=' +req.session.etab +'&profil=' + req.body.profil + '&token='+ token + '\n\n' +
+          'http://' + req.headers.host + '/users/reset/?etab=' + req.session.etab + '&profil=' + req.body.profil + '&token=' + token + '\n\n' +
           'Si vous ne souhaitez pas poursuivre, ignorer le message et votre mot de passe sera conservé.\n'
       };
       transporter.sendMail(mailOptions, function(err, info) {
@@ -207,6 +217,7 @@ router.post('/forgot', function(req, res, next) {
       });
     }
   ], function(err) {
+    console.log(err);
     if (err) return next(err);
     transporter.close();
     res.redirect('/users/forgot');
@@ -225,9 +236,9 @@ router.post('/forgot', function(req, res, next) {
 // ===
 
 router.get('/reset/', function(req, res, next) {
-  req.session.etab=req.query.etab;
-  req.session.role=req.query.profil;
-  let profil =req.query.profil;
+  req.session.etab = req.query.etab;
+  req.session.role = req.query.profil;
+  let profil = req.query.profil;
   if (profil === 'professeur') {
     let Professeur = require('../models/professeur')(req.session.etab);
     Login = Professeur;
@@ -236,21 +247,21 @@ router.get('/reset/', function(req, res, next) {
     Login = Admin;
   }
   Login.findOne({
-      resetPasswordToken: req.query.token,
-      resetPasswordExpires: {
-        $gt: Date.now()
-      }
-    }, function(err, user) {
-      if (!user) {
-        res.locals.messages = req.flash('msg', 'Le délai pour modifier votre mot de passe a expiré.');
-        return res.redirect('/users/forgot');
-      }
-      res.render('forgot.ejs', {
-        title: 'e-khôlle',
-        role: req.session.role,
-        //user: req.username,
-        form: 'reset'
-      });
+    resetPasswordToken: req.query.token,
+    resetPasswordExpires: {
+      $gt: Date.now()
+    }
+  }, function(err, user) {
+    if (!user) {
+      res.locals.messages = req.flash('msg', 'Le délai pour modifier votre mot de passe a expiré.');
+      return res.redirect('/users/forgot');
+    }
+    res.render('forgot.ejs', {
+      title: 'e-khôlle',
+      role: req.session.role,
+      //user: req.username,
+      form: 'reset'
+    });
   });
 });
 
@@ -264,13 +275,16 @@ router.post('/reset/', function(req, res) {
         res.locals.messages = req.flash('msg', 'les mots de passe ne correspondent pas');
         return res.redirect('back');
       }
-      let profil=req.session.role;
+      let profil = req.session.role;
       if (profil === 'professeur') {
         let Professeur = require('../models/professeur')(req.session.etab);
         Login = Professeur;
       } else if (profil === 'admin') {
         let Admin = require('../models/admin')(req.session.etab);
         Login = Admin;
+      } else if (req.session.role === 'eleve') {
+        let Eleve = require('../models/eleve')(req.session.etab);
+        Login = Eleve;
       }
       Login.findOne({
         resetPasswordToken: req.body.token,
@@ -301,9 +315,9 @@ router.post('/reset/', function(req, res) {
         from: 'administrateur@e-kholle.fr',
         subject: 'Votre mot de passe a été modifié',
         text: 'Bonjour,\n\n' +
-        'Ce message confirme que le mot de passe de votre compte a été modifié.\n'
+          'Ce message confirme que le mot de passe de votre compte a été modifié.\n'
       };
-      transporter.sendMail(mailOptions, function(err,info) {
+      transporter.sendMail(mailOptions, function(err, info) {
         req.flash('msg', 'Succès! Votre mot de passe a été modifié.');
         console.log('Message sent: ' + info.response);
         done(err, 'done');

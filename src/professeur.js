@@ -29,7 +29,7 @@ let professeur = (function() {
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       let id=this.getAttribute("href");
-      if(id==='#3ac'){
+      if(id==='#3b'){
         decompteHeures.refreshTableDecompteHeures()
       }
     });
@@ -55,8 +55,39 @@ let professeur = (function() {
       dataListe.setDataListe(el5, data);
       let el7 = document.getElementById('dataListe7')
       dataListe.setDataListe(el7, data);
+      let el8 = document.getElementById('dataListe8')
+      dataListe.setDataListe(el8, data);
     });
   }
+
+
+//   $('.summernote').summernote({
+//   minHeight: 150,
+//   placeholder: ' ...',
+//   focus: false,
+//   airMode: false,
+//   fontNames: ['Roboto', 'Calibri', 'Times New Roman', 'Arial'],
+//   fontNamesIgnoreCheck: ['Roboto', 'Calibri'],
+//   dialogsInBody: true,
+//   dialogsFade: true,
+//   disableDragAndDrop: false,
+//   toolbar: [
+//     // [groupName, [list of button]]
+//     ['para', ['style', 'ul', 'ol', 'paragraph']],
+//     ['fontsize', ['fontsize']],
+//     ['insert', ['link', 'hr']],
+//     ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
+//   ],
+//   popover: {
+//     air: [
+//       ['color', ['color']],
+//       ['font', ['bold', 'underline', 'clear']]
+//     ]
+//   },
+//   print: {
+//     //'stylesheetUrl': 'url_of_stylesheet_for_printing'
+//   }
+// });
 
   /*
   **************************
@@ -82,6 +113,13 @@ let professeur = (function() {
       document.getElementById('addColleForm').reset();
       document.getElementById('dateSaisie').innerHTML=moment().format('L')
       $('#addColleModal').modal();
+    });
+
+    document.getElementById("buttonAddProgramme").addEventListener('click', function() {
+      document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
+      document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
+      document.getElementById('addProgrammeForm').reset();
+      $('#addProgrammeModal').modal();
     });
 
     //on initialise les dataListes
@@ -113,6 +151,12 @@ let professeur = (function() {
       'form': true
     });
 
+    let el8 = document.querySelector('#dataListe8') //liste des classes matières du coordonateur de discipline
+    dataListe.set(el8, {
+      'form': true
+    });
+
+
     $('input').clearer(); //permet de réinitialiser les input
 
     //remplir la dataliste du coordo
@@ -130,6 +174,8 @@ let professeur = (function() {
     synthese.init();
     let resultats = require('./professeur/resultats.js');
     resultats.init();
+    let programme = require('./professeur/programme.js');
+    programme.init();
     let decompteHeures = require('./professeur/decompteHeures.js');
     decompteHeures.init();
 
