@@ -1,18 +1,21 @@
 <div id='showParam' class='visible' style="display:block">
 	<div id="TabParam" class="container">
 		<ul class="nav nav-pills">
-			<li class="nav-item active pill-1">
+			<li class="nav-item  pill-1">
 				<a class="nav-link active" href="#1a" data-toggle="tab">Les classes</a>
 			</li>
 			<li class="nav-item pill-1" ><a class="nav-link" href="#2a" data-toggle="tab">Les professeurs</a>
 			</li>
 			<li class="nav-item pill-1"><a class="nav-link" href="#3a" data-toggle="tab">Les élèves</a>
+			</li>
+			<li class="nav-item pill-1"><a class="nav-link" href="#4a" data-toggle="tab">Imports</a>
+			</li>
 		</ul>
 
 		<div class="tab-content">
 			<div class="tab-pane active" id="1a">
 				<ul class="nav nav-pills">
-					<li class="nav-item active pill-1"><a class="nav-link" data-toggle="tab" href="#1a1sa">Structure</a></li>
+					<li class="nav-item  pill-1"><a class="nav-link active" data-toggle="tab" href="#1a1sa">Structure</a></li>
 					<li class="nav-item pill-1"><a class="nav-link" data-toggle="tab" href="#1a2sa">Matières</a></li>
 					<li class="nav-item pill-1"><a class="nav-link" data-toggle="tab" href="#1a3sa">Équipes</a></li>
 				</ul>
@@ -31,7 +34,7 @@
 			</div>
 			<div class="tab-pane" id="2a">
 				<ul class="nav nav-pills">
-					<li class="nav-item pill-1 active"><a class="nav-link" data-toggle="tab" href="#2a1sa">Liste</a></li>
+					<li class="nav-item pill-1 "><a class="nav-link active" data-toggle="tab" href="#2a1sa">Liste</a></li>
 					<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#2a2sa">Nouveau professeur</a></li>
 				</ul>
 				<div class="tab-content">
@@ -46,7 +49,32 @@
 
 			</div>
 			<div class="tab-pane" id="3a">
-				<% include partialsEleves/eleves%>
+				<ul class="nav nav-pills">
+					<li class="nav-item pill-1 "><a class="nav-link active" data-toggle="tab" href="#3a1sa">Listes</a></li>
+					<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#3a2sa">Nouveau</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="3a1sa" class="tab-pane active fade show">
+						<% include partialsEleves/eleves%>
+					</div>
+					<div id="3a2sa" class="tab-pane fade">
+						<% include partialsEleves/ajouterEleve%>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="4a">
+				<ul class="nav nav-pills">
+					<li class="nav-item pill-1 "><a class="nav-link active" data-toggle="tab" href="#4a1sa">Eleves</a></li>
+					<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#4a2sa">Professeurs</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="4a1sa" class="tab-pane active fade show">
+						<% include partialsImports/eleves %>
+					</div>
+					<div id="4a2sa" class="tab-pane fade">
+					</div>
+
+				</div>
 			</div>
 		</div>
 	</div>

@@ -73,7 +73,7 @@ EleveSchema.statics.authenticate = function(Eleve,login, password, callback) {
 //hashing a password before saving it to the database
 EleveSchema.pre('save', function(next) {
   let user = this;
-  if (!user.isModified('password')) return next();
+  if (!user.changePwd) return next();
 
   bcrypt.hash(user.password, 10, function(err, hash) {
     if (err) {

@@ -1,0 +1,42 @@
+<div class="container">
+  <form id="ajouterEleveForm" role="form">
+    <fieldset>
+      <div class="form-group has-feedback has-clear">
+        <label for="grade">n° INE :</label>
+        <input class="form-control" type="text" required name="ine" />
+      </div>
+      <label>classe :</label>
+      <div id="dataListe6" class="dataListe" data-type="classe" data-message='Sélectionner une classe dans la liste' data-placeholder='Choisir une classe'></div>
+
+      <div class="form-group has-feedback has-clear">
+        <label for="prenom">Prénom:</label>
+        <input class="form-control" type="text" required name="prenom" />
+      </div>
+      <div class="form-group has-feedback has-clear">
+        <label for="nom">Nom :</label>
+        <input class="form-control" type="text" required name="nom" />
+      </div>
+  
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Tester</button>
+      </div>
+    </fieldset>
+  </form>
+
+  <form id="validerEleveForm" role="form" style="display:none">
+    <fieldset>
+      <div class="form-group has-feedback has-clear">
+        <label for="login">Login :</label>
+        <input class="form-control" type="text" readonly required name="login" />
+      </div>
+      <div class="form-group has-feedback has-clear">
+        <label for="password">Password:</label>
+        <input class="form-control" type="text" readonly required name="password" />
+      </div>
+      <div class="form-group">
+        <button type="reset" class="btn btn-secondary">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </fieldset>
+  </form>
+</div>

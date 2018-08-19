@@ -18,14 +18,9 @@ let equipesClasses = (function() {
 
 
 
-
-  document.getElementById("modalAddMatiere").addEventListener('click', function() {
-    $('#addMatiereClasse').modal();
-  });
-
-
   $('#dataListe1Form').submit(function(e) {
     e.preventDefault();
+    let el1 = document.getElementById('dataListe1')
     let classe = dataListe.getName(el1)
     let id = dataListe.getId(el1)
     if (classe !== '') {
@@ -37,18 +32,37 @@ let equipesClasses = (function() {
   });
 
 
+
+    /*
+    ********************************************************************
+    validation ajout ou modification matiere
+    ************************************************************
+      */
   $('#addMatiereForm').submit(function(e) {
     e.preventDefault();
+    let el1 = document.getElementById('dataListe1')
+    let el2 = document.getElementById('dataListe2')
+    let el3 = document.getElementById('dataListe3')
     let classe = dataListe.getName(el1);
     let idClasse = dataListe.getId(el1);
     let idMatiere = dataListe.getId(el2);
     let idProfesseur = dataListe.getId(el3);
     let duree = document.getElementById('duree').value;
-    $.post("/admin/addMatiereClasseJSON/", {
+    let dureeExc = duree; //la duree exc est par defaut égale à la duree de la colle
+      let mode = document.getElementById('addMatiereForm').getAttribute("data-mode");
+    let idClasseMatiere = '';
+    if (mode === 'modifier') {
+      idClasseMatiere = document.getElementById('addMatiereForm').getAttribute("data-idclassematiere")
+      dureeExc = document.getElementById('dureeExc').value; //on prend en compte la duree exc
+    }
+    $.post("/admin/addOrModClasseMatiere/", {
       'idClasse': idClasse,
       'idMatiere': idMatiere,
       'idProfesseur': idProfesseur,
       'duree': duree,
+      'dureeExc': dureeExc,
+      "mode": mode, // mode : ajout ou modification d'une colle
+      "idClasseMatiere": idClasseMatiere //utile en cas de modif
     }, (message) => {
 
       if (message.error !== "ok") {
@@ -62,12 +76,42 @@ let equipesClasses = (function() {
     });
   });
 
+  /*
+  ********************************************************************
+    Suppression d'une matiere
+  ************************************************************
+    */
+  suppClasseMatiere = function(idClasseMatiere) {
+    let el1 = document.getElementById('dataListe1')
+    let classe = dataListe.getName(el1);
+    $.post("/admin/suppClasseMatiere/", {
+        "idClasseMatiere": idClasseMatiere
+    }, (message) => {
+      console.log(message);
+      refreshTableEquipeClasse(classe);
+    })
+  }
+
 
   /*
   **************************
         Script pour afficher une classe
    **************************
    */
+   function formatColleurs(d) {
+     // `d` is the original data object for the row
+     let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+     for(i=0;i<d.nomColleur.length;i++){
+       table+=
+         '<tr>' +
+         '<td>colleur :</td>' +
+         '<td>' + d.nomColleur[i] + ' ' + d.prenomColleur[i]+ '</td>' +
+         '</tr>' ;
+     }
+
+       table+='</table>';
+       return table;
+   };
 
   function initDataTablesEquipeClasse() {
     liste = [];
@@ -114,11 +158,94 @@ let equipesClasses = (function() {
         {
           data: 'dureeExc'
         },
+        {
+          "className": 'details-control',
+          "orderable": false,
+          "data": null,
+          "defaultContent": ''
+        },
+        {
+          data: null,
+          className: "center",
+          render: function(data, type, row) {
+            if (data.nomColleur.length>0){
+              return '<a href="" class="editor_modif">Edit</a>'
+            }
+            return '<a href="" class="editor_modif">Edit</a>/<a href="" class="editor_supp">Supp</a>'
+          },
+        },
       ],
     });
 
+
+    // Edit record
+    $('#tableEquipeClasse').on('click', 'a.editor_modif', function(e) {
+      e.preventDefault();
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      let element = row.data();
+      let idClasseMatiere = element.idClasseMatiere;
+      let duree = element.duree ;
+      let dureeExc = element.dureeExc ;
+      let nom = element.nom ;
+      let prenom = element.prenom ;
+      let matiere = element.matiere ;
+      let extraPeriode = element.extraPeriode;
+      // utiliser un data-action='modifier' ou data-action='supprimer'
+      document.getElementById('addMatiereForm').setAttribute("data-mode", "modifier");
+      document.getElementById('addMatiereForm').setAttribute("data-idclassematiere", idClasseMatiere);
+      let el2 = document.querySelector('#dataListe2')
+      dataListe.readOnly(el2, true);
+      dataListe.setName(el2, matiere);
+      //liste professeur
+      let el3 = document.querySelector('#dataListe3')
+      dataListe.readOnly(el3, true);
+      dataListe.setName(el3, nom + ' ' + prenom);
+      $(document.getElementById('duree')).val(duree);
+      $(document.getElementById('dureeExc')).val(dureeExc);
+      if(extraPeriode===true){
+        $('#formExtraPeriode').css("display", "block");
+      }
+      else{
+        $('#formExtraPeriode').css("display", "none");
+      }
+     $('#addMatiereClasse').modal();
+    });
+
+    // Supp record
+    $('#tableEquipeClasse').on('click', 'a.editor_supp', function(e) {
+      e.preventDefault();
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      let element = row.data();
+      let idClasseMatiere = element.idClasseMatiere;
+      suppClasseMatiere(idClasseMatiere);
+    });
+
+    $('#tableEquipeClasse tbody').on('click', 'td.details-control', function() {
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      if (row.child.isShown()) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+      } else {
+        // Open this row
+        row.child(formatColleurs(row.data())).show();
+        tr.addClass('shown');
+      }
+    });
+
+    //coluonne extra période non visible pat defaut
     table.columns(3).visible(false);
   };
+
+
+  /*
+  **************************
+      mise à jour de la table
+   **************************
+   */
 
   refreshTableEquipeClasse = function(classe) {
     $.post("/admin/tableEquipeClasseJSON/", {

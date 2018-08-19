@@ -5,6 +5,10 @@ const async = require('async');
 const nodeMailer = require("nodemailer");
 const crypto = require('crypto');
 const queryString = require('query-string');
+const multer = require('multer');
+const csv = require('fast-csv');
+const fs = require('fs');
+
 
 
 /* GET users listing. */
@@ -200,7 +204,7 @@ router.post('/forgot', function(req, res, next) {
       console.log(user.email);
       console.log(req.body.profil);
       console.log(req.headers.host);
-        console.log(token);
+      console.log(token);
       var mailOptions = {
         to: user.email,
         from: 'administrateur@e-kholle.fr',
@@ -264,6 +268,9 @@ router.get('/reset/', function(req, res, next) {
     });
   });
 });
+
+
+
 
 // =====================================
 // validation du  form reset
@@ -332,9 +339,33 @@ router.post('/reset/', function(req, res) {
 
 
 
+/*
+**************************
+ création login
+**************************
+*/
 
-
-
+function createLogin(prenom, nom) {
+  let tab1 = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ";
+  let tab2 = "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn";
+  rep2 = tab1.split('');
+  rep = tab2.split('');
+  myarray = new Array();
+  var i = -1;
+  while (rep2[++i]) {
+    myarray[rep2[i]] = rep[i];
+  }
+  myarray['Œ'] = 'OE';
+  myarray['œ'] = 'oe';
+  myarray[' '] = '-';
+  let p = prenom.replace(/./g, function($0) {
+    return (myarray[$0]) ? myarray[$0] : $0
+  });
+  let n = nom.replace(/./g, function($0) {
+    return (myarray[$0]) ? myarray[$0] : $0
+  });
+  return p + '.' + n
+};
 
 
 /*
@@ -350,6 +381,10 @@ function generePassword() {
   }
   return r
 }
+
+
+
+
 /*
 **************************
 ajouter un professeur
@@ -395,7 +430,165 @@ router.post('/validerProfesseur', login.isLoggedIn, function(req, res, next) {
   professeur.save(function(err) {
     if (err) return handleError(err);
   });
-  return res.send();
+  return res.end();
 });
+
+
+
+
+
+/*
+**************************
+ajouter un eleve
+**************************
+*/
+router.post('/creerEleve', login.isLoggedIn, function(req, res, next) {
+  let Eleve = require('../models/eleve')(req.session.etab);
+  let login = req.body.login;
+  Eleve.findOne({
+      'ine': req.body.ine
+    })
+    .exec(function(error, eleve) {
+      let message = '';
+      if (eleve !== null) {
+        message = "l'élève est déjà présent dans la base"
+        return res.send({
+          'message': message,
+        });
+      } else {
+        Eleve.find({
+            'login': {
+              $regex: login + '.*'
+            }
+          })
+          .exec(function(error, eleve) {
+            if (eleve.length > 0) {
+              login = login + String(eleve.length);
+            }
+            let password = generePassword();
+            return res.send({
+              'message': message,
+              'password': password,
+              'login': login
+            });
+          });
+      }
+    });
+});
+
+
+router.post('/validerEleve', login.isLoggedIn, function(req, res, next) {
+  console.log(req.body);
+  let Eleve = require('../models/eleve')(req.session.etab);
+  let eleve = new Eleve({
+    'prenom': req.body.prenom,
+    'nom': req.body.nom,
+    'login': req.body.login,
+    'password': req.body.password,
+    'ine': req.body.ine,
+    'classe': req.body.classe,
+    'changePwd': false,
+  });
+  eleve.save(function(err) {
+    if (err) console.log(error);;
+  });
+  return res.end();
+});
+
+
+
+
+/*
+**************************
+import csv eleves
+**************************
+*/
+
+creationLogin = function(req, res, csvData, callback) {
+  let Eleve = require('../models/eleve')(req.session.etab);
+  Eleve.aggregate([{
+    $project: {
+      nom: 1,
+      prenom: 1,
+      login: 1,
+      ine: 1,
+      password: 1,
+    }
+  }]).exec(function(err, eleves) {
+    if (err) return console.error(err);
+    let testLogin = [];
+    eleves.forEach((value) => {
+      testLogin.push(value.login)
+    });
+    csvData.forEach((value) => {
+      let index = eleves.findIndex(item => item.ine === value.ine);
+      if (index !== -1) {
+        value.present = true;
+        value.password = eleves[index].password;
+        value.login = eleves[index].login;
+      } else {
+        value.present = false;
+        let login = createLogin(value.prenom.toLowerCase(), value.nom.toLowerCase())
+        let re = new RegExp('^' + login);
+        //on verifie dans la table login les doublons
+        let n=0;
+        let num = [];
+        testLogin.forEach((l) => {
+          if (l.match(re) !== null){
+            n+=1;
+            if (!isNaN(l.split(re)[1])) num.push(l.split(re)[1]);
+          }
+        });
+        if (n > 0) login += String(Math.max.apply(Math, num) + 1);
+        value.login=login;
+        value.password=generePassword();
+        testLogin.push(login);
+      }
+    });
+    callback(csvData);
+  });
+};
+
+
+let upload = multer({
+  dest: 'tmp/csv/'
+});
+
+router.post('/csvEleves', upload.single('file'), function(req, res, next) {
+  let csvData = [],
+    fileHeader;
+  // open uploaded file
+  csv.fromPath(req.file.path, {
+      headers: true
+    })
+    .on("data", function(data) {
+      let rowData = {};
+      Object.keys(data).forEach(current_key => {
+        rowData[current_key] = data[current_key]
+      });
+
+      csvData.push(rowData);
+    })
+    .on("end", function() {
+      fs.unlinkSync(req.file.path); // remove temp file
+      creationLogin(req, res, csvData, (data) => {
+        res.send(data)
+      });
+    });
+});
+
+router.post('/importEleves', function(req, res, next) {
+  let Eleve = require('../models/eleve')(req.session.etab);
+  let data =JSON.parse(req.body.dataAdd);
+  Eleve.collection.insertMany(data, function (err, docs) {
+       if (err){
+           return console.error(err);
+       } else {
+         console.log("Multiple documents inserted to Collection");
+       }
+     });
+  res.end();
+});
+
 
 module.exports = router;

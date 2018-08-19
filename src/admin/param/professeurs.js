@@ -79,6 +79,8 @@ let professeurs = (function() {
        table+='</table>';
        return table;
    };
+
+   
   function initDataTablesProfesseurs() {
     liste = [];
     let table = $('#tableProfesseurs').DataTable({

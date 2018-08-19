@@ -9,17 +9,30 @@ let eleves = (function() {
 
   let self = {};
   let dataListe = require('../../dataListe/dataListe.js');
+  let loginPassword = require('../../loginPassword.js');
+
+  let el4 = document.getElementById('dataListe4');
+  dataListe.selectId(el4);
+
+  let el6 = document.getElementById('dataListe6');
+  dataListe.selectId(el6);
   /*
   **************************
         PRIVATE
    **************************
    */
-  let el = document.getElementById('dataListe4')
-  dataListe.selectId(el)
+
+   /*
+   **************************
+         dataliste choix classe
+    **************************
+    */
+
 
   $('#dataListe4Select').on('change', function() {
-    let classe = dataListe.getName(el)
-    let id = dataListe.getId(el)
+    let el4 = document.getElementById('dataListe4');
+    let classe = dataListe.getName(el4)
+    let id = dataListe.getId(el4)
     if (classe !== '') {
       $('#showTableEleves').css("display", "block");
       refreshEleves(classe);
@@ -27,6 +40,81 @@ let eleves = (function() {
       $('#showTableEleves').css("display", "none");
     }
   });
+
+
+
+  /*
+  **************************
+        gestion du formulaire pour ajout d'un eleve
+   **************************
+   */
+  $('#ajouterEleveForm').submit(function(e) {
+    e.preventDefault();
+    let el6 = document.getElementById('dataListe6');
+    let classe = dataListe.getName(el6)
+    let nom = document.querySelector('#ajouterEleveForm input[name="nom"]').value.toLowerCase();
+    let prenom = document.querySelector('#ajouterEleveForm input[name="prenom"]').value.toLowerCase();
+    let ine = document.querySelector('#ajouterEleveForm input[name="ine"]').value.toUpperCase();
+    let login = loginPassword.createLogin(prenom, nom)
+    $.post("/users/creerEleve", {
+      "classe" : classe,
+      "ine": ine,
+      "nom": nom,
+      "prenom": prenom,
+      "login": login
+    }, (data) => {
+      let login = data.login;
+      let password = data.password;
+      if (data.message !== '') {
+        $('#error').html(data.message);
+        $('#erreur').modal();
+      }
+      else{
+        document.querySelector('#validerEleveForm input[name="login"]').value = login;
+        document.querySelector('#validerEleveForm input[name="password"]').value = password;
+        dataListe.readOnly(el6, true);
+        document.querySelector('#ajouterEleveForm input[name="nom"]').readOnly=true;
+        document.querySelector('#ajouterEleveForm input[name="prenom"]').readOnly=true;
+        document.querySelector('#ajouterEleveForm input[name="ine"]').readOnly=true;
+        $('#validerEleveForm').css("display", "block");
+      }
+    });
+  });
+
+
+  $('#validerEleveForm').submit(function(e) {
+    e.preventDefault();
+    let nom = document.querySelector('#ajouterEleveForm input[name="nom"]').value.toLowerCase();
+    let prenom = document.querySelector('#ajouterEleveForm input[name="prenom"]').value.toLowerCase();
+    let ine = document.querySelector('#ajouterEleveForm input[name="ine"]').value.toUpperCase();
+    let login = document.querySelector('#validerEleveForm input[name="login"]').value;
+    let password = document.querySelector('#validerEleveForm input[name="password"]').value;
+    let el6 = document.getElementById('dataListe6');
+    let classe = dataListe.getName(el6)
+    $.post("/users/validerEleve", {
+      "nom": nom,
+      "prenom": prenom,
+      "login": login,
+      "password": password,
+      "ine": ine,
+      "classe": classe,
+    }, () => {
+      console.log('ok');
+      $('#validerEleveForm')[0].reset();
+      $('#ajouterEleveForm')[0].reset();
+      dataListe.readOnly(el6, false);
+      document.querySelector('#ajouterEleveForm input[name="nom"]').readOnly=false;
+      document.querySelector('#ajouterEleveForm input[name="prenom"]').readOnly=false;
+      document.querySelector('#ajouterEleveForm input[name="ine"]').readOnly=false;
+      $('#validerEleveForm').css("display", "none");
+      refreshEleves();
+    });
+  });
+
+
+
+
+
 
 
 
@@ -95,7 +183,6 @@ let eleves = (function() {
     $.post("/admin/tableElevesClasseJSON/", {
       'classe': classe
     }, (data) => {
-
       $('#tableEleves').DataTable().clear().draw();
       $('#tableEleves').DataTable().rows.add(data); // Add new data
       $('#tableEleves').DataTable().columns.adjust().draw(); // Redraw the DataTable

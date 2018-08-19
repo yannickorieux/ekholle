@@ -23,11 +23,13 @@ db.once('open', function () {
 
 const app = express();
 
+
+
 const sessionMiddleware = session({
   secret: 'jeDetesteLeJardinage',
   resave: true,
   saveUninitialized: false,
-  cookie: {maxAge: 3600000},
+  cookie: {maxAge: 36000000},
   store: new MongoStore({
     mongooseConnection: db
   })
@@ -91,7 +93,7 @@ let getEtab = function(req, res, next) {
     }
   }
 }
-
+app.use(express.static(__dirname, { dotfiles: 'allow' } ));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

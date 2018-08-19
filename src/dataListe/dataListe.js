@@ -109,7 +109,6 @@ let dataListe = (function() {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + "</option>";
         }
       } else if (type === 'classematiere') {
-        console.log(data);
         for (i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].matiere.nom +'--' + data[i].professeur.nom +' ' + data[i].professeur.prenom + "</option>";
         }
