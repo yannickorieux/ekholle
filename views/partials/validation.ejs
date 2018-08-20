@@ -1,0 +1,22 @@
+
+<!-- La fonction fonctionValid est à inclure dans chaque page HTML appelée -->
+<!-- on peut passer un parametre avec data-param-->
+<!-- Modal -->
+  <div id="confirmerMessage" class="modal fade" data-backdrop="false"  data-param=''   role="dialog"  >
+    <div class="modal-dialog" >
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Message de confirmation</h4>
+        </div>
+        <div class="modal-body">
+          <p id="message"><!-- Le message à afficher --></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+          <button id="actionConfirmee" type="button" class="btn btn-primary" data-dismiss="modal">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>

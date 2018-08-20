@@ -345,7 +345,7 @@ router.post('/reset/', function(req, res) {
 **************************
 */
 
-function createLogin(prenom, nom) {
+function genereLogin(prenom, nom) {
   let tab1 = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ";
   let tab2 = "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn";
   rep2 = tab1.split('');
@@ -504,49 +504,76 @@ import csv eleves
 **************************
 */
 
-creationLogin = function(req, res, csvData, callback) {
-  let Eleve = require('../models/eleve')(req.session.etab);
-  Eleve.aggregate([{
-    $project: {
-      nom: 1,
-      prenom: 1,
-      login: 1,
-      ine: 1,
-      password: 1,
-    }
-  }]).exec(function(err, eleves) {
-    if (err) return console.error(err);
-    let testLogin = [];
-    eleves.forEach((value) => {
-      testLogin.push(value.login)
-    });
-    csvData.forEach((value) => {
-      let index = eleves.findIndex(item => item.ine === value.ine);
-      if (index !== -1) {
-        value.present = true;
-        value.password = eleves[index].password;
-        value.login = eleves[index].login;
-      } else {
-        value.present = false;
-        let login = createLogin(value.prenom.toLowerCase(), value.nom.toLowerCase())
-        let re = new RegExp('^' + login);
-        //on verifie dans la table login les doublons
-        let n=0;
-        let num = [];
-        testLogin.forEach((l) => {
-          if (l.match(re) !== null){
-            n+=1;
-            if (!isNaN(l.split(re)[1])) num.push(l.split(re)[1]);
-          }
-        });
-        if (n > 0) login += String(Math.max.apply(Math, num) + 1);
-        value.login=login;
-        value.password=generePassword();
-        testLogin.push(login);
-      }
-    });
-    callback(csvData);
+testEtcrationLogin = function(profil, csvData, dataExists) {
+  let testLogin = [];
+  dataExists.forEach((value) => {
+    testLogin.push(value.login)
   });
+  csvData.forEach((value) => {
+    //ecriture de la condition en fonction du profil
+    let index;
+    if (profil === 'eleve') {
+      index = dataExists.findIndex(item => item.ine === value.ine);
+    } else {
+      index = dataExists.findIndex(item => item.nom.toLowerCase() === value.nom.toLowerCase() && item.nom.toLowerCase() === value.prenom.toLowerCase());
+    }
+    if (index !== -1) {
+      value.present = true;
+      value.password = dataExists[index].password;
+      value.login = dataExists[index].login;
+    } else {
+      value.present = false;
+      let login = genereLogin(value.prenom.toLowerCase(), value.nom.toLowerCase())
+      let re = new RegExp('^' + login);
+      //on verifie dans la table login les doublons
+      let n = 0;
+      let num = [];
+      testLogin.forEach((l) => {
+        if (l.match(re) !== null) {
+          n += 1;
+          if (!isNaN(l.split(re)[1])) num.push(l.split(re)[1]);
+        }
+      });
+      if (n > 0) login += String(Math.max.apply(Math, num) + 1);
+      value.login = login;
+      value.password = generePassword();
+      testLogin.push(login);
+    }
+  });
+}
+
+creationLogin = function(req, res, profil, csvData, callback) {
+  if (profil === 'eleve') {
+    let Eleve = require('../models/eleve')(req.session.etab);
+    Eleve.aggregate([{
+      $project: {
+        nom: 1,
+        prenom: 1,
+        login: 1,
+        ine: 1,
+        password: 1,
+      }
+    }]).exec(function(err, eleves) {
+      if (err) return console.error(err);
+      testEtcrationLogin(profil, csvData, eleves);
+      callback(csvData);
+    });
+  } else {
+    let Professeur = require('../models/professeur')(req.session.etab);
+    Professeur.aggregate([{
+      $project: {
+        nom: 1,
+        prenom: 1,
+        login: 1,
+        password: 1,
+      }
+    }]).exec(function(err, professeurs) {
+      if (err) return console.error(err);
+      testEtcrationLogin(profil, csvData, professeurs);
+      callback(csvData);
+    });
+  }
+
 };
 
 
@@ -554,7 +581,10 @@ let upload = multer({
   dest: 'tmp/csv/'
 });
 
-router.post('/csvEleves', upload.single('file'), function(req, res, next) {
+
+
+router.post('/csvData', upload.single('file'), function(req, res, next) {
+  let profil = req.body.profil;
   let csvData = [],
     fileHeader;
   // open uploaded file
@@ -564,31 +594,122 @@ router.post('/csvEleves', upload.single('file'), function(req, res, next) {
     .on("data", function(data) {
       let rowData = {};
       Object.keys(data).forEach(current_key => {
-        rowData[current_key] = data[current_key]
+        rowData[current_key.toLowerCase()] = data[current_key]
       });
 
       csvData.push(rowData);
     })
     .on("end", function() {
       fs.unlinkSync(req.file.path); // remove temp file
-      creationLogin(req, res, csvData, (data) => {
+      creationLogin(req, res, profil, csvData, (data) => {
         res.send(data)
       });
+
     });
 });
 
+
+
+
 router.post('/importEleves', function(req, res, next) {
   let Eleve = require('../models/eleve')(req.session.etab);
-  let data =JSON.parse(req.body.dataAdd);
-  Eleve.collection.insertMany(data, function (err, docs) {
-       if (err){
-           return console.error(err);
-       } else {
-         console.log("Multiple documents inserted to Collection");
-       }
-     });
-  res.end();
+  let Structure = require('../models/structure')(req.session.etab);
+  if (req.body.importAnnuel === 'true' || req.body.importAnnuel === true) {
+    //on nettoie la structure
+    Structure.update({}, {
+        $unset: {
+          matieres: 1,
+          periode: 1,
+          extraPeriode: 1
+        }
+      }, {
+        multi: true
+      })
+      .exec(function(err, results) {
+        console.log(results);
+        //on supprime les classes pour chaque eleves
+        Eleve.update({}, {
+          $unset: {
+            classe: 1,
+          }
+        }, {
+          multi: true
+        }).exec(function(err, results) {
+          console.log(results);
+          //puis  modifie les restants avec leur nouvelle classe
+          Eleve.update({}, {
+            $unset: {
+              classe: 1,
+            }
+          }, {
+            multi: true
+          }).exec(function(err, results) {
+            const async = require('async');
+            let data = JSON.parse(req.body.dataMod);
+            async.eachSeries(data, function updateObject(obj, done) {
+              // Model.update(condition, doc, callback)
+              Eleve.update({
+                ine: obj.ine
+              }, {
+                $set: {
+                  classe: obj.classe
+                }
+              }, done);
+            }, function allDone(err) {
+              //puis on ajoute les nouveaux
+              let data = JSON.parse(req.body.dataAdd);
+              Eleve.collection.insertMany(data, function(err, docs) {
+                if (err) {
+                  return console.error(err);
+                } else {
+                  console.log("Multiple documents inserted to Collection");
+                }
+                res.end();
+              });
+            });
+          })
+
+        });
+        //puis on remet à jour la structure
+        res.end();
+      });
+  } else {
+    // mise à jour standard on ajoute les nouveaux (modifie les autres)
+    let data = JSON.parse(req.body.dataAdd);
+    if (dataAdd.length !== 0) {
+      Eleve.collection.insertMany(data, function(err, docs) {
+        if (err) {
+          return console.error(err);
+        } else {
+          console.log("Multiple documents inserted to Collection");
+        }
+        res.end();
+      });
+    }
+    res.end();
+  }
 });
+
+
+router.post('/importProfesseurs', function(req, res, next) {
+  let Professeur = require('../models/professeur')(req.session.etab);
+  let data = JSON.parse(req.body.dataAdd);
+  console.log(data);
+  console.log(data.length);
+  if (data.length > 0) {
+    Professeur.collection.insertMany(data, function(err, docs) {
+      if (err) {
+        return console.error(err);
+      } else {
+        console.log("Multiple documents inserted to Collection");
+      }
+      res.end();
+    });
+    res.end();
+  }
+
+});
+
 
 
 module.exports = router;

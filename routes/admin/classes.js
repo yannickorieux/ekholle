@@ -351,5 +351,41 @@ module.exports = {
   },
 
 
+  /*
+  **************************
+         rafraichir les classes après import
+   **************************
+   */
 
+  rafraichirBaseStructure: function(req, res) {
+    let Eleve = require('../../models/eleve')(req.session.etab);
+    let Structure = require('../../models/structure')(req.session.etab);
+    Eleve.distinct('classe')
+      .exec(function(err, classes) {
+        if (err) return console.error(err);
+        Structure.distinct('nom')
+          .exec(function(err, classesExist) {
+            if (err) return console.error(err);
+            newClasses = [];
+            classes.forEach((value) => {
+              if (classesExist.indexOf(value) === -1) {
+                newClasses.push({
+                  'nom': value
+                })
+              }
+            })
+            console.log(newClasses);
+            Structure.collection.insertMany(newClasses, function(err, docs) {
+              if (err) {
+                return console.error(err);
+              } else {
+                console.log("Multiple documents inserted to Collection");
+              }
+              res.end();
+            });
+          });
+      });
+
+
+  },
 }

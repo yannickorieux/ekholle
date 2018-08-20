@@ -254,7 +254,7 @@ let equipesClasses = (function() {
       let table = $('#tableEquipeClasse').DataTable();
       let button = document.getElementById('buttonAddSuppPeriode');
       if(data.length!==0){
-        if (data[0].extraPeriode === false) {
+        if (data[0].extraPeriode === false ||  typeof data[0].extraPeriode==='undefined') {
           table.columns(3).visible(false);
           button.setAttribute("data-action", "ajouter");
           button.innerHTML = 'Ajouter une période';

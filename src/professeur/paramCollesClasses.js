@@ -36,6 +36,7 @@ let paramCollesClasses = (function() {
     $.post("/professeur/listeMatiereClasseJSON/", {
       'idClasse': idClasse,
     }, (data) => {
+      console.log(data);
       let el4 = document.getElementById('dataListe4')
       dataListe.setDataListe(el4, data);
       dataListe.display(el4, true);
@@ -89,8 +90,6 @@ let paramCollesClasses = (function() {
   function initDataTablesMesCollesClasses() {
     let liste = [];
     let table = $('#tableMesCollesClasses').DataTable({
-
-      retrieve: true,
       data: liste,
       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
       language: {
@@ -139,22 +138,17 @@ let paramCollesClasses = (function() {
 
   /*
   ********************************************************************
-        PUBLIC
-  ************************************************************
-        */
-
-  /*
-  ********************************************************************
     Mise à jour de la table des colles
   ************************************************************
     */
-  self.refreshTableMesCollesClasses = function() {
+   function refreshTableMesCollesClasses() {
     $.post("/professeur/tableMesCollesClassesJSON/", {
       'idProfesseur': idProfesseur,
     }, (data) => {
-      $('#tableMesCollesClasses').DataTable().clear().draw();
-      $('#tableMesCollesClasses').DataTable().rows.add(data); // Add new data
-      $('#tableMesCollesClasses').DataTable().columns.adjust().draw(); // Redraw the DataTable
+      let table = $('#tableMesCollesClasses').DataTable({  retrieve: true,})
+      table.clear().draw();
+      table.rows.add(data); // Add new data
+      table.columns.adjust().draw(); // Redraw the DataTable
       let el1 = document.getElementById('dataListe1') //liste des colles du professeur
       dataListe.setDataListe(el1, data); //on met a jour la dataliste
       let el4 = document.getElementById('dataListe4') // on masque la liste des matieres/classes
@@ -163,11 +157,21 @@ let paramCollesClasses = (function() {
   }
 
 
+  /*
+  ********************************************************************
+        PUBLIC
+  ************************************************************
+        */
+
+
+
+
 
 
   self.init = () => {
     getListeClasses();
     initDataTablesMesCollesClasses();
+    refreshTableMesCollesClasses ();
   }
 
   return self;

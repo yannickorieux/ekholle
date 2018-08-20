@@ -11,8 +11,6 @@ let professeur = (function() {
 
   function menu() {
 
-    //parametrage colleur - professeur
-    let paramCollesClasses = require('./professeur/paramCollesClasses.js');
     //affichage du decompte
     let decompteHeures = require('./professeur/decompteHeures.js');
 
@@ -23,7 +21,6 @@ let professeur = (function() {
 
     $('#navParam').on('click', function() {
       $(".visible").css("display", "none");
-      paramCollesClasses.refreshTableMesCollesClasses();
       $("#showParam").css("display", "block");
     });
 
@@ -127,8 +124,10 @@ let professeur = (function() {
     dataListe.set(el1, {
       'form': true
     });
+
     let el2 = document.querySelector('#dataListe2') //liste des élèves formAddColle
     dataListe.set(el2);
+
     let el3 = document.querySelector('#dataListe3') //liste des classes partialsParamColles/formAddColleClasse
     dataListe.set(el3, {
       'form': true

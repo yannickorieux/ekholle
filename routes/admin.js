@@ -113,7 +113,21 @@ router.get('/tableProfesseursJSON/', login.isLoggedIn, professeurs.tableProfesse
  **************************
  */
 
+ /*
+ **************************
+      TAB IMPORTS
+  **************************
+  */
 
+  router.get('/nettoyerBaseEleve/', login.isLoggedIn, eleves.nettoyerBaseEleve);
+
+
+  router.get('/rafraichirBaseStructure/', login.isLoggedIn, classes.rafraichirBaseStructure);
+  /*
+  **************************
+       FIN TAB IMPORTS
+   **************************
+   */
 /*
 **************************
       GESTION RAMASSAGES

@@ -103,9 +103,9 @@ module.exports = {
   */
 
   listeMatiereClasseJSON : function(req, res) {
-    let Structure = require('../models/structure')(req.session.etab);
-    let Matiere = require('../models/matiere')(req.session.etab);
-    let Professeur = require('../models/professeur')(req.session.etab);
+    let Structure = require('../../models/structure')(req.session.etab);
+    let Matiere = require('../../models/matiere')(req.session.etab);
+    let Professeur = require('../../models/professeur')(req.session.etab);
     Structure.findOne({
       "_id": req.body.idClasse
     }, {
@@ -140,9 +140,9 @@ module.exports = {
   **************************
   */
   addMatiereProfesseurJSON : function(req, res) {
-    let Matiere = require('../models/matiere')(req.session.etab);
-    let Professeur = require('../models/professeur')(req.session.etab);
-    let Structure = require('../models/structure')(req.session.etab);
+    let Matiere = require('../../models/matiere')(req.session.etab);
+    let Professeur = require('../../models/professeur')(req.session.etab);
+    let Structure = require('../../models/structure')(req.session.etab);
     Structure.update({
       "_id": req.body.idClasse
     }, {

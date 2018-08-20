@@ -72,8 +72,7 @@ let admin = (function() {
       'form': true
     });
 
-    $('input').clearer(); //permet de réinitialiser les input
-
+    $('input[type=text]').clearer(); //permet de réinitialiser les input
 
 
 
@@ -94,7 +93,7 @@ let admin = (function() {
       $('#addMatiereClasse').modal();
     });
 
-      
+
 
   // les imports
     let structure = require('./admin/structure.js');
