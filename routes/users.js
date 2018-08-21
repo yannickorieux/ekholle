@@ -135,7 +135,7 @@ transporter = nodeMailer.createTransport({
 router.post('/contactSupport', function(req, res, next) {
   let mailOptions = {
     from: req.body.sender,
-    to: 'administrateur@e-kholle.fr',
+    to: config.email,
     subject: req.body.subject,
     text: req.body.message,
     html: '<b>' + req.body.message + '</b>',
@@ -207,7 +207,7 @@ router.post('/forgot', function(req, res, next) {
       console.log(token);
       var mailOptions = {
         to: user.email,
-        from: 'administrateur@e-kholle.fr',
+        from: config.email,
         subject: 'changer le mot de passe de votre comptr e-kholle',
         text: 'Vous avez reçu ce message car (vous ou un tiers) a fait une demande de modification du mot de passe de votre comte.\n\n' +
           'Coller le lien dans le navigateur  pour terminer le processus de modification :\n\n' +
@@ -319,7 +319,7 @@ router.post('/reset/', function(req, res) {
     function(user, done) {
       var mailOptions = {
         to: user.email,
-        from: 'administrateur@e-kholle.fr',
+        from: config.email,
         subject: 'Votre mot de passe a été modifié',
         text: 'Bonjour,\n\n' +
           'Ce message confirme que le mot de passe de votre compte a été modifié.\n'
