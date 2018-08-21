@@ -80,13 +80,15 @@ let professeurs = (function() {
        return table;
    };
 
-   
+
   function initDataTablesProfesseurs() {
     liste = [];
     let table = $('#tableProfesseurs').DataTable({
-      retrieve: true,
       data: liste,
-      // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
+      dom: 'Bfrtip',
+      buttons: [
+        'csv', 'excel', 'pdf'
+      ],
       language: {
         processing: "Traitement en cours...",
         search: "Rechercher&nbsp;:",
@@ -187,10 +189,11 @@ let professeurs = (function() {
       //on met à jour les datalistes correspondantes
       let el3 = document.getElementById('dataListe3')
       dataListe.setDataListe(el3, data);
+      let table=$('#tableProfesseurs').DataTable({retrieve: true,})
 
-      $('#tableProfesseurs').DataTable().clear().draw();
-      $('#tableProfesseurs').DataTable().rows.add(data); // Add new data
-      $('#tableProfesseurs').DataTable().columns.adjust().draw(); // Redraw the DataTable
+      table.clear().draw();
+      table.rows.add(data); // Add new data
+      table.columns.adjust().draw(); // Redraw the DataTable
     });
   };
 

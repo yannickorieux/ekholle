@@ -126,7 +126,7 @@ let periodes = (function() {
     Mise à jour dataTables
   */
   refreshTablePeriodes = function(data) {
-    let table = $('#tablePeriodes').DataTable();
+    let table = $('#tablePeriodes').DataTable({retrieve : true});
     table.clear().draw();
     table.rows.add(data); // Add new data
     table.columns.adjust().draw(); // Redraw the DataTable

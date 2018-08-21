@@ -113,18 +113,14 @@ let eleves = (function() {
 
 
 
-
-
-
-
-
-
   function initDataTablesEleves() {
     liste = [];
     let table = $('#tableEleves').DataTable({
-      retrieve: true,
       data: liste,
-      // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
+      dom: 'Bfrtip',
+      buttons: [
+        'csv', 'excel', 'pdf'
+      ],
       language: {
         processing: "Traitement en cours...",
         search: "Rechercher&nbsp;:",
@@ -183,9 +179,10 @@ let eleves = (function() {
     $.post("/admin/tableElevesClasseJSON/", {
       'classe': classe
     }, (data) => {
-      $('#tableEleves').DataTable().clear().draw();
-      $('#tableEleves').DataTable().rows.add(data); // Add new data
-      $('#tableEleves').DataTable().columns.adjust().draw(); // Redraw the DataTable
+      let table=$('#tableEleves').DataTable({retrieve: true,})
+      table.clear().draw();
+      table.rows.add(data); // Add new data
+      table.columns.adjust().draw(); // Redraw the DataTable
     });
   };
 

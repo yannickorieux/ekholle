@@ -65,7 +65,6 @@ let decompteHeures = (function() {
       buttons: [
         'csv', 'excel', 'pdf'
       ],
-      retrieve: true,
       data: liste,
       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
       language: {
@@ -158,7 +157,7 @@ let decompteHeures = (function() {
   ************************************************************
     */
   function refreshTableBilan(data) {
-      let table = $('#tableDecompte').DataTable()
+      let table = $('#tableDecompte').DataTable({retrieve : true})
       table.clear().draw();
       table.rows.add(data); // Add new data
       table.columns.adjust().draw(); // Redraw the DataTable

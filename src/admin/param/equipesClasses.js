@@ -87,7 +87,6 @@ let equipesClasses = (function() {
     $.post("/admin/suppClasseMatiere/", {
         "idClasseMatiere": idClasseMatiere
     }, (message) => {
-      console.log(message);
       refreshTableEquipeClasse(classe);
     })
   }

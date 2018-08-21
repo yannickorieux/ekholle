@@ -8,7 +8,7 @@ const queryString = require('query-string');
 const multer = require('multer');
 const csv = require('fast-csv');
 const fs = require('fs');
-
+const config = require('../secret');
 
 
 /* GET users listing. */
@@ -118,12 +118,12 @@ router.post('/modifyPassword', login.isLoggedIn, function(req, res, next) {
 // =====================================
 
 transporter = nodeMailer.createTransport({
-  host: 'auth.smtp.1and1.fr',
+  host: config.host,
   port: 465,
   secure: true, // true for 465, false for other ports
   auth: {
-    user: 'administrateur@e-kholle.fr', // generated ethereal user
-    pass: 's20y14n01o29' // generated ethereal password
+    user: config.email, // generated ethereal user
+    pass: config.emailPassword // generated ethereal password
   },
   tls: {
     rejectUnauthorized: false

@@ -69,7 +69,7 @@ let paramCollesClasses = (function() {
         $('#erreur').modal();
       } else {
         $('#addClasseProfesseur').modal('hide');
-        self.refreshTableMesCollesClasses();
+        refreshTableMesCollesClasses();
       }
       dataListe.display(el4, false);
       document.getElementById('addClasseForm').reset();
