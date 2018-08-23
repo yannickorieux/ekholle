@@ -8,7 +8,7 @@ let matieres = (function() {
    **************************
    */
 
-   afficheMatieres= function(data) {
+   function afficheMatieres(data) {
        let liste = data;
        let table = $('#tableMatieres').DataTable({
          retrieve: true,
@@ -58,7 +58,7 @@ let matieres = (function() {
    */
 
   self.init = function(){
-    let dataListe = require('../../dataListe/dataListe.js');
+    let dataListe = require('../../misc/dataListe.js');
 
     $.get("/admin/tableMatieresJSON/", (data) => {
         let el=document.getElementById('dataListe2')

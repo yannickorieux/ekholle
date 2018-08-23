@@ -4,6 +4,7 @@ $danger: #dd0000;
 $success: lime;
 $warning: orange;
 $info: aqua;
+$semi-transparent-black : rgba(255, 0, 0, 0.8);
 
 $body-bg: #f3f3f0;
 
@@ -68,4 +69,41 @@ td.details-control {
 tr.shown td.details-control {
     background: url('./moins.png') no-repeat center center;
     background-size: 20px 20px;
+}
+
+
+// Le bandeau cookie
+.cookie-banner {
+  display: none;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+
+  &.active {
+    display: block;
+  }
+}
+
+// Overlay de la boite de dialogue
+.cookie-inform-and-ask {
+  background-color: $semi-transparent-black;
+  display: none;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+
+  &.active {
+    display: block;
+  }
+
+  // La vraie boîte de dialogue
+  .cookie-dialog {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+  }
 }

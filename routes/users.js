@@ -11,9 +11,9 @@ const fs = require('fs');
 const config = require('../secret');
 
 
-/* GET users listing. */
+/* on renvoie la page de login */
 router.get('/', function(req, res, next) {
-  res.render('users.ejs', {
+  res.render('login.ejs', {
     title: 'e-khôlle',
     role: req.session.role,
   });
@@ -542,7 +542,10 @@ testEtcrationLogin = function(profil, csvData, dataExists) {
   });
 }
 
-creationLogin = function(req, res, profil, csvData, callback) {
+
+
+//fonction permettant de vérifier si le login professeur eleve ou matiere à importer est present dans la base
+testPresenceBase = function(req, res, profil, csvData, callback) {
   if (profil === 'eleve') {
     let Eleve = require('../models/eleve')(req.session.etab);
     Eleve.aggregate([{
@@ -558,7 +561,7 @@ creationLogin = function(req, res, profil, csvData, callback) {
       testEtcrationLogin(profil, csvData, eleves);
       callback(csvData);
     });
-  } else {
+  } else if (profil === 'professeur') {
     let Professeur = require('../models/professeur')(req.session.etab);
     Professeur.aggregate([{
       $project: {
@@ -572,6 +575,29 @@ creationLogin = function(req, res, profil, csvData, callback) {
       testEtcrationLogin(profil, csvData, professeurs);
       callback(csvData);
     });
+  } else if (profil === 'matiere') {
+    let Matiere = require('../models/matiere')(req.session.etab);
+    Matiere.aggregate([{
+      $project: {
+        nom: 1,
+        generique: 1,
+      }
+    }]).exec(function(err, matieres) {
+      if (err) return console.error(err);
+      csvData.forEach((value) => {
+        //ecriture de la condition en fonction du profil
+        let index = matieres.findIndex(item => item.nom === value.nom);
+        if (index !== -1) {
+          value.present = true;
+        } else {
+          value.present = false;
+        }
+      });
+      callback(csvData);
+    });
+  } else {
+    //erreur sur le profil
+    console.log(profil)
   }
 
 };
@@ -601,7 +627,7 @@ router.post('/csvData', upload.single('file'), function(req, res, next) {
     })
     .on("end", function() {
       fs.unlinkSync(req.file.path); // remove temp file
-      creationLogin(req, res, profil, csvData, (data) => {
+      testPresenceBase(req, res, profil, csvData, (data) => {
         res.send(data)
       });
 
@@ -694,10 +720,27 @@ router.post('/importEleves', function(req, res, next) {
 router.post('/importProfesseurs', function(req, res, next) {
   let Professeur = require('../models/professeur')(req.session.etab);
   let data = JSON.parse(req.body.dataAdd);
-  console.log(data);
-  console.log(data.length);
   if (data.length > 0) {
     Professeur.collection.insertMany(data, function(err, docs) {
+      if (err) {
+        return console.error(err);
+      } else {
+        console.log("Multiple documents inserted to Collection");
+      }
+      res.end();
+    });
+    res.end();
+  }
+
+});
+
+
+
+router.post('/importMatieres', function(req, res, next) {
+  let Matiere = require('../models/matiere')(req.session.etab);
+  let data = JSON.parse(req.body.dataAdd);
+  if (data.length > 0) {
+    Matiere.collection.insertMany(data, function(err, docs) {
       if (err) {
         return console.error(err);
       } else {

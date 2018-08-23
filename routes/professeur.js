@@ -5,13 +5,14 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const colleur = require('./professeur/colleur');
 const coordonnateur = require('./professeur/coordonnateur');
+
 /*
 **************************
 page index professeur
 **************************
 */
 router.get('/', login.isLoggedIn, function(req, res, next) {
-  console.log(req.session.role );
+  console.log(req.session.role);
   if (req.session.role === 'professeur') {
     res.render('professeur.ejs', {
       title: 'e-khôlle - professeur',
@@ -40,16 +41,21 @@ association matiere/classe avec le professeur coordo de discipline pour datalist
 **************************
 */
 
-router.post('/listeMatiereClasseJSON/', login.isLoggedIn, colleur.listeMatiereClasseJSON)
+router.post('/listeMatiereClasseJSON/', login.isLoggedIn, colleur.listeMatiereClasseJSON);
 
 /*
 **************************
 ajoute une colle à un professeur en l'associant à une matiere/classe
 **************************
 */
-router.post('/addMatiereProfesseurJSON/', login.isLoggedIn, colleur.addMatiereProfesseurJSON);
+router.post('/addClasseMatiereColleur/', login.isLoggedIn, colleur.addClasseMatiereColleur);
 
-
+/*
+**************************
+      suppression d'une  matiere sur une classe
+ **************************
+ */
+router.post('/suppClasseMatiereColleur/', login.isLoggedIn, colleur.suppClasseMatiereColleur);
 
 /*
 **************************
@@ -115,7 +121,7 @@ table pour afficher la liste des colleurs du coordo
 **************************
 */
 
-router.post('/tableMesClassesJSON/', login.isLoggedIn, coordonnateur.tableMesClassesJSON );
+router.post('/tableMesClassesJSON/', login.isLoggedIn, coordonnateur.tableMesClassesJSON);
 
 
 /*
@@ -167,6 +173,15 @@ router.post('/tableProgrammeCoordoJSON/', login.isLoggedIn, coordonnateur.tableP
 TAB bilan colleur
 **************************
 */
+
+/*
+**************************
+     renvoie l'année et les périodes
+ **************************
+ */
+router.get('/getAnnee/', login.isLoggedIn, colleur.getAnnee);
+
+
 /*
 **************************
 table pour afficher le bilan des heures réalisées par le colleur
@@ -174,99 +189,6 @@ table pour afficher le bilan des heures réalisées par le colleur
 */
 
 
-router.post("/tableDecompteHeuresJSON/", login.isLoggedIn, function(req, res) {
-  let Structure = require('../models/structure')(req.session.etab);
-  let matieres = req.session.etab + '_matieres'
-  Structure.aggregate([{
-        $unwind: "$matieres"
-      },
-      {
-        $unwind: "$matieres.colleurs"
-      },
-      {
-        $unwind: "$matieres.colleurs.colles"
-      },
-      {
-        $match: {
-          'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
-        }
-      },
-      {
-        $project: {
-          classe: "$nom",
-          matiere: "$matieres.matiere",
-          extraPeriode: 1,
-          debut: '$periode.debut',
-          fin: '$periode.fin',
-          professeur: "$matieres.colleurs._id",
-          colles: "$matieres.colleurs.colles",
-          classeMatiere: "$matieres._id",
-          date: "$colles.date",
-          duree: {
-            $cond: [
-
-              {
-                $and: [{
-                    $eq: ["$extraPeriode", true]
-                  },
-                  {
-                    $gte: ["$matieres.colleurs.colles.date", "$periode.debut"]
-                  }, {
-                    $lte: ["$matieres.colleurs.colles.date", "$periode.fin"]
-                  }
-                ]
-              },
-
-              '$matieres.dureeExc',
-              '$matieres.duree'
-            ]
-          }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            classeMatiere: '$classeMatiere',
-            duree: '$duree',
-            classe: '$classe',
-            matiere: '$matiere',
-          }, //$region is the column name in collection
-          count: {
-            $sum: 1
-          },
-          heures: {
-            $sum: '$duree'
-          },
-
-        },
-      },
-      {
-        $lookup: {
-          from: matieres,
-          localField: "_id.matiere",
-          foreignField: "_id",
-          as: "matieres"
-        }
-      },
-      {
-        $unwind: "$matieres"
-      },
-      {
-        $project: {
-          _id :0,
-          classe: "$_id.classe",
-          matiere: "$matieres.nom",
-          duree : "$_id.duree",
-          count: 1,
-          heures :1,
-        }
-      },
-    ])
-    .exec(function(err, data) {
-
-      if (err) return console.error(err);
-      res.json(data);
-    });
-});
+router.post("/tableDecompteHeuresJSON/", login.isLoggedIn, colleur.tableDecompteHeuresJSON);
 
 module.exports = router;

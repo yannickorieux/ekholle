@@ -6324,3 +6324,28 @@ td.details-control {
 tr.shown td.details-control {
   background: url("./moins.png") no-repeat center center;
   background-size: 20px 20px; }
+
+.cookie-banner {
+  display: none;
+  position: fixed;
+  bottom: 0px;
+  width: 100%; }
+  .cookie-banner.active {
+    display: block; }
+
+.cookie-inform-and-ask {
+  background-color: rgba(255, 0, 0, 0.8);
+  display: none;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%; }
+  .cookie-inform-and-ask.active {
+    display: block; }
+  .cookie-inform-and-ask .cookie-dialog {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%; }

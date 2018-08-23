@@ -38,7 +38,7 @@ let synthese = (function() {
 
 
   function initDataTablesColles() {
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableColles').DataTable({
       retrieve: true,
@@ -128,7 +128,7 @@ let synthese = (function() {
     Mise à jour de la table des colles
   ************************************************************
     */
-  refreshTableColles = function() {
+  function refreshTableColles() {
     $.post("/eleve/tableCollesJSON/", {
       'idEleve': idEleve,
       'classe': classe,

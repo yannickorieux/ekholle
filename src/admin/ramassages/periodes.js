@@ -1,7 +1,7 @@
 let periodes = (function() {
 
   let self = {};
-  let dataListe = require('../../dataListe/dataListe.js');
+  let dataListe = require('../../misc/dataListe.js');
 
   /*
   **************************
@@ -19,7 +19,7 @@ let periodes = (function() {
 
 
   function initDataTablesPeriodes() {
-    liste = [];
+    let liste = [];
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tablePeriodes').DataTable({
       data: liste,
@@ -125,7 +125,7 @@ let periodes = (function() {
   /*
     Mise à jour dataTables
   */
-  refreshTablePeriodes = function(data) {
+  function refreshTablePeriodes(data) {
     let table = $('#tablePeriodes').DataTable({retrieve : true});
     table.clear().draw();
     table.rows.add(data); // Add new data
@@ -181,9 +181,9 @@ let periodes = (function() {
     LEcture des données pour mettre à jour les périodes
   */
 
-  lirePeriodes = function() {
+  function lirePeriodes() {
     $.get("/admin/getAnnee/", (data) => {
-      if (typeof data.annee.debut === 'undefined' && typeof data.annee.fin === 'undefined') {
+      if (typeof data.annee === 'undefined' ||(typeof data.annee.debut === 'undefined' && typeof data.annee.fin === 'undefined') ) {
         //annee non definie
       } else {
         let debutAnnee = $('#datetimepicker1').find("input").val(moment(data.annee.debut).format('DD/MM/YYYY'));
@@ -241,7 +241,7 @@ let periodes = (function() {
   });
 
 
-  suppPeriode = function(idPeriode, idNext , dateFinPrevious) {
+  function suppPeriode(idPeriode, idNext , dateFinPrevious) {
     $.post("/admin/suppPeriode/" , {
       'idPeriode': idPeriode,
       'idNext': idNext,

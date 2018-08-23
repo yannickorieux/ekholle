@@ -16,7 +16,7 @@ let structure = (function() {
      $.get("/admin/tableStructureJSON/", (data) => {
        let liste = data;
        if (typeof liste === 'undefined') {
-         liste = []
+         let liste = []
        };
 
        let table = $('#tableStructure').DataTable({

@@ -1,7 +1,7 @@
 let professeurs = (function() {
 
   let self = {};
-  let dataListe = require('../../dataListe/dataListe.js');
+  let dataListe = require('../../misc/dataListe.js');
   let loginPassword = require('../../loginPassword.js');
   /*
   **************************
@@ -82,7 +82,7 @@ let professeurs = (function() {
 
 
   function initDataTablesProfesseurs() {
-    liste = [];
+    let liste = [];
     let table = $('#tableProfesseurs').DataTable({
       data: liste,
       dom: 'Bfrtip',
@@ -183,7 +183,7 @@ let professeurs = (function() {
            Script pour afficher la table professeurs
       **************************
       */
-  refreshProfesseurs = function() {
+  function refreshProfesseurs() {
     $.get("/admin/tableProfesseursJSON/", (data) => {
 
       //on met à jour les datalistes correspondantes

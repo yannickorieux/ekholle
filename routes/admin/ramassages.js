@@ -44,6 +44,7 @@ getAnnee : function(req, res) {
     _id: req._id
   }).exec(function(err, data) {
     if (err) return console.error(err);
+    console.log(data);
     res.json(data);
   });
 },
@@ -100,7 +101,6 @@ sauvePeriode : function(req, res) {
  **************************
  */
 suppPeriode : function(req, res) {
-  console.log(req.body);
   let Admin = require('../../models/admin')(req.session.etab)
   Admin.update({}, {
       $pull: {

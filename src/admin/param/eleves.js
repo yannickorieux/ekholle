@@ -8,7 +8,7 @@
 let eleves = (function() {
 
   let self = {};
-  let dataListe = require('../../dataListe/dataListe.js');
+  let dataListe = require('../../misc/dataListe.js');
   let loginPassword = require('../../loginPassword.js');
 
   let el4 = document.getElementById('dataListe4');
@@ -114,7 +114,7 @@ let eleves = (function() {
 
 
   function initDataTablesEleves() {
-    liste = [];
+    let liste = [];
     let table = $('#tableEleves').DataTable({
       data: liste,
       dom: 'Bfrtip',
@@ -175,7 +175,7 @@ let eleves = (function() {
           Script pour afficher une classe
       **************************
       */
-  refreshEleves = function(classe) {
+  function refreshEleves(classe) {
     $.post("/admin/tableElevesClasseJSON/", {
       'classe': classe
     }, (data) => {

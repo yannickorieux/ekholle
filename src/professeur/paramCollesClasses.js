@@ -7,7 +7,7 @@
 let paramCollesClasses = (function() {
   let self = {};
   let idProfesseur = $('body').data("idprofesseur")
-  let dataListe = require('../dataListe/dataListe.js');
+  let dataListe = require('../misc/dataListe.js');
 
 
   /********************************************************************
@@ -58,8 +58,7 @@ let paramCollesClasses = (function() {
     let idClasse = dataListe.getId(el3);
     let e4 = document.getElementById('dataListe4')
     let idClasseMatiere = dataListe.getId(e4)
-    console.log(idClasseMatiere);
-    $.post("/professeur/addMatiereProfesseurJSON/", {
+    $.post("/professeur/addClasseMatiereColleur/", {
       'idClasse': idClasse,
       'idProfesseur': idProfesseur,
       'idClasseMatiere': idClasseMatiere,
@@ -131,9 +130,52 @@ let paramCollesClasses = (function() {
         {
           data: 'duree'
         },
+        {
+          data: 'totalColles'
+        },
+        {
+          data: null,
+          className: "center",
+          render: function(data, type, row) {
+            if (data.totalColles>0){
+              return ''
+            }
+            else{
+            return '<a href="" class="editor_supp">Supp</a>'}
+          },
+        },
       ],
     });
+
+    // Supp record
+    $('#tableMesCollesClasses').on('click', 'a.editor_supp', function(e) {
+      e.preventDefault();
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      let element = row.data();
+      idClasseMatiereColleur = element.idClasseMatiereColleur;
+      idClasseMatiere = element.idClasseMatiere;
+      suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur );
+    });
   };
+
+
+
+  /*
+  ********************************************************************
+    Suppression d'une matiere
+  ************************************************************
+    */
+  function suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur) {
+    console.log(idClasseMatiere, idClasseMatiereColleur);
+
+    $.post("/professeur/suppClasseMatiereColleur/", {
+        "idClasseMatiere": idClasseMatiere,
+        "idClasseMatiereColleur": idClasseMatiereColleur
+    }, (message) => {
+      refreshTableMesCollesClasses();
+    })
+  }
 
 
   /*

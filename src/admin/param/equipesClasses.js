@@ -1,7 +1,7 @@
 let equipesClasses = (function() {
 
   let self = {};
-  let dataListe = require('../../dataListe/dataListe.js');
+  let dataListe = require('../../misc/dataListe.js');
   /*
   **************************
         PRIVATE
@@ -81,7 +81,7 @@ let equipesClasses = (function() {
     Suppression d'une matiere
   ************************************************************
     */
-  suppClasseMatiere = function(idClasseMatiere) {
+  function suppClasseMatiere(idClasseMatiere) {
     let el1 = document.getElementById('dataListe1')
     let classe = dataListe.getName(el1);
     $.post("/admin/suppClasseMatiere/", {
@@ -113,7 +113,7 @@ let equipesClasses = (function() {
    };
 
   function initDataTablesEquipeClasse() {
-    liste = [];
+    let liste = [];
     let table = $('#tableEquipeClasse').DataTable({
       retrieve: true,
       data: liste,
@@ -180,8 +180,8 @@ let equipesClasses = (function() {
     // Edit record
     $('#tableEquipeClasse').on('click', 'a.editor_modif', function(e) {
       e.preventDefault();
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
+      let tr = $(this).closest('tr');
+      let row = table.row(tr);
       let element = row.data();
       let idClasseMatiere = element.idClasseMatiere;
       let duree = element.duree ;
@@ -214,16 +214,16 @@ let equipesClasses = (function() {
     // Supp record
     $('#tableEquipeClasse').on('click', 'a.editor_supp', function(e) {
       e.preventDefault();
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
+      let tr = $(this).closest('tr');
+      let row = table.row(tr);
       let element = row.data();
       let idClasseMatiere = element.idClasseMatiere;
       suppClasseMatiere(idClasseMatiere);
     });
 
     $('#tableEquipeClasse tbody').on('click', 'td.details-control', function() {
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
+      let tr = $(this).closest('tr');
+      let row = table.row(tr);
       if (row.child.isShown()) {
         // This row is already open - close it
         row.child.hide();
@@ -246,7 +246,7 @@ let equipesClasses = (function() {
    **************************
    */
 
-  refreshTableEquipeClasse = function(classe) {
+  function refreshTableEquipeClasse(classe) {
     $.post("/admin/tableEquipeClasseJSON/", {
       'classe': classe
     }, (data) => {

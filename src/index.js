@@ -4,6 +4,9 @@ $(document).ready(() => {
   let professeur = require('./professeur.js');
   let eleve = require('./eleve.js');
   let admin = require('./admin.js');
+  //let login = require('./login.js');
+
+
   //gestion password forgot
   let forgot = require('./forgot.js');
 
@@ -14,7 +17,7 @@ $(document).ready(() => {
 
 
   if ($('body').data("page") === 'forgot') {
-      forgot.init();
+    forgot.init();
   }
 
   if ($('body').data("page") === 'professeur') {
@@ -26,5 +29,9 @@ $(document).ready(() => {
   if ($('body').data("page") === 'admin') {
     admin.init();
   }
+  // if ($('body').data("page") === 'login') {
+  //   console.log('test2');
+  //   login.init();
+  // }
 
 });

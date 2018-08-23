@@ -2,7 +2,7 @@ let professeur = (function() {
 
   let self = {};
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
-  let dataListe = require('./dataListe/dataListe.js');
+  let dataListe = require('./misc/dataListe.js');
   /*
   **************************
         PRIVATE
@@ -22,13 +22,6 @@ let professeur = (function() {
     $('#navParam').on('click', function() {
       $(".visible").css("display", "none");
       $("#showParam").css("display", "block");
-    });
-
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      let id=this.getAttribute("href");
-      if(id==='#3b'){
-        decompteHeures.refreshTableDecompteHeures()
-      }
     });
 
 
@@ -93,6 +86,21 @@ let professeur = (function() {
    */
 
   self.init = function() {
+
+    $('.summernote').summernote({
+       dialogsInBody: true,
+      toolbar: [
+        ['style', ['bold', 'italic', 'underline', 'strike']],
+        ['para', ['ul', 'ol']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['insert', ['link', 'hr']],
+        ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
+      ],
+      styleWithSpan: false,
+    });
+
+
     // addEventListener pour les boutons déclenchant les modals
     //
     document.getElementById("buttonAddClasse").addEventListener('click', function() {
@@ -155,6 +163,11 @@ let professeur = (function() {
       'form': true
     });
 
+    //liste des Periodes
+    let el9 = document.querySelector('#dataListe9')
+    dataListe.set(el9, {
+      'form': true
+    });
 
     $('input').clearer(); //permet de réinitialiser les input
 

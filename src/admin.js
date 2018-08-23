@@ -8,7 +8,7 @@ let admin = (function() {
    **************************
    */
 
-  menu = function() {
+  function menu() {
 
     $('#navBilan').on('click', function() {
       $(".visible").css("display", "none");
@@ -36,7 +36,7 @@ let admin = (function() {
   self.init = function() {
 
     // on met à jour la dataliste classes
-    let dataListe = require('./dataListe/dataListe.js');
+    let dataListe = require('./misc/dataListe.js');
 
     //dataliste classe pour creation equipe classe
     let el1 = document.querySelector('#dataListe1')

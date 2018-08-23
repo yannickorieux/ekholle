@@ -1,0 +1,35 @@
+<div id="uploadMatieres">
+  <form id="uploadMatieresForm" enctype="multipart/form-data">
+    <fieldset>
+      <!-- Default unchecked -->
+      <div>
+
+          <div class="form-group has-feedback has-clear">
+            <label>Fichier CSV</label>
+            <!-- The name here is important, and will be used later to reference the data -->
+            <input class='form-control' type="file" id="csvdataMat" name="csvdata" accept="text/csv">
+          </div>
+
+
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Charger</button>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div id="showTableImportMatieres" style="display:none;">
+  <h3>Liste des matieres</h3>
+  <div>
+    <table class="table table-striped table-bordered" style="width:100%" id="tableImportMatieres">
+      <thead>
+        <tr>
+          <th width="20%">Matiere</th>
+          <th width="20%">Nom générique</th>
+          <th width="20%">Nouveau</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>

@@ -54,10 +54,33 @@ let imports = (function() {
     });
 
 
+    $('#uploadMatieresForm').submit(function(e) {
+
+      e.preventDefault();
+
+      let formdata = new FormData();
+      formdata.append('file', $('#csvdataMat').get(0).files[0]);
+      formdata.append('profil','matiere');
+      $.ajax({
+        url: "/users/csvData",
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: formdata,
+        type: 'post',
+        success: function(data) {
+          $('#showTableImportMatieres').css("display", "block");
+          refreshImport(data,'Matieres');
+
+        }
+      });
+    });
+
+
 
   function initDataTablesImportEleves() {
     $.fn.dataTable.ext.errMode = 'none';
-    liste = [];
+    let liste = [];
     let table = $('#tableImportEleves').DataTable({
       data: liste,
       dom: '<"top"Bif>rt<"bottom"lp><"clear">',
@@ -159,7 +182,7 @@ let imports = (function() {
 
   function initDataTablesImportProfesseurs() {
     $.fn.dataTable.ext.errMode = 'none';
-    liste = [];
+    let liste = [];
     let table = $('#tableImportProfesseurs').DataTable({
       data: liste,
       dom: '<"top"Bif>rt<"bottom"lp><"clear">',
@@ -249,12 +272,99 @@ let imports = (function() {
       });
   };
 
+
+  function initDataTablesImportMatieres() {
+    $.fn.dataTable.ext.errMode = 'none';
+    let liste = [];
+    let table = $('#tableImportMatieres').DataTable({
+      data: liste,
+      dom: '<"top"Bif>rt<"bottom"lp><"clear">',
+      language: {
+        processing: "Traitement en cours...",
+        search: "Rechercher&nbsp;:",
+        lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
+        info: "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+        infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+        infoFiltered: "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+        infoPostFix: "",
+        loadingRecords: "Chargement en cours...",
+        zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
+        emptyTable: "Aucune donnée disponible dans le tableau",
+        paginate: {
+          first: "Premier",
+          previous: "Pr&eacute;c&eacute;dent",
+          next: "Suivant",
+          last: "Dernier"
+        },
+        aria: {
+          sortAscending: ": activer pour trier la colonne par ordre croissant",
+          sortDescending: ": activer pour trier la colonne par ordre décroissant"
+        }
+      },
+      buttons: [{
+        text: "Valider l'import",
+        action: function(e, dt, node, config) {
+          let d = dt.buttons.exportData(
+            $.extend({
+              decodeEntities: false
+            }, config.exportOptions) // XSS protection
+          );
+
+          let dataAdd = [];
+          let dataMod = [];
+          for (let i = 0, ien = d.body.length; i < ien; i++) {
+            let row = {
+              'nom': d.body[i][0],
+              'generique': d.body[i][1],
+            }
+            if (d.body[i][2] === 'Oui') {
+              dataAdd.push(row);
+            } else {
+              dataMod.push(row);
+            }
+          }
+          let data = {
+            'dataAdd': JSON.stringify(dataAdd),
+            'dataMod': JSON.stringify(dataMod),
+          }
+          $.ajax({
+            url: "/users/importMatieres",
+            data: data,
+            type: 'post',
+            success: function(data) {
+              $('#showTableImportMatieres').css("display", "none");
+            }
+          });
+        }
+      }],
+      columns: [{
+          data: 'nom'
+        },
+        {
+          data: 'generique'
+        },
+        {
+          data: null,
+          render: function(data, type, row) {
+            if (data.present === true) return 'Non'
+            else return 'Oui'
+          },
+        },
+      ],
+      });
+  };
+
+
+
+
   /*
      **************************
           Script pour afficher les tables eleves et professeurs
       **************************
       */
-  refreshImport = function(data, profil) {
+
+
+  function refreshImport(data, profil) {
     let table =$('#tableImport'+profil).DataTable({  retrieve: true})
     table.clear().draw();
     table.rows.add(data); // Add new data
@@ -274,6 +384,10 @@ let imports = (function() {
       $('#error').html("Votre fichier de donées semble incorrect, vous ne pouvez pas poursuivre l'import ");
   })
 
+  $('#tableImportMatieres').on('error.dt', function(e, settings, techNote, message) {
+     console.log( 'An error has been reported by DataTables: ', message);
+      $('#error').html("Votre fichier de donées semble incorrect, vous ne pouvez pas poursuivre l'import ");
+  })
 
   /*
      **************************
@@ -315,6 +429,7 @@ let imports = (function() {
   self.init = function() {
     initDataTablesImportEleves()
     initDataTablesImportProfesseurs()
+    initDataTablesImportMatieres()
   }
   return self;
 })();

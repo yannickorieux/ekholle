@@ -6,7 +6,7 @@ let dataListe = (function() {
         PRIVATE
    **************************
    */
-  setHTML = function(id, html) {
+  function setHTML(id, html) {
     $('#' + id + 'liste').empty()
     $('#' + id + 'liste').append(html)
   }
@@ -86,43 +86,43 @@ let dataListe = (function() {
   self.setDataListe = function(element, data) {
     let id = element.id;
     let type = $(element).data("type")
-    html = '';
+    let html = '';
     if (data.length === 0) {
       // $("#error").html("<p>Vous n'avez pas encore de matières dans la base</p><p>Créer une nouvlle matière</p>");
       // $('#erreur').modal("show");
 
     } else {
       if (type === 'matiere') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + "</option>";
         }
       } else if (type === 'eleve') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + ' ' + data[i].prenom + "</option>";
         }
       } else if (type === 'professeur') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + ' ' + data[i].prenom + "</option>";
         }
       } else if (type === 'classe') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].nom + "</option>";
         }
       } else if (type === 'classematiere') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].matiere.nom +'--' + data[i].professeur.nom +' ' + data[i].professeur.prenom + "</option>";
         }
       } else if (type === 'classematierecoordo') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i].idClasseMatiere + "'>" + data[i].classe + '-' + data[i].matiere + "</option>";
         }
       } else if (type === 'classematierecolleur') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i].idClasseMatiere + "'>" + data[i].classe + '-' + data[i].matiere + "</option>";
         }
       }
       else if (type === 'periodes') {
-        for (i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
           html += "<option data-value='" + data[i]._id + "'>" + data[i].description + " du : " + moment(data[i].debutPeriode).format('L') +  " au : " + moment(data[i].finPeriode).format('L') + "</option>";
         }
       }
@@ -219,7 +219,7 @@ dtaliste spéciale pour gérer la notation de 0 à 20
      html='';
      html += "<option value='n.n'></option>";
      html += "<option value='abs.'></option>";
-     for (i = 0; i < 21; i++) {
+     for (let i = 0; i < 21; i++) {
        html += "<option value='" + i + "'></option>";
      }
      setHTML(id, html); //on insère la datalistelet id = idElement.id;

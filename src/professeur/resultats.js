@@ -1,7 +1,7 @@
 let resultats = (function() {
 
   let self = {};
-  let dataListe = require('../dataListe/dataListe.js');
+  let dataListe = require('../misc/dataListe.js');
 
   let el7 = document.getElementById('dataListe7') //liste des classes/matieres
   dataListe.selectId(el7)
@@ -72,7 +72,7 @@ $('#periodeResultatsForm').submit(function(e) {
   Mise à jour de la table des colles
 ************************************************************
   */
-refreshTablesResultatsCoordo = function(idClasseMatiere,debutPeriode,finPeriode) {
+function refreshTablesResultatsCoordo(idClasseMatiere,debutPeriode,finPeriode) {
   $.post("/professeur/tableResultatsCoordoJSON/", {
     'idClasseMatiere': idClasseMatiere,
     'debutPeriode' : debutPeriode,
@@ -88,7 +88,7 @@ refreshTablesResultatsCoordo = function(idClasseMatiere,debutPeriode,finPeriode)
 
 
 function initDataTablesResultatsCoordo() {
-  liste = []
+  let liste = []
   $.fn.dataTable.moment('DD/MM/YYYY');
   let table = $('#tableResultatsCoordo').DataTable({
     retrieve: true,
@@ -148,7 +148,7 @@ function initDataTablesResultatsCoordo() {
       },
     ],
     drawCallback: function () {
-         api = this.api();
+         let api = this.api();
          let arr = api.columns(2).data()[0];  //get array of column 3 (extn)
          let sorted = arr.slice().sort(function(a,b){return b-a});
          let ranks = arr.slice().map(function(v){ return sorted.indexOf(v)+1 });

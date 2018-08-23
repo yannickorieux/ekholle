@@ -2,7 +2,7 @@ let synthese = (function() {
 
   let self = {};
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
-  let dataListe = require('../dataListe/dataListe.js');
+  let dataListe = require('../misc/dataListe.js');
 
   let el5 = document.getElementById('dataListe5') //liste des élèves
   dataListe.selectId(el5)
@@ -65,7 +65,7 @@ let synthese = (function() {
     Mise à jour de la table des colles
   ************************************************************
     */
-  refreshTableCoordo = function(idClasseMatiere) {
+  function refreshTableCoordo(idClasseMatiere) {
     $.post("/professeur/tableCollesCoordoJSON/", {
       'idClasseMatiere': idClasseMatiere,
     }, (data) => {
@@ -77,7 +77,7 @@ let synthese = (function() {
 
 
   function initDataTablesCoordo() {
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableCollesCoordo').DataTable({
       retrieve: true,

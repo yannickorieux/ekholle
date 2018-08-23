@@ -2,7 +2,7 @@ let programme = (function() {
 
   let self = {};
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
-  let dataListe = require('../dataListe/dataListe.js');
+  let dataListe = require('../misc/dataListe.js');
 
   let el8 = document.getElementById('dataListe8') //liste des classes matieres
   dataListe.selectId(el8)
@@ -49,7 +49,7 @@ let programme = (function() {
     let debut = moment($('#datetimepickerProg1').find("input").val(), 'DD/MM/YYYY').format();
     let fin = moment($('#datetimepickerProg2').find("input").val(), 'DD/MM/YYYY').format();
     let titre = document.getElementById('titre').value;
-    let detail = document.getElementById('detailProg').value;
+    let detail = $(document.getElementById('detailProg')).summernote('code');
     let mode = document.getElementById('addProgrammeForm').getAttribute("data-mode");
     let idProgramme = '';
     if (mode === 'modifier') {
@@ -76,7 +76,7 @@ let programme = (function() {
     Suppression d'un programme de colle
   ************************************************************
     */
-  suppProgramme = function(idClasseMatiere, idProgramme) {
+  function suppProgramme(idClasseMatiere, idProgramme) {
     $.post("/professeur/suppProgramme/", {
       "idProgramme": idProgramme,
       "idClasseMatiere": idClasseMatiere
@@ -113,7 +113,7 @@ let programme = (function() {
     Mise à jour de la table des colles
   ************************************************************
     */
-  refreshTableProgrammeCoordo = function(idClasseMatiere) {
+  function refreshTableProgrammeCoordo(idClasseMatiere) {
     $.post("/professeur/tableProgrammeCoordoJSON/", {
       'idClasseMatiere': idClasseMatiere,
     }, (data) => {
@@ -136,7 +136,7 @@ let programme = (function() {
 
 
   function initDataTablesProgrammeCoordo() {
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableProgrammeCoordo').DataTable({
       retrieve: true,
@@ -226,7 +226,7 @@ let programme = (function() {
       $(document.getElementById('debutProg')).val(moment(element.debut).format('DD/MM/YYYY'));
       $(document.getElementById('finProg')).val(moment(element.fin).format('DD/MM/YYYY'));
       $(document.getElementById('titre')).val(titre);
-      $(document.getElementById('detailProg')).val(detail);
+      $(document.getElementById('detailProg')).summernote('code',detail);
       $('#addProgrammeModal').modal();
     });
 
@@ -245,7 +245,7 @@ let programme = (function() {
     Mise à jour de la table des colles
   ************************************************************
   */
-  refreshTableProgrammeColleur = function() {
+  function refreshTableProgrammeColleur() {
     $.post("/professeur/tableProgrammeColleurJSON/", {
       'idProfesseur': idProfesseur,
     }, (data) => {
@@ -268,7 +268,7 @@ let programme = (function() {
 
 
   function initDataTablesProgrammeColleur() {
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableProgrammeColleur').DataTable({
       retrieve: true,

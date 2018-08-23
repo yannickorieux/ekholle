@@ -7,7 +7,7 @@
 let paramMesClasses = (function() {
   let self = {};
   let idProfesseur = $('body').data("idprofesseur")
-  let dataListe = require('../dataListe/dataListe.js');
+  let dataListe = require('../misc/dataListe.js');
 
 
 
@@ -17,7 +17,7 @@ let paramMesClasses = (function() {
   ************************************************************
 */
   function initDataTablesMesClasses() {
-    liste = []
+    let liste = []
     let table = $('#tableMesClasses').DataTable({
       retrieve: true,
       data: liste,
@@ -70,7 +70,7 @@ let paramMesClasses = (function() {
     Mise à jour de la table des colles
   ************************************************************
     */
-  refreshTableMesClasses = function() {
+  function refreshTableMesClasses() {
     $.post("/professeur/tableMesClassesJSON/", {
       'idProfesseur': idProfesseur,
     }, (data) => {

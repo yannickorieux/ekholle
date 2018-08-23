@@ -9,6 +9,8 @@ let loginPassword = (function() {
    **************************
    */
 
+
+
   $('#modifyPasswordForm').submit(function(e) {
     e.preventDefault();
     let password = document.querySelector('#modifyPasswordForm input[name="password"]').value;
@@ -35,11 +37,7 @@ let loginPassword = (function() {
 
 
 
-  //
-  // function foo(){
-  //
-  // }
-  // alert(foo(chaine))
+
   /*
   **************************
         PUBLIC
@@ -67,6 +65,8 @@ let loginPassword = (function() {
     });
     return p + '.' + n
   };
+
+
 
 
 

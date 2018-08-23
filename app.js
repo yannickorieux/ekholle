@@ -1,4 +1,4 @@
-var createError = require('http-errors');
+const  createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -8,12 +8,13 @@ const flash = require('connect-flash');
 //Ajout mongo
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
+const config = require('./secret');
 
 mongoose.Promise = global.Promise;
 //connect to MongoDB
-const promise = mongoose.connect('mongodb://localhost/dbEKholle');
+const promise = mongoose.connect('mongodb://'+config.loginDb+':'+config.pwdDb+'@localhost/dbEKholle');
 const db = mongoose.connection;
-//mongoose.set('debug',true);
+mongoose.set('debug',true);
 //handle mongo error
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {

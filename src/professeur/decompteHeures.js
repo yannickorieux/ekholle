@@ -2,7 +2,7 @@ let decompteHeures = (function() {
 
   let self = {};
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
-
+  let dataListe = require('../misc/dataListe.js');
 
   /*
   ********************************************************************
@@ -10,15 +10,45 @@ let decompteHeures = (function() {
   ************************************************************
 */
 
+let el9 = document.getElementById('dataListe9')
+dataListe.selectId(el9)
+$('#dataListe9Form').submit(function(e) {
+  e.preventDefault();
+  let idPeriode = dataListe.getId(el9);
+  if (idPeriode != '') {
+    $('#showTableDecompte').css("display", "block");
+    refreshTableDecompteHeures(idPeriode)
+  } else {
+    $('#showTableDecompte').css("display", "none");
+  }
+});
 
 
-
+function lirePeriodes() {
+  $.get("/professeur/getAnnee/", (data) => {
+    if (typeof data.annee === 'undefined' ||(typeof data.annee.debut === 'undefined' && typeof data.annee.fin === 'undefined') ) {
+      return;
+    } else {
+      let periodes = data.periodes;
+      let dateInitAddPeriode;
+      let n = 0;
+      if (typeof periodes !== 'undefined' && periodes.length !== 0) {
+        n = data.periodes.length;
+        dateInitAddPeriode = data.periodes[n - 1].finPeriode;
+      } else {
+        dateInitAddPeriode = data.annee.debut;
+      }
+      //on met à jour la dataliste des periodes
+      let el9 = document.getElementById('dataListe9')
+      dataListe.setDataListe(el9, periodes);
+    }
+  });
+};
 
 
 
   function initDataDecompteHeures() {
-
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableDecompte').DataTable({
       retrieve: true,
@@ -70,6 +100,16 @@ let decompteHeures = (function() {
 
   };
 
+
+  function refreshTableDecompteHeures(idPeriode) {
+      $.post("/professeur/tableDecompteHeuresJSON/",{'idProfesseur' : idProfesseur, 'idPeriode' : idPeriode} , (data) => {
+        $('#tableDecompte').DataTable().clear().draw();
+        $('#tableDecompte').DataTable().rows.add(data); // Add new data
+        $('#tableDecompte').DataTable().columns.adjust().draw(); // Redraw the DataTable
+      });
+    }
+
+
   /*
   ********************************************************************
         PUBLIC
@@ -80,17 +120,11 @@ let decompteHeures = (function() {
     Mise à jour de la table des colles
   ************************************************************
     */
-  self.refreshTableDecompteHeures = function() {
-    $.post("/professeur/tableDecompteHeuresJSON/",{'idProfesseur' : idProfesseur} , (data) => {
-      $('#tableDecompte').DataTable().clear().draw();
-      $('#tableDecompte').DataTable().rows.add(data); // Add new data
-      $('#tableDecompte').DataTable().columns.adjust().draw(); // Redraw the DataTable
-    });
-  }
 
 
   self.init = () => {
     initDataDecompteHeures();
+    lirePeriodes();
   };
 
 

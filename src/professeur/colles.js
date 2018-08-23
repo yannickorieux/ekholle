@@ -2,7 +2,7 @@ let colles = (function() {
 
   let self = {};
   let idProfesseur =  document.body.getAttribute("data-idprofesseur");
-  let dataListe = require('../dataListe/dataListe.js');
+  let dataListe = require('../misc/dataListe.js');
 
 
   /*
@@ -77,8 +77,8 @@ let colles = (function() {
       note=parseInt(note);
     }
     let sujet = document.getElementById('sujet').value;
-    let obsCoordo = document.getElementById('obsCoordo').value;
-    let obsEleve = document.getElementById('obsEleve').value;
+    let obsCoordo = $('#obsCoordo').summernote('code');
+    let obsEleve = $('#obsEleve').summernote('code');
     let mode = document.getElementById('addColleForm').getAttribute("data-mode");
     let idColle = '';
     if (mode === 'modifier') {
@@ -113,7 +113,7 @@ let colles = (function() {
     Mise à jour de la table des colles
   ************************************************************
     */
-  refreshTableColle = function(idMatiereColle) {
+   function refreshTableColle(idMatiereColle) {
     $.post("/professeur/tableCollesJSON/", {
       'idMatiereColle': idMatiereColle,
       'idProfesseur': idProfesseur,
@@ -131,7 +131,7 @@ let colles = (function() {
     Suppression d'une colle
   ************************************************************
     */
-  suppColle = function(idMatiereColle, idColle) {
+function suppColle(idMatiereColle, idColle) {
     $.post("/professeur/suppColle/", {
       "idColle": idColle,
         "idProfesseur": idProfesseur,
@@ -181,7 +181,7 @@ let colles = (function() {
 
 
   function initDataTables() {
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableColles').DataTable({
       retrieve: true,
@@ -285,8 +285,8 @@ let colles = (function() {
       $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY'));
       document.getElementById('dateSaisie').innerHTML=moment().format('L');
       $(document.getElementById('sujet')).val(sujet);
-      $(document.getElementById('obsEleve')).val(obsEleve);
-      $(document.getElementById('obsCoordo')).val(obsCoordo);
+      $(document.getElementById('obsEleve')).summernote('code',obsEleve);
+      $(document.getElementById('obsCoordo')).summernote('code', obsCoordo);
       let el6 = document.getElementById('dataListe6')
       dataListe.setLaNote(el6,note);
 
@@ -326,15 +326,6 @@ let colles = (function() {
 
 
   self.init = () => {
-    //$('#addColleModal').on('shown.bs.modal', function() {
-    //   $('.summernote').summernote({
-    //     toolbar: [
-    //       ['style', ['bold', 'italic', 'underline', 'strike']],
-    //       ['para', ['ul', 'ol']],
-    //     ],
-    //     styleWithSpan: false,
-    //   });
-    // })
     getListeColles();
     initDataTables();
   };

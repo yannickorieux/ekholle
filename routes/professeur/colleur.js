@@ -5,12 +5,6 @@ const ObjectId = mongoose.Types.ObjectId;
 
 /*
 **************************
-PRIVE
-**************************
-*/
-
-/*
-**************************
 ajout colle
 **************************
 */
@@ -139,7 +133,7 @@ module.exports = {
   ajoute une colle à un professeur en l'associant à une matiere/classe
   **************************
   */
-  addMatiereProfesseurJSON : function(req, res) {
+  addClasseMatiereColleur : function(req, res) {
     let Matiere = require('../../models/matiere')(req.session.etab);
     let Professeur = require('../../models/professeur')(req.session.etab);
     let Structure = require('../../models/structure')(req.session.etab);
@@ -171,6 +165,31 @@ module.exports = {
 
   /*
   **************************
+         suppression d'une classe/matiere au colleur
+   **************************
+   */
+  suppClasseMatiereColleur: function(req, res) {
+    let Structure = require('../../models/structure')(req.session.etab);
+    Structure.update({'matieres._id' : req.body.idClasseMatiere}, {
+      $pull: {
+        'matieres.$[el].colleurs': {
+          '_id': ObjectId(req.body.idClasseMatiereColleur)
+        }
+      }
+    }, {
+      arrayFilters: [{
+          'el._id': ObjectId(req.body.idClasseMatiere)
+        }
+      ]
+    }).exec(function(err, result) {
+      console.log(result);
+      if (err) return console.error(err);
+      res.end();
+    });
+  },
+
+  /*
+  **************************
   table pour afficher les matieres/classes du colleur
   **************************
   */
@@ -190,9 +209,11 @@ module.exports = {
           $project: {
             classe: "$nom",
             idClasseMatiere: "$matieres._id",
+            idClasseMatiereColleur:  '$matieres.colleurs._id',
             duree: "$matieres.duree",
             matiere: "$matieres.matiere",
-            professeur: "$matieres.professeur"
+            professeur: "$matieres.professeur",
+            colles : "$matieres.colleurs.colles",
           }
         },
         {
@@ -218,19 +239,28 @@ module.exports = {
           $unwind: "$matiere"
         },
         {
+          $unwind: "$idClasseMatiereColleur"
+        },
+        {
+          $unwind: "$colles"
+        },
+        {
           $project: {
-            idMatiereColleur: '$_id',
+            idClasse: '$_id',
+            idClasseMatiereColleur:  1,
             classe: 1,
             idClasseMatiere: 1,
             duree: 1,
             matiere: '$matiere.nom',
             nom: '$professeur.nom',
-            prenom: '$professeur.prenom'
+            prenom: '$professeur.prenom',
+            totalColles : {$size : '$colles'},
           }
         },
 
       ])
       .exec(function(err, data) {
+        console.log(data);
         if (err) return console.error(err);
         res.send(data);
       });
@@ -339,7 +369,7 @@ module.exports = {
   suppColle : function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     // il faut au prealable filtrer sur la matiere de la colle
-    Structure.update({}, {
+    Structure.update({'matieres._id': req.body.idMatiereColle}, {
       $pull: {
         'matieres.$[].colleurs.$[].colles': {
           '_id': ObjectId(req.body.idColle)
@@ -477,6 +507,158 @@ module.exports = {
       if (err) return console.error(err);
       res.send(data);
     });
+  },
+
+
+  /*
+  **************************
+       renvoie l'année et les périodes
+   **************************
+   */
+/*
+   ****************************
+ATTENTION CE N'EST AS PROPRE ON SUPPOSE QUE admin est le prenom de tous les administrateurs
+*/
+
+  getAnnee : function(req, res) {
+    let Admin = require('../../models/admin')(req.session.etab)
+    Admin.findOne({
+      prenom : 'admin'
+    }).exec(function(err, data) {
+      if (err) return console.error(err);
+      res.json(data);
+    });
+  },
+
+
+
+  /*
+  **************************
+  table pour afficher le bilan des heures réalisées par le colleur
+  **************************
+  */
+
+
+  tableDecompteHeuresJSON : function(req, res) {
+    let Admin = require('../../models/admin')(req.session.etab)
+    Admin.aggregate([{
+          $unwind: "$periodes"
+        },
+        {
+          $project: {
+            periode: '$periodes',
+          }
+        },
+        {
+          $match: {
+            'periode._id': ObjectId(req.body.idPeriode)
+          }
+        },
+      ])
+      .exec(function(err, data) {
+        let debutPeriode = data[0].periode.debutPeriode;
+        let finPeriode = data[0].periode.finPeriode;
+        let Structure = require('../../models/structure')(req.session.etab);
+        let matieres = req.session.etab + '_matieres';
+        Structure.aggregate([{
+              $unwind: "$matieres"
+            },
+            {
+              $unwind: "$matieres.colleurs"
+            },
+            {
+              $unwind: "$matieres.colleurs.colles"
+            },
+            {
+              $match: {
+                'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
+              }
+            },
+            {
+              $project: {
+                classe: "$nom",
+                matiere: "$matieres.matiere",
+                extraPeriode: 1,
+                debut: '$periode.debut',
+                fin: '$periode.fin',
+                professeur: "$matieres.colleurs._id",
+                colles: "$matieres.colleurs.colles",
+                classeMatiere: "$matieres._id",
+                date: "$matieres.colleurs.colles.date",
+                dateSaisie: "$matieres.colleurs.colles.dateSaisie",
+                duree: {
+                  $cond: [
+
+                    {
+                      $and: [{
+                          $eq: ["$extraPeriode", true]
+                        },
+                        {
+                          $gte: ["$matieres.colleurs.colles.date", "$periode.debut"]
+                        }, {
+                          $lte: ["$matieres.colleurs.colles.date", "$periode.fin"]
+                        }
+                      ]
+                    },
+
+                    '$matieres.dureeExc',
+                    '$matieres.duree'
+                  ]
+                }
+              }
+            }, {
+              $match: {
+                dateSaisie: {
+                  $gte: debutPeriode,
+                  $lt: finPeriode
+                }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  classeMatiere: '$classeMatiere',
+                  duree: '$duree',
+                  classe: '$classe',
+                  matiere: '$matiere',
+                }, //$region is the column name in collection
+                count: {
+                  $sum: 1
+                },
+                heures: {
+                  $sum: '$duree'
+                },
+
+              },
+            },
+            {
+              $lookup: {
+                from: matieres,
+                localField: "_id.matiere",
+                foreignField: "_id",
+                as: "matieres"
+              }
+            },
+            {
+              $unwind: "$matieres"
+            },
+            {
+              $project: {
+                _id: 0,
+                classe: "$_id.classe",
+                matiere: "$matieres.nom",
+                duree: "$_id.duree",
+                count: 1,
+                heures: 1,
+              }
+            },
+          ])
+          .exec(function(err, data) {
+            console.log(data);
+            if (err) return console.error(err);
+            res.json(data);
+          });
+      });
   },
 
   //fin exports

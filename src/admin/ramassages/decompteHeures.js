@@ -1,7 +1,7 @@
 let decompteHeures = (function() {
 
   let self = {};
-  let dataListe = require('../../dataListe/dataListe.js');
+  let dataListe = require('../../misc/dataListe.js');
   /*
   **************************
         PRIVATE
@@ -25,8 +25,6 @@ let decompteHeures = (function() {
     } else {
       $('#showTableDecompte').css("display", "none");
     }
-
-
   });
 
 

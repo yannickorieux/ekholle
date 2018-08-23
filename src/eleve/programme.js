@@ -17,7 +17,7 @@ let programme = (function() {
     Mise à jour de la table des colles
   ************************************************************
   */
-  refreshTableProgrammeEleve = function() {
+  function refreshTableProgrammeEleve() {
     $.post("/eleve/tableProgrammeEleveJSON/", {
       'classe': classe,
     }, (data) => {
@@ -40,7 +40,7 @@ let programme = (function() {
 
 
   function initDataTablesProgrammeEleve() {
-    liste = []
+    let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableProgrammeEleve').DataTable({
       retrieve: true,
