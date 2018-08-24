@@ -1,0 +1,34 @@
+<div id='login' class="visible" style="display:none">
+  <form action="/users/login" method="post">
+    <div class="form-group row">
+      <label class="col-md-4 col-form-label">Votre profil</label>
+      <div class="col-md-8">
+        <select name="profil">
+        <option value="professeur">Professeur</option>
+        <option value="eleve">eleve</option>
+        <option value="admin">admin</option>
+      </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-4 col-form-label">login</label>
+      <div class="col-md-8">
+        <input class="form-control" type="text" name="login" placeholder="votre identifiant" required="">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-4 col-form-label">Mot de passe</label>
+      <div class="col-md-8">
+        <input class="form-control" type="password" name="logpassword" placeholder="Password" required="">
+      </div>
+    </div>
+    <div class="form row">
+      <div class="col-md-6">
+        <button type="submit" class="btn btn-primary">LOGIN</button>
+      </div>
+      <div class="col-md-6">
+        <a href="/users/forgot">Mot de passe oublié</a>
+      </div>
+    </div>
+  </form>
+</div>
