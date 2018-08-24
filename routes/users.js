@@ -504,10 +504,10 @@ import csv eleves
 **************************
 */
 
-testEtcrationLogin = function(profil, csvData, dataExists) {
+testEtCreationLogin = function(profil, csvData, dataExists) {
   let testLogin = [];
   dataExists.forEach((value) => {
-    testLogin.push(value.login)
+    if(typeof value.login!=='undefined'){testLogin.push(value.login)}
   });
   csvData.forEach((value) => {
     //ecriture de la condition en fonction du profil
@@ -558,7 +558,7 @@ testPresenceBase = function(req, res, profil, csvData, callback) {
       }
     }]).exec(function(err, eleves) {
       if (err) return console.error(err);
-      testEtcrationLogin(profil, csvData, eleves);
+      testEtCreationLogin(profil, csvData, eleves);
       callback(csvData);
     });
   } else if (profil === 'professeur') {
@@ -572,7 +572,7 @@ testPresenceBase = function(req, res, profil, csvData, callback) {
       }
     }]).exec(function(err, professeurs) {
       if (err) return console.error(err);
-      testEtcrationLogin(profil, csvData, professeurs);
+      testEtCreationLogin(profil, csvData, professeurs);
       callback(csvData);
     });
   } else if (profil === 'matiere') {

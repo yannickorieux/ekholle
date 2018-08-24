@@ -36,7 +36,6 @@ let paramCollesClasses = (function() {
     $.post("/professeur/listeMatiereClasseJSON/", {
       'idClasse': idClasse,
     }, (data) => {
-      console.log(data);
       let el4 = document.getElementById('dataListe4')
       dataListe.setDataListe(el4, data);
       dataListe.display(el4, true);
@@ -72,6 +71,7 @@ let paramCollesClasses = (function() {
       }
       dataListe.display(el4, false);
       document.getElementById('addClasseForm').reset();
+      document.getElementById('dataListe3Form').reset();
     });
   });
 
@@ -153,8 +153,8 @@ let paramCollesClasses = (function() {
       var tr = $(this).closest('tr');
       var row = table.row(tr);
       let element = row.data();
-      idClasseMatiereColleur = element.idClasseMatiereColleur;
-      idClasseMatiere = element.idClasseMatiere;
+      let idClasseMatiereColleur = element.idClasseMatiereColleur;
+      let idClasseMatiere = element.idClasseMatiere;
       suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur );
     });
   };

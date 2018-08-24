@@ -1,79 +1,83 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <% include partials/head %>
-  </head>
-  <body data-page="login">
-    <header>
-      <% include partials/header %>
-    </header>
-    <main>
 
-      <div class="container">
-        <div class="row">
-          <% if (locals.messages) { %>
-         <p style="color:red"><%=  locals.messages.msg  %></p>
+<head>
+  <% include partials/head %>
+</head>
+
+<body data-page="login">
+  <header>
+    <% include partials/header %>
+  </header>
+  <main>
+
+    <div class="container">
+      <div class="row">
+        <% if (locals.messages) { %>
+          <p style="color:red">
+            <%=  locals.messages.msg  %>
+          </p>
           <% } %>
-          <div id='login' class="visible">
-            <form action="/users/login" method="post">
-              <div class="form-group row">
-                <label class="col-md-4 col-form-label">Votre profil</label>
-                <div class="col-md-8">
-                  <select name="profil">
+            <div id='login' class="visible">
+              <form action="/users/login" method="post">
+                <div class="form-group row">
+                  <label class="col-md-4 col-form-label">Votre profil</label>
+                  <div class="col-md-8">
+                    <select name="profil">
                     <option value="professeur">Professeur</option>
                     <option value="eleve">eleve</option>
                     <option value="admin">admin</option>
                   </select>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-md-4 col-form-label">login</label>
-                <div class="col-md-8">
-                  <input class="form-control" type="text" name="login" placeholder="votre identifiant" required="">
+                <div class="form-group row">
+                  <label class="col-md-4 col-form-label">login</label>
+                  <div class="col-md-8">
+                    <input class="form-control" type="text" name="login" placeholder="votre identifiant" required="">
+                  </div>
                 </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-md-4 col-form-label">Mot de passe</label>
-                <div class="col-md-8">
-                  <input class="form-control" type="password" name="logpassword" placeholder="Password" required="">
+                <div class="form-group row">
+                  <label class="col-md-4 col-form-label">Mot de passe</label>
+                  <div class="col-md-8">
+                    <input class="form-control" type="password" name="logpassword" placeholder="Password" required="">
+                  </div>
                 </div>
-              </div>
-              <div class="form row">
-                <div class="col-md-6">
-                  <button type="submit" class="btn btn-primary">LOGIN</button>
+                <div class="form row">
+                  <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary">LOGIN</button>
+                  </div>
+                  <div class="col-md-6">
+                    <a href="/users/forgot">Mot de passe oublié</a>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <a href="/users/forgot" >Mot de passe oublié</a>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <hr>
+              </form>
+            </div>
       </div>
-      <!-- Bandeau cookie comportant le message et le bouton pour éventuellement s'opposer -->
-<div id="cookie-banner" class="cookie-banner">
-    Ce site utilise un cookie d'identication. En continuant à naviguer, vous nous autorisez à déposer ce cookie pour le bon fonctionnement de l'application e-khôlle.
-    <button id="cookie-more-button" name="cookie-more">En savoir plus ou s'opposer</button>
-</div>
+      <hr>
+    </div>
+    <!-- Bandeau cookie comportant le message et le bouton pour éventuellement s'opposer -->
+    <div id="cookie-banner" class="cookie-banner">
+      Ce site utilise un cookie d'identication. En continuant à naviguer, vous nous autorisez à déposer ce cookie pour le bon fonctionnement de l'application e-khôlle.
+      <button id="cookie-more-button" name="cookie-more">En savoir plus ou s'opposer</button>
+    </div>
 
-<!-- Boite de dialogue comportant une description détaillée et deux boutons (confirmation, rejet) -->
-<div id="cookie-inform-and-ask" class="cookie-inform-and-ask">
-    <div class="cookie-dialog">
+    <!-- Boite de dialogue comportant une description détaillée et deux boutons (confirmation, rejet) -->
+    <div id="cookie-inform-and-ask" class="cookie-inform-and-ask">
+      <div class="cookie-dialog">
         <h1>Cookies & traceurs : que dit la loi ?</h1>
-        <p>L'application e-khôlle utilise un cookie d'identification dans lequel est stocké un identifiant unique propre à chaque utilisateur enregistré
-        dans une base de donnée ainsi que son profil. D'après la directive 2002/58/CE celui-ci ne nécessite pas une approbation de l'utilisateur
-        voir : <a href='https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi'>CNIL</a>
-      </p>
+        <p>L'application e-khôlle utilise un cookie d'identification dans lequel est stocké un identifiant unique propre à chaque utilisateur enregistré dans une base de donnée ainsi que son profil. D'après la directive 2002/58/CE celui-ci ne nécessite pas
+          une approbation de l'utilisateur voir : <a href='https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi'>CNIL</a>
+        </p>
         <div>
           <button id="ga-cancel-button" name="ga-cancel">Annuler</button>
           <button id="ga-confirm-button" name="ga-confirm">Ne plus voir le message</button>
         </div>
+      </div>
     </div>
-</div>
-    </main>
-    <footer>
-      <% include partials/footer %>
-    </footer>
-  </body>
+  </main>
+  <footer>
+    <% include partials/footer %>
+  </footer>
+</body>
+
 </html>
