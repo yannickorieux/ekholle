@@ -86,7 +86,6 @@ let professeur = (function() {
    */
 
   self.init = function() {
-
     $('.summernote').summernote({
        dialogsInBody: true,
       toolbar: [

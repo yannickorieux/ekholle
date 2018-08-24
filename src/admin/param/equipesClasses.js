@@ -100,7 +100,7 @@ let equipesClasses = (function() {
    function formatColleurs(d) {
      // `d` is the original data object for the row
      let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-     for(i=0;i<d.nomColleur.length;i++){
+     for(let i=0;i<d.nomColleur.length;i++){
        table+=
          '<tr>' +
          '<td>colleur :</td>' +

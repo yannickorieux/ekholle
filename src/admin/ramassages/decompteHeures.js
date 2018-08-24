@@ -38,7 +38,7 @@ let decompteHeures = (function() {
     // `d` is the original data object for the row
     // `d` is the original data object for the row
     let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-    for (i = 0; i < d.bilan.length; i++) {
+    for (let i = 0; i < d.bilan.length; i++) {
       table +=
         '<tr>' +
         '<td>' + d.bilan[i].classe + ' ( ' + d.bilan[i].duree + ' ) ' + '</td>' +
@@ -119,7 +119,7 @@ let decompteHeures = (function() {
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
             let detail = '';
-            for (i = 0; i < data.bilan.length; i++) {
+            for (let i = 0; i < data.bilan.length; i++) {
               detail += data.bilan[i].classe + ' ( ' + data.bilan[i].duree + ' ) : ' + data.bilan[i].count + ' : ' + Math.floor(data.bilan[i].heures / 60) + 'h' + data.bilan[i].heures % 60 + 'mn' + ';'
             }
             return detail;

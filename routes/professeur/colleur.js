@@ -8,7 +8,7 @@ const ObjectId = mongoose.Types.ObjectId;
 ajout colle
 **************************
 */
-  function ajoutColle(req, res) {
+function ajoutColle(req, res) {
   let Structure = require('../../models/structure')(req.session.etab);
   // il faut au prealable filtrer sur la matiere de la colle
   Structure.update({
@@ -81,13 +81,105 @@ function modifColle(req, res) {
 
 
 
-
-
-
-
-
-
 module.exports = {
+
+  /*
+  **************************
+   EN TEST
+  **************************
+  */
+
+  listeClassesMatieresJSON: function(req, res) {
+    let Structure = require('../../models/structure')(req.session.etab);
+    let matiere = req.session.etab + '_matieres';
+    let professeur = req.session.etab + '_professeurs'
+    Structure.aggregate([{
+          $unwind: "$matieres"
+        },
+        {
+          $project: {
+            classe: "$nom",
+            idClasseMatiere: "$matieres._id",
+            matiere: "$matieres.matiere",
+            professeur: "$matieres.professeur",
+          }
+        },
+        {
+          $lookup: {
+            from: matiere,
+            localField: "matiere",
+            foreignField: "_id",
+            as: "matiere"
+          }
+        },
+        {
+          $lookup: {
+            from: professeur,
+            localField: "professeur",
+            foreignField: "_id",
+            as: "professeur"
+          }
+        },
+        {
+          $unwind: "$professeur"
+        },
+        {
+          $unwind: "$matiere"
+        },
+        {
+          $project: {
+            idClasse: '$_id',
+            classe: 1,
+            idClasseMatiere: 1,
+            duree: 1,
+            matiere: 1,
+            professeur: 1,
+
+          }
+        },
+        {
+          $group: {
+            _id: {
+              'idClasse': '$idClasse',
+              'classe': '$classe'
+            },
+            matieres: {
+              $push: {
+                'idClasseMatiere': '$idClasseMatiere',
+                'matiere': '$matiere',
+                'professeur': '$professeur'
+              }
+            },
+
+          }, //$region is the column name in collection
+        },
+        {
+          $project: {
+            _id: '$_id.idClasse',
+            idClasse: '$_id.idClasse',
+            nom: '$_id.classe',
+            matieres: 1
+          }
+        },
+      ])
+      .exec(function(err, data) {
+        if (err) return console.error(err);
+        res.send(data);
+      });
+  },
+
+
+  /*
+  **************************
+  FIN TEST
+  **************************
+  */
+
+
+
+
+
+
 
 
   /*
@@ -95,68 +187,99 @@ module.exports = {
   association matiere/classe avec le professeur coordo de discipline pour datalist
   **************************
   */
-
-  listeMatiereClasseJSON : function(req, res) {
-    let Structure = require('../../models/structure')(req.session.etab);
-    let Matiere = require('../../models/matiere')(req.session.etab);
-    let Professeur = require('../../models/professeur')(req.session.etab);
-    Structure.findOne({
-      "_id": req.body.idClasse
-    }, {
-      'matieres.matiere': 1,
-      'matieres.professeur': 1,
-      'matieres.duree': 1,
-      'matieres._id': 1
-    }).populate({
-      path: 'matieres.matiere',
-      model: Matiere,
-      select: {
-        'nom': 1,
-        '_id': 0
-      }
-    }).populate({
-      path: 'matieres.professeur',
-      model: Professeur,
-      select: {
-        'nom': 1,
-        'prenom': 1,
-        '_id': 0
-      }
-    }).exec(function(err, data) {
-      if (err) return console.error(err);
-      res.json(data.matieres);
-    });
-  },
+  //
+  // listeMatiereClasseJSON: function(req, res) {
+  //   let Structure = require('../../models/structure')(req.session.etab);
+  //   let Matiere = require('../../models/matiere')(req.session.etab);
+  //   let Professeur = require('../../models/professeur')(req.session.etab);
+  //   Structure.findOne({
+  //     "_id": req.body.idClasse
+  //   }, {
+  //     'matieres.matiere': 1,
+  //     'matieres.professeur': 1,
+  //     'matieres.duree': 1,
+  //     'matieres._id': 1
+  //   }).populate({
+  //     path: 'matieres.matiere',
+  //     model: Matiere,
+  //     select: {
+  //       'nom': 1,
+  //       '_id': 0
+  //     }
+  //   }).populate({
+  //     path: 'matieres.professeur',
+  //     model: Professeur,
+  //     select: {
+  //       'nom': 1,
+  //       'prenom': 1,
+  //       '_id': 0
+  //     }
+  //   }).exec(function(err, data) {
+  //     if (err) return console.error(err);
+  //     res.json(data.matieres);
+  //   });
+  // },
 
   /*
   **************************
   ajoute une colle à un professeur en l'associant à une matiere/classe
   **************************
   */
-  addClasseMatiereColleur : function(req, res) {
+  addClasseMatiereColleur: function(req, res) {
     let Matiere = require('../../models/matiere')(req.session.etab);
     let Professeur = require('../../models/professeur')(req.session.etab);
     let Structure = require('../../models/structure')(req.session.etab);
-    Structure.update({
-      "_id": req.body.idClasse
-    }, {
-      $addToSet: {
-        'matieres.$[element].colleurs': {
-          _id: req.body.idProfesseur
+    Structure.aggregate([{
+        $match: {
+          _id: ObjectId(req.body.idClasse)
         }
-      }
-    }, {
-      arrayFilters: [{
-        'element._id': ObjectId(req.body.idClasseMatiere)
-      }]
-    }).exec(function(err, data) {
-      if (data.nModified !== 0) {
-        res.send({
-          "error": "ok"
-        });
-      } else {
+      },
+      {
+        $unwind: "$matieres"
+      },
+      {
+        $unwind: "$matieres.colleurs"
+      },
+      {
+        $project: {
+          idMatiere: "$matieres._id",
+          idColleur: "$matieres.colleurs._id"
+        }
+      },
+      {
+        $match: {
+          $and: [{
+              idMatiere: ObjectId(req.body.idClasseMatiere)
+            },
+            {
+              idColleur: ObjectId(req.body.idProfesseur)
+            }
+          ]
+        }
+      },
+    ]).exec(function(err, data) {
+      if (data.length > 0) {
         res.send({
           "error": "Cette association Colleur/Matière est déjà créée"
+        });
+      } else {
+        Structure.update({
+          "_id": ObjectId(req.body.idClasse)
+        }, {
+          $push: {
+            'matieres.$[element].colleurs': {
+              _id: ObjectId(req.body.idProfesseur)
+            }
+          }
+        }, {
+          arrayFilters: [{
+            'element._id': ObjectId(req.body.idClasseMatiere)
+          }]
+        }).exec(function(err, data) {
+
+          res.send({
+            "error": "ok"
+          });
         });
       }
     });
@@ -170,7 +293,9 @@ module.exports = {
    */
   suppClasseMatiereColleur: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
-    Structure.update({'matieres._id' : req.body.idClasseMatiere}, {
+    Structure.update({
+      'matieres._id': req.body.idClasseMatiere
+    }, {
       $pull: {
         'matieres.$[el].colleurs': {
           '_id': ObjectId(req.body.idClasseMatiereColleur)
@@ -178,9 +303,8 @@ module.exports = {
       }
     }, {
       arrayFilters: [{
-          'el._id': ObjectId(req.body.idClasseMatiere)
-        }
-      ]
+        'el._id': ObjectId(req.body.idClasseMatiere)
+      }]
     }).exec(function(err, result) {
       console.log(result);
       if (err) return console.error(err);
@@ -193,7 +317,7 @@ module.exports = {
   table pour afficher les matieres/classes du colleur
   **************************
   */
-  tableMesCollesClassesJSON : function(req, res) {
+  tableMesCollesClassesJSON: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     let matiere = req.session.etab + '_matieres';
     let professeur = req.session.etab + '_professeurs'
@@ -209,11 +333,11 @@ module.exports = {
           $project: {
             classe: "$nom",
             idClasseMatiere: "$matieres._id",
-            idClasseMatiereColleur:  '$matieres.colleurs._id',
+            idClasseMatiereColleur: '$matieres.colleurs._id',
             duree: "$matieres.duree",
             matiere: "$matieres.matiere",
             professeur: "$matieres.professeur",
-            colles : "$matieres.colleurs.colles",
+            colles: "$matieres.colleurs.colles",
           }
         },
         {
@@ -247,20 +371,21 @@ module.exports = {
         {
           $project: {
             idClasse: '$_id',
-            idClasseMatiereColleur:  1,
+            idClasseMatiereColleur: 1,
             classe: 1,
             idClasseMatiere: 1,
             duree: 1,
             matiere: '$matiere.nom',
             nom: '$professeur.nom',
             prenom: '$professeur.prenom',
-            totalColles : {$size : '$colles'},
+            totalColles: {
+              $size: '$colles'
+            },
           }
         },
 
       ])
       .exec(function(err, data) {
-        console.log(data);
         if (err) return console.error(err);
         res.send(data);
       });
@@ -273,7 +398,7 @@ module.exports = {
   liste des élèves à coller pour la matière choisie ar le colleur
   **************************
   */
-  listeElevesJSON : function(req, res) {
+  listeElevesJSON: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     let eleves = req.session.etab + '_eleves';
     Structure.aggregate([{
@@ -351,7 +476,7 @@ module.exports = {
   Ajout ou modification d'une colle dans la base
   **************************
   */
-  addOrModColle : function(req, res) {
+  addOrModColle: function(req, res) {
     if (req.body.mode === 'ajouter') {
       ajoutColle(req, res);
     } else {
@@ -366,10 +491,12 @@ module.exports = {
   */
 
 
-  suppColle : function(req, res) {
+  suppColle: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     // il faut au prealable filtrer sur la matiere de la colle
-    Structure.update({'matieres._id': req.body.idMatiereColle}, {
+    Structure.update({
+      'matieres._id': req.body.idMatiereColle
+    }, {
       $pull: {
         'matieres.$[].colleurs.$[].colles': {
           '_id': ObjectId(req.body.idColle)
@@ -390,7 +517,7 @@ module.exports = {
   */
 
 
-  tableCollesJSON : function(req, res) {
+  tableCollesJSON: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     let eleves = req.session.etab + '_eleves';
     Structure.aggregate([{
@@ -459,7 +586,7 @@ module.exports = {
   **************************
   */
 
-  tableProgrammeColleurJSON : function(req, res) {
+  tableProgrammeColleurJSON: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     let professeurs = req.session.etab + '_professeurs';
     Structure.aggregate([{
@@ -470,14 +597,14 @@ module.exports = {
       },
       {
         $match: {
-            'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
-          }
+          'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
+        }
       },
       {
         $project: {
           classe: "$nom",
           idProf: "$matieres.professeur",
-          programme : "$matieres.programme",
+          programme: "$matieres.programme",
         }
       },
       {
@@ -495,10 +622,10 @@ module.exports = {
         $project: {
           classe: 1,
           idMat: 1,
-          nom : "$professeurs.nom",
-          prenom : "$professeurs.prenom",
-          debut : "$programme.debut",
-          fin : "$programme.fin",
+          nom: "$professeurs.nom",
+          prenom: "$professeurs.prenom",
+          debut: "$programme.debut",
+          fin: "$programme.fin",
           titre: "$programme.titre",
           detail: "$programme.detail",
         }
@@ -515,15 +642,15 @@ module.exports = {
        renvoie l'année et les périodes
    **************************
    */
-/*
-   ****************************
-ATTENTION CE N'EST AS PROPRE ON SUPPOSE QUE admin est le prenom de tous les administrateurs
-*/
+  /*
+     ****************************
+  ATTENTION CE N'EST AS PROPRE ON SUPPOSE QUE admin est le prenom de tous les administrateurs
+  */
 
-  getAnnee : function(req, res) {
+  getAnnee: function(req, res) {
     let Admin = require('../../models/admin')(req.session.etab)
     Admin.findOne({
-      prenom : 'admin'
+      prenom: 'admin'
     }).exec(function(err, data) {
       if (err) return console.error(err);
       res.json(data);
@@ -539,7 +666,7 @@ ATTENTION CE N'EST AS PROPRE ON SUPPOSE QUE admin est le prenom de tous les admi
   */
 
 
-  tableDecompteHeuresJSON : function(req, res) {
+  tableDecompteHeuresJSON: function(req, res) {
     let Admin = require('../../models/admin')(req.session.etab)
     Admin.aggregate([{
           $unwind: "$periodes"
@@ -654,7 +781,6 @@ ATTENTION CE N'EST AS PROPRE ON SUPPOSE QUE admin est le prenom de tous les admi
             },
           ])
           .exec(function(err, data) {
-            console.log(data);
             if (err) return console.error(err);
             res.json(data);
           });

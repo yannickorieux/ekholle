@@ -29,7 +29,8 @@ let eleves = (function() {
     */
 
 
-  $('#dataListe4Select').on('change', function() {
+  $('#dataListe4Form').submit(function(e) {
+    e.preventDefault();
     let el4 = document.getElementById('dataListe4');
     let classe = dataListe.getName(el4)
     let id = dataListe.getId(el4)

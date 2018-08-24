@@ -26,11 +26,8 @@ let loginPassword = (function() {
       $.post("/users/modifyPassword", {
         'password': password,
         'passwordConf': passwordConf,
-      }, (message) => {
-        if (message == null || message == '') {
-          $('#error').html('Votre mot de passe a été modifié');
-          $('#erreur').modal();
-        }
+      }, () => {
+          window.location.assign('/')
       });
     }
   });

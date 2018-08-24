@@ -8,6 +8,7 @@ let paramCollesClasses = (function() {
   let self = {};
   let idProfesseur = $('body').data("idprofesseur")
   let dataListe = require('../misc/dataListe.js');
+  var classesMatieres;
 
 
   /********************************************************************
@@ -33,13 +34,15 @@ let paramCollesClasses = (function() {
     e.preventDefault();
     let classe = dataListe.getName(el3);
     let idClasse = dataListe.getId(el3);
-    $.post("/professeur/listeMatiereClasseJSON/", {
-      'idClasse': idClasse,
-    }, (data) => {
-      let el4 = document.getElementById('dataListe4')
-      dataListe.setDataListe(el4, data);
-      dataListe.display(el4, true);
+    let matiere = classesMatieres.find((el) => {
+       if(el.idClasse===idClasse){
+         let el4 = document.getElementById('dataListe4')
+         dataListe.setDataListe(el4, el.matieres);
+         dataListe.display(el4, true);
+         return;
+       };
     });
+
   });
 
 
@@ -70,20 +73,32 @@ let paramCollesClasses = (function() {
         refreshTableMesCollesClasses();
       }
       dataListe.display(el4, false);
-      document.getElementById('addClasseForm').reset();
-      document.getElementById('dataListe3Form').reset();
+      $('#addClasseForm')[0].reset();
+      $("#addClasseForm input[type=hidden]").val('');
+      $('#dataListe3Form')[0].reset();
+      $("#dataListe3Form input[type=hidden]").val('');
     });
   });
 
 
-  function getListeClasses() {
-    //Mettre à jour la liste des classes
+  // function getListeClasses() {
+  //   //Mettre à jour la liste des classes
+  //
+  //   $.get("/admin/tableClassesJSON/", (data) => {
+  //     let el3 = document.getElementById('dataListe3')
+  //     dataListe.setDataListe(el3, data);
+  //   });
+  // }
 
-    $.get("/admin/tableClassesJSON/", (data) => {
-      let el3 = document.getElementById('dataListe3')
-      dataListe.setDataListe(el3, data);
+
+  function getListeClassesMatieres() {
+    $.get("/professeur/listeClassesMatieresJSON/", (data) => {
+      classesMatieres=data;
+       let el3 = document.getElementById('dataListe3')
+       dataListe.setDataListe(el3, classesMatieres);  //on peuple les classes
     });
   }
+
 
 
   function initDataTablesMesCollesClasses() {
@@ -211,7 +226,8 @@ let paramCollesClasses = (function() {
 
 
   self.init = () => {
-    getListeClasses();
+    //getListeClasses();
+    getListeClassesMatieres(); //test
     initDataTablesMesCollesClasses();
     refreshTableMesCollesClasses ();
   }

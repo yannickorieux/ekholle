@@ -37,11 +37,25 @@ TAB  COLLEUR
 
 /*
 **************************
+ EN TEST
+**************************
+*/
+
+
+router.get('/listeClassesMatieresJSON/', login.isLoggedIn, colleur.listeClassesMatieresJSON);
+/*
+**************************
+FIN TEST
+**************************
+*/
+
+/*
+**************************
 association matiere/classe avec le professeur coordo de discipline pour datalist
 **************************
 */
 
-router.post('/listeMatiereClasseJSON/', login.isLoggedIn, colleur.listeMatiereClasseJSON);
+//router.post('/listeMatiereClasseJSON/', login.isLoggedIn, colleur.listeMatiereClasseJSON);
 
 /*
 **************************

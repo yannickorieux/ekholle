@@ -13,9 +13,16 @@ const config = require('../secret');
 
 /* on renvoie la page de login */
 router.get('/', function(req, res, next) {
+  let page = '';
+  if (typeof req.session.userId === 'undefined') {
+    page = 'login'
+  } else if (req.session.changePwd === false) {
+    page = 'password'
+  } else res.end();
   res.render('login.ejs', {
     title: 'e-khôlle',
     role: req.session.role,
+    page: page
   });
 });
 
@@ -45,7 +52,10 @@ router.post('/login', function(req, res, next) {
       } else {
         req.session.userId = user._id;
         req.session.role = req.body.profil;
-        if (req.body.profil === 'professeur') {
+        if (user.changePwd === false) {
+          req.session.changePwd = false;
+          res.redirect('/users');
+        } else if (req.body.profil === 'professeur') {
           return res.redirect('/professeur');
         } else if (req.body.profil === 'admin') {
           return res.redirect('/admin');
@@ -106,7 +116,11 @@ router.post('/modifyPassword', login.isLoggedIn, function(req, res, next) {
       user.changePwd = true; //l'utilisateur utilise maintenant un mdp crypté
       user.save(function(err, user) {
         Login.authenticate(Login, user.login, req.body.password, function(error, user) {
-          return res.send(err);
+          if (!err) return res.end();
+          else {
+            console.log("une erreur s'est produite");
+            res.redirect('/users');
+          }
         });
       });
     });
@@ -190,6 +204,10 @@ router.post('/forgot', function(req, res, next) {
         if (!user) {
           res.locals.messages = req.flash('msg', "Ce login n'est pas présent dans la base de l'application.");
           return res.redirect('/users/forgot');
+        }
+        if(user.changePwd === false){
+          res.locals.messages = req.flash('msg', "Ce login est  présent dans la base mais votre compte n'a pas été activé avec le code fourni.");
+          return res.redirect('/users');
         }
         user.email = req.body.logemail
         user.resetPasswordToken = token;
@@ -507,7 +525,9 @@ import csv eleves
 testEtCreationLogin = function(profil, csvData, dataExists) {
   let testLogin = [];
   dataExists.forEach((value) => {
-    if(typeof value.login!=='undefined'){testLogin.push(value.login)}
+    if (typeof value.login !== 'undefined') {
+      testLogin.push(value.login)
+    }
   });
   csvData.forEach((value) => {
     //ecriture de la condition en fonction du profil

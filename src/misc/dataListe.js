@@ -110,7 +110,7 @@ let dataListe = (function() {
         }
       } else if (type === 'classematiere') {
         for (let i = 0; i < data.length; i++) {
-          html += "<option data-value='" + data[i]._id + "'>" + data[i].matiere.nom +'--' + data[i].professeur.nom +' ' + data[i].professeur.prenom + "</option>";
+          html += "<option data-value='" + data[i].idClasseMatiere + "'>" + data[i].matiere.nom +'--' + data[i].professeur.nom +' ' + data[i].professeur.prenom + "</option>";
         }
       } else if (type === 'classematierecoordo') {
         for (let i = 0; i < data.length; i++) {

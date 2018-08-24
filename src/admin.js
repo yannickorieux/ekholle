@@ -46,7 +46,9 @@ let admin = (function() {
 
       //dataliste classe pour liste eleves
     let el4 = document.querySelector('#dataListe4')
-    dataListe.set(el4);
+    dataListe.set(el4 ,{
+      'form': true
+    });
 
     //dataliste classe pour nouvel eleve
     let el6 = document.querySelector('#dataListe6')
