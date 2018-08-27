@@ -11,7 +11,9 @@ let StructureSchema = new mongoose.Schema({
   niveau: {
     type: Number
   },
-
+  totalEleves : {
+    type: Number
+  },
   extraPeriode : {
     type : Boolean,
     default : false

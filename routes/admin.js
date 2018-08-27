@@ -39,6 +39,13 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
  */
 router.get('/tableStructureJSON/', login.isLoggedIn, classes.tableStructureJSON);
 
+/*
+**************************
+      Script pour modifier le niveau des classes
+ **************************
+ */
+
+ router.post('/niveau/', login.isLoggedIn, classes.niveau);
 
 /*
 **************************
@@ -123,7 +130,6 @@ router.get('/tableProfesseursJSON/', login.isLoggedIn, professeurs.tableProfesse
   router.get('/nettoyerBaseEleve/', login.isLoggedIn, eleves.nettoyerBaseEleve);
 
 
-  router.get('/rafraichirBaseStructure/', login.isLoggedIn, classes.rafraichirBaseStructure);
   /*
   **************************
        FIN TAB IMPORTS

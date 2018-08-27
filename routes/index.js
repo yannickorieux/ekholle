@@ -21,7 +21,6 @@ router.get('/', function(req, res, next) {
       res.redirect('/users')
     }
     else {
-      console.log('testindex');
       res.render('index', {
         title: 'e-khôlle',
         role:'' ,
@@ -46,11 +45,15 @@ router.get('/home', function(req, res, next) {
 
 
 router.post('/choixEtab', function(req, res, next) {
+  console.log('test');
+  console.log(req.body);
+  console.log(req.session.userId);
       if(typeof req.session.userId !== 'undefined'){res.redirect('/')}
       else{
+        console.log(req.body);
         req.session.etab=req.body.etablissement;
         req.session.lycee=req.body.etablissement;
-        res.redirect('/')
+        res.redirect('/users')
       }
 
 

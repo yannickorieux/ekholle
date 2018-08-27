@@ -73,7 +73,7 @@ Etablissement.find({}, function(err, result) {
 
 let getEtab = function(req, res, next) {
   let etab=req.url.split('/').pop();
-  if(etab !==''){ //on detecte une chaine de caractere et on verifie qu'elle correspond à un etab
+  if(etab !=='' && etab !=='choixEtab' ){ //on detecte une chaine de caractere et on verifie qu'elle correspond à un etab
     index = liste.findIndex(item => item.prefix === etab); //on regarde si etab est dans la liste
     if (typeof req.session.etab!=='undefined'){
       //attention si session deja enregistree

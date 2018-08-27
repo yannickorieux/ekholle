@@ -207,7 +207,7 @@ router.post('/forgot', function(req, res, next) {
           res.locals.messages = req.flash('msg', "Ce login n'est pas présent dans la base de l'application.");
           return res.redirect('/users/forgot');
         }
-        if(user.changePwd === false){
+        if (user.changePwd === false) {
           res.locals.messages = req.flash('msg', "Ce login est  présent dans la base mais votre compte n'a pas été activé avec le code fourni.");
           return res.redirect('/users');
         }
@@ -672,25 +672,16 @@ router.post('/importEleves', function(req, res, next) {
         multi: true
       })
       .exec(function(err, results) {
-        console.log(results);
+
         //on supprime les classes pour chaque eleves
         Eleve.update({}, {
-          $unset: {
-            classe: 1,
-          }
-        }, {
-          multi: true
-        }).exec(function(err, results) {
-          console.log(results);
-          //puis  modifie les restants avec leur nouvelle classe
-          Eleve.update({}, {
             $unset: {
               classe: 1,
             }
           }, {
             multi: true
-          }).exec(function(err, results) {
-            const async = require('async');
+          })
+          .exec(function(err, results) {
             let data = JSON.parse(req.body.dataMod);
             async.eachSeries(data, function updateObject(obj, done) {
               // Model.update(condition, doc, callback)
@@ -712,12 +703,8 @@ router.post('/importEleves', function(req, res, next) {
                 }
                 res.end();
               });
-            });
-          })
-
-        });
-        //puis on remet à jour la structure
-        res.end();
+            })
+          });
       });
   } else {
     // mise à jour standard on ajoute les nouveaux (modifie les autres)
@@ -774,5 +761,69 @@ router.post('/importMatieres', function(req, res, next) {
 });
 
 
+
+/*
+**************************
+       rafraichir les classes après import
+ **************************
+ */
+
+
+router.get('/rafraichirBaseStructure/', login.isLoggedIn, function(req, res) {
+  let Eleve = require('../models/eleve')(req.session.etab);
+  let Structure = require('../models/structure')(req.session.etab);
+  Eleve.aggregate([{
+        $group: {
+          _id: '$classe', //$region is the column name in collection
+          count: {
+            $sum: 1
+          },
+        }
+      },
+      {
+        $project: {
+          nom: "$_id",
+          totalEleves: '$count'
+        }
+      }
+    ])
+    .exec(function(err, classes) {
+      if (err) return console.error(err);
+      Structure.distinct('nom')
+        .exec(function(err, classesExist) {
+          if (err) return console.error(err);
+          newClasses = [];
+          classes.forEach((value) => {
+            if (classesExist.indexOf(value.nom) === -1) {
+              newClasses.push({
+                'nom': value
+              })
+            }
+          });
+          Structure.collection.insertMany(newClasses, function(err, docs) {
+            if (err) {
+              console.error(err);
+            } else {
+              console.log("Multiple documents inserted to Collection");
+            }
+            // on enregistre ensuite le nombre d'élèves par classe dans la Structure
+            async.eachSeries(classes, function updateObject(obj, done) {
+                // Model.update(condition, doc, callback)
+                Structure.update({
+                  nom: obj.nom
+                }, {
+                  $set: {
+                    totalEleves: obj.totalEleves
+                  }
+                }, done);
+              },
+              function allDone(err) {
+                res.end();
+              });
+          });
+        });
+      res.end();
+    });
+});
 
 module.exports = router;

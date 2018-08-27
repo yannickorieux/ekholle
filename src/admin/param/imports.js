@@ -414,7 +414,7 @@ let imports = (function() {
       });
     };
     if(action==='rafraichir'){
-      $.get("/admin/rafraichirBaseStructure/",  () => {
+      $.get("/users/rafraichirBaseStructure/",  () => {
         // success
       });
     };

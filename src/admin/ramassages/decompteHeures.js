@@ -7,6 +7,8 @@ let decompteHeures = (function() {
         PRIVATE
    **************************
 
+
+
    ********************************************************************
          Choix de la periode
    ************************************************************
@@ -34,22 +36,22 @@ let decompteHeures = (function() {
    **************************
    */
 
-  function formatDetailBilan(d) {
-    // `d` is the original data object for the row
-    // `d` is the original data object for the row
-    let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-    for (let i = 0; i < d.bilan.length; i++) {
-      table +=
-        '<tr>' +
-        '<td>' + d.bilan[i].classe + ' ( ' + d.bilan[i].duree + ' ) ' + '</td>' +
-        '<td>' + d.bilan[i].count + '</td>' +
-        '<td>' + Math.floor(d.bilan[i].heures / 60) + 'h' + d.bilan[i].heures % 60 + 'mn' + '</td>' +
-        '</tr>';
-    }
-
-    table += '</table>';
-    return table;
-  };
+  // function formatDetailBilan(d) {
+  //   // `d` is the original data object for the row
+  //   // `d` is the original data object for the row
+  //   let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+  //   for (let i = 0; i < d.bilan.length; i++) {
+  //     table +=
+  //       '<tr>' +
+  //       '<td>' + d.bilan[i].classe + ' ( ' + d.bilan[i].duree + ' ) ' + '</td>' +
+  //       '<td>' + d.bilan[i].count + '</td>' +
+  //       '<td>' + Math.floor(d.bilan[i].heures / 60) + 'h' + d.bilan[i].heures % 60 + 'mn' + '</td>' +
+  //       '</tr>';
+  //   }
+  //
+  //   table += '</table>';
+  //   return table;
+  // };
 
   /*
   **************************
@@ -99,32 +101,64 @@ let decompteHeures = (function() {
           data: 'grade'
         },
         {
-          data: 'count'
+          data: null,
+          render: function(data, type, row) {
+            // Combine the first and last names into a single table field
+            let ind=data.bilan.findIndex(i =>i.taux === 1);
+            if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
+          },
         },
         {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
-            return Math.floor(data.heures / 60) + 'h' + data.heures % 60 + 'mn';
+            let ind=data.bilan.findIndex(i =>i.taux === 2);
+            if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
           },
-        },
-        {
-          "className": 'details-control',
-          "orderable": false,
-          "data": null,
-          "defaultContent": ''
         },
         {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
-            let detail = '';
-            for (let i = 0; i < data.bilan.length; i++) {
-              detail += data.bilan[i].classe + ' ( ' + data.bilan[i].duree + ' ) : ' + data.bilan[i].count + ' : ' + Math.floor(data.bilan[i].heures / 60) + 'h' + data.bilan[i].heures % 60 + 'mn' + ';'
-            }
-            return detail;
+            let ind=data.bilan.findIndex(i => i.taux === 3);
+            if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
           },
         },
+        {
+          data: null,
+          render: function(data, type, row) {
+            // Combine the first and last names into a single table field
+            let ind=data.bilan.findIndex(i =>i.taux === 4);
+            if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
+          },
+        },
+        // {
+        //   data: 'count'
+        // },
+        // {
+        //   data: null,
+        //   render: function(data, type, row) {
+        //     // Combine the first and last names into a single table field
+        //     return Math.floor(data.heures / 60) + 'h' + data.heures % 60 + 'mn';
+        //   },
+        // },
+        // {
+        //   "className": 'details-control',
+        //   "orderable": false,
+        //   "data": null,
+        //   "defaultContent": ''
+        // },
+        // {
+        //   data: null,
+        //   render: function(data, type, row) {
+        //     // Combine the first and last names into a single table field
+        //     let detail = '';
+        //     for (let i = 0; i < data.bilan.length; i++) {
+        //       detail += data.bilan[i].classe + ' ( ' + data.bilan[i].duree + ' ) : ' + data.bilan[i].count + ' : ' + Math.floor(data.bilan[i].heures / 60) + 'h' + data.bilan[i].heures % 60 + 'mn' + ';'
+        //     }
+        //     return detail;
+        //   },
+        // },
       ],
 
       order: [
@@ -132,20 +166,20 @@ let decompteHeures = (function() {
       ],
     });
 
-    $('#tableDecompte tbody').on('click', 'td.details-control', function() {
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
-      if (row.child.isShown()) {
-        // This row is already open - close it
-        row.child.hide();
-        tr.removeClass('shown');
-      } else {
-        // Open this row
-        row.child(formatDetailBilan(row.data())).show();
-        tr.addClass('shown');
-      }
-    });
-    table.columns(5).visible(false);
+    // $('#tableDecompte tbody').on('click', 'td.details-control', function() {
+    //   var tr = $(this).closest('tr');
+    //   var row = table.row(tr);
+    //   if (row.child.isShown()) {
+    //     // This row is already open - close it
+    //     row.child.hide();
+    //     tr.removeClass('shown');
+    //   } else {
+    //     // Open this row
+    //     row.child(formatDetailBilan(row.data())).show();
+    //     tr.addClass('shown');
+    //   }
+    // });
+    // table.columns(5).visible(false);
   };
 
 

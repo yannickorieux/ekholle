@@ -80,36 +80,92 @@ module.exports = {
       GESTION CLASSES
    **************************
    */
+
+
+  /*
+  **************************
+        Script pour modifier le niveau des classes
+   **************************
+   */
+
+
+  niveau: function(req, res) {
+    let Structure = require('../../models/structure')(req.session.etab);
+    Structure.findOneAndUpdate({
+        '_id': ObjectId(req.body.idClasse)
+      }, {
+        $set: {
+          'niveau': parseInt(req.body.niveau)
+        }
+      })
+      .exec(function(err, structure) {
+        if (err) return console.error(err);
+        res.end();
+      });
+
+  },
+
   /*
   **************************
         Script pour afficher la sructure des classes
    **************************
    */
   tableStructureJSON: function(req, res) {
-    let Eleve = require('../../models/eleve')(req.session.etab);
-    structure = req.session.etab + '_structures'
-    Eleve.aggregate([{
-        $group: {
-          _id: '$classe', //$region is the column name in collection
-          count: {
-            $sum: 1
-          },
-        }
-      }, {
-        $lookup: {
-          from: structure,
-          localField: "_id",
-          foreignField: "nom",
-          as: "classe"
-        }
-      },
-      {
+    let Structure = require('../../models/structure')(req.session.etab);
+    Structure.aggregate([{
         $project: {
-          nom: "$_id",
-          total: "$count",
-          classe: '$classe'
+          idClasse: "$_id",
+          nom : 1,
+          niveau: 1,
+          totalEleves : 1 ,
+          taux: {
+            $switch: {
+              branches: [{
+                  case: {
+                    $and: [{
+                      $lte: ["$totalEleves", 36]
+                    }, {
+                      $eq: ["$niveau", 1]
+                    }]
+                  },
+                  then: 'taux 91/08',
+                },
+                {
+                  case: {
+                    $and: [{
+                      $gt: ["$totalEleves", 36]
+                    }, {
+                      $eq: ["$niveau", 1]
+                    }]
+                  },
+                  then: 'taux 90/07',
+                },
+                {
+                  case: {
+                    $and: [{
+                      $lte: ["$totalEleves", 36]
+                    }, {
+                      $eq: ["$niveau", 2]
+                    }]
+                  },
+                  then: 'taux 01/06',
+                },
+                {
+                  case: {
+                    $and: [{
+                      $gt: ["$totalEleves", 36]
+                    }, {
+                      $eq: ["$niveau", 2]
+                    }]
+                  },
+                  then: 'taux 157/161',
+                }
+              ],
+              default: "Did not match"
+            }
         }
       }
+    }
     ]).exec(function(err, data) {
       if (err) return console.error(err);
       res.json(data);
@@ -317,7 +373,7 @@ module.exports = {
 
   /*
   **************************
-         ajout ou modiication d'une matiere
+         ajout ou modification d'une matiere
    **************************
    */
   addOrModClasseMatiere: function(req, res) {
@@ -335,7 +391,6 @@ module.exports = {
    */
   suppClasseMatiere: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
-    console.log(req.body.idClasseMatiere);
     Structure.update({}, {
       $pull: {
         'matieres': {
@@ -351,41 +406,5 @@ module.exports = {
   },
 
 
-  /*
-  **************************
-         rafraichir les classes après import
-   **************************
-   */
 
-  rafraichirBaseStructure: function(req, res) {
-    let Eleve = require('../../models/eleve')(req.session.etab);
-    let Structure = require('../../models/structure')(req.session.etab);
-    Eleve.distinct('classe')
-      .exec(function(err, classes) {
-        if (err) return console.error(err);
-        Structure.distinct('nom')
-          .exec(function(err, classesExist) {
-            if (err) return console.error(err);
-            newClasses = [];
-            classes.forEach((value) => {
-              if (classesExist.indexOf(value) === -1) {
-                newClasses.push({
-                  'nom': value
-                })
-              }
-            })
-            console.log(newClasses);
-            Structure.collection.insertMany(newClasses, function(err, docs) {
-              if (err) {
-                return console.error(err);
-              } else {
-                console.log("Multiple documents inserted to Collection");
-              }
-              res.end();
-            });
-          });
-      });
-
-
-  },
 }
