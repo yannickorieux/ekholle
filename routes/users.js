@@ -22,6 +22,7 @@ router.get('/', function(req, res, next) {
   res.render('login.ejs', {
     title: 'e-khôlle',
     role: req.session.role,
+    lycee: req.session.lycee,
     page: page
   });
 });
@@ -175,8 +176,9 @@ router.post('/contactSupport', function(req, res, next) {
 router.get('/forgot', function(req, res) {
   res.render('forgot.ejs', {
     role: req.session.role,
+    lycee: req.session.lycee,
     title: 'e-khôlle',
-    form: 'forgot'
+    form: 'forgot',
   });
 });
 
@@ -226,7 +228,7 @@ router.post('/forgot', function(req, res, next) {
       var mailOptions = {
         to: user.email,
         from: config.email,
-        subject: 'changer le mot de passe de votre comptr e-kholle',
+        subject: 'changer le mot de passe de votre compte e-kholle',
         text: 'Vous avez reçu ce message car (vous ou un tiers) a fait une demande de modification du mot de passe de votre comte.\n\n' +
           'Coller le lien dans le navigateur  pour terminer le processus de modification :\n\n' +
           'http://' + req.headers.host + '/users/reset/?etab=' + req.session.etab + '&profil=' + req.body.profil + '&token=' + token + '\n\n' +
@@ -281,7 +283,7 @@ router.get('/reset/', function(req, res, next) {
     res.render('forgot.ejs', {
       title: 'e-khôlle',
       role: req.session.role,
-      //user: req.username,
+      lycee: req.session.lycee,
       form: 'reset'
     });
   });
@@ -344,7 +346,6 @@ router.post('/reset/', function(req, res) {
       };
       transporter.sendMail(mailOptions, function(err, info) {
         req.flash('msg', 'Succès! Votre mot de passe a été modifié.');
-        console.log('Message sent: ' + info.response);
         done(err, 'done');
       });
     }
@@ -496,7 +497,6 @@ router.post('/creerEleve', login.isLoggedIn, function(req, res, next) {
 
 
 router.post('/validerEleve', login.isLoggedIn, function(req, res, next) {
-  console.log(req.body);
   let Eleve = require('../models/eleve')(req.session.etab);
   let eleve = new Eleve({
     'prenom': req.body.prenom,

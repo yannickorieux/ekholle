@@ -19,6 +19,7 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
       id: req._id,
       classe : req.session.classe,
       etab: req.session.etab,
+      lycee: req.session.lycee,
     });
   } else {
     res.redirect('/' + req.session.role);

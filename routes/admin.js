@@ -18,6 +18,7 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
       title: 'e-khôlle - administration',
       user: req.prenom + '-' + req.nom,
       role: req.session.role,
+      lycee: req.session.lycee,
     });
   } else {
     res.redirect('/' + req.session.role);

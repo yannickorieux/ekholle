@@ -1,13 +1,17 @@
 <div id='login' class="visible" style="display:none">
   <form action="/users/login" method="post">
     <div class="form-group row">
-      <label class="col-md-4 col-form-label">Votre profil</label>
+      <label class="col-md-4 col-form-label">Votre profil : </label>
       <div class="col-md-8">
-        <select name="profil">
-        <option value="professeur">Professeur</option>
-        <option value="eleve">eleve</option>
-        <option value="admin">admin</option>
-      </select>
+        <label class="radio-inline">
+          <input type="radio" name="profil" value="professeur" checked>Professeur
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="profil" value="eleve" > Eleve
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="profil" value="admin"> Administration 
+        </label>
       </div>
     </div>
     <div class="form-group row">

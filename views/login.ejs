@@ -27,29 +27,10 @@
               <%if (page === 'password') { %>
                  <% include partials/password %>
                   <% } %>
-
+                <% include partials/cookie %>
       </div>
       <% include partials/erreur %>
       <hr>
-    </div>
-    <!-- Bandeau cookie comportant le message et le bouton pour éventuellement s'opposer -->
-    <div id="cookie-banner" class="cookie-banner">
-      Ce site utilise un cookie d'identication. En continuant à naviguer, vous nous autorisez à déposer ce cookie pour le bon fonctionnement de l'application e-khôlle.
-      <button id="cookie-more-button" name="cookie-more">En savoir plus ou s'opposer</button>
-    </div>
-
-    <!-- Boite de dialogue comportant une description détaillée et deux boutons (confirmation, rejet) -->
-    <div id="cookie-inform-and-ask" class="cookie-inform-and-ask">
-      <div class="cookie-dialog">
-        <h1>Cookies & traceurs : que dit la loi ?</h1>
-        <p>L'application e-khôlle utilise un cookie d'identification dans lequel est stocké un identifiant unique propre à chaque utilisateur enregistré dans une base de donnée ainsi que son profil. D'après la directive 2002/58/CE celui-ci ne nécessite pas
-          une approbation de l'utilisateur voir : <a href='https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi'>CNIL</a>
-        </p>
-        <div>
-          <button id="ga-cancel-button" name="ga-cancel">Annuler</button>
-          <button id="ga-confirm-button" name="ga-confirm">Ne plus voir le message</button>
-        </div>
-      </div>
     </div>
   </main>
   <footer>

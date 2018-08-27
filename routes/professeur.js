@@ -20,6 +20,7 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
       role: req.session.role,
       id: req._id,
       etab: req.session.etab,
+      lycee: req.session.lycee,
     });
   } else {
     res.redirect('/' + req.session.role);

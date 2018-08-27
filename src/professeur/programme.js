@@ -117,9 +117,12 @@ let programme = (function() {
     $.post("/professeur/tableProgrammeCoordoJSON/", {
       'idClasseMatiere': idClasseMatiere,
     }, (data) => {
-      $('#tableProgrammeCoordo').DataTable().clear().draw();
-      $('#tableProgrammeCoordo').DataTable().rows.add(data); // Add new data
-      $('#tableProgrammeCoordo').DataTable().columns.adjust().draw(); // Redraw the DataTable
+      let table = $('#tableProgrammeCoordo').DataTable({
+          retrieve: true,
+        })
+      table.clear().draw();
+      table.rows.add(data); // Add new data
+      table.columns.adjust().draw(); // Redraw the DataTable
     });
   }
 
@@ -139,7 +142,6 @@ let programme = (function() {
     let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableProgrammeCoordo').DataTable({
-      retrieve: true,
       data: liste,
       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
       language: {

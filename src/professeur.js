@@ -115,6 +115,8 @@ let professeur = (function() {
       let el2 = document.getElementById('dataListe2')
       dataListe.readOnly(el2, false);
       document.getElementById('addColleForm').reset();
+      $(document.getElementById('obsEleve')).summernote('code','');
+      $(document.getElementById('obsCoordo')).summernote('code', '');
       document.getElementById('dateSaisie').innerHTML=moment().format('L')
       $('#addColleModal').modal();
     });
@@ -123,6 +125,7 @@ let professeur = (function() {
       document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
       document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
       document.getElementById('addProgrammeForm').reset();
+      $(document.getElementById('detailProg')).summernote('code','');
       $('#addProgrammeModal').modal();
     });
 

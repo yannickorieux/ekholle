@@ -44,7 +44,6 @@ getAnnee : function(req, res) {
     _id: req._id
   }).exec(function(err, data) {
     if (err) return console.error(err);
-    console.log(data);
     res.json(data);
   });
 },

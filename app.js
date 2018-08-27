@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session      = require('express-session');
 const flash = require('connect-flash');
+const bodyParser = require('body-parser')
 //Ajout mongo
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
@@ -60,40 +61,64 @@ const adminRouter = require('./routes/admin');
 const professeurRouter = require('./routes/professeur');
 const eleveRouter = require('./routes/eleve');
 
-let listeEtab=['bergson','test']
+//let listeEtab=['bergson','test']
+let Etablissement=require('./models/etablissement');
+
+let liste =[]
+Etablissement.find({}, function(err, result) {
+    if (err) throw err;
+    liste=result;
+  });
+
 
 let getEtab = function(req, res, next) {
   let etab=req.url.split('/').pop();
-  if (typeof req.session.etab!=='undefined'){
-    //attention si session deja enregistree
-    if(etab===req.session.etab){
-      return res.redirect('/');
-    }
-    else if(listeEtab.indexOf(etab)!==-1){
-      //on change d'etablissement et celui-ci est present dans la base
-      req.session.etab=etab;
-      return res.redirect('/');
-    }
-    else{
-      // etablissement non reconnu
-      return next();
-    }
-  }
-  else{
-    //session non enregistree
-    if(listeEtab.indexOf(etab)!==-1){
-      //l'etab est dans la base je peux l'inscrire dans la session
-      req.session.etab=etab;
-      return res.redirect('/');
+  if(etab !==''){ //on detecte une chaine de caractere et on verifie qu'elle correspond à un etab
+    index = liste.findIndex(item => item.prefix === etab); //on regarde si etab est dans la liste
+    if (typeof req.session.etab!=='undefined'){
+      //attention si session deja enregistree
+      if(etab===req.session.etab){
+        return res.redirect('/');
+      }
+      else if(index!==-1){
+        //on change d'etablissement car celui-ci est present dans la base
+        req.session.etab=etab;
+        req.session.lycee=liste[index].nom;
+        return res.redirect('/users/logout');
+      }
+      else{
+        // etablissement non reconnu
+        return next();
+      }
     }
     else{
-      // url non reconnu
-      res.locals.message ="Veuillez vous connecter avec l'url de votre établissement";
-      res.locals.error="Veuillez vous connecter avec l'url de votre établissement";
-      res.render('error');
+      //session non enregistree
+      if(index!==-1){
+        //l'etab est dans la base je peux l'inscrire dans la session
+        req.session.etab=etab;
+        req.session.lycee=liste[index].nom;
+        return res.redirect('/');
+      }
+      else{
+        // url non reconnu
+        res.locals.message ="Veuillez vous connecter avec l'url de votre établissement";
+        res.locals.error="Veuillez vous connecter avec l'url de votre établissement";
+        return res.redirect('/');
+      }
     }
-  }
+  } // chaine vide et pas de cookie enregistre on reste sur la page d'index
+  else return next();
 }
+
+
+
+app.use(bodyParser.json({limit: '50mb'}) );
+app.use(bodyParser.urlencoded({
+  limit: '50mb',
+  extended: true,
+  parameterLimit:50000
+}));
+
 app.use(express.static(__dirname, { dotfiles: 'allow' } ));
 app.use(logger('dev'));
 app.use(express.json());

@@ -431,6 +431,12 @@ tableProgrammeCoordoJSON : function(req, res) {
         detail: "$matieres.programme.detail",
       }
     },
+    {
+      $sort: {
+        debut: -1,
+        fin: -1
+      }
+    }
   ]).exec(function(err, data) {
     if (err) return console.error(err);
     res.send(data);

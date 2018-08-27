@@ -98,8 +98,8 @@ let periodes = (function() {
     // Supp record
     $('#tablePeriodes').on('click', 'a.editor_supp', function(e) {
       e.preventDefault();
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
+      let tr = $(this).closest('tr');
+      let row = table.row(tr);
       let element = row.data();
       let idPeriode = element._id;
       let idNext = '';
@@ -194,7 +194,8 @@ let periodes = (function() {
         let n = 0;
         if (typeof periodes !== 'undefined' && periodes.length !== 0) {
           n = data.periodes.length;
-          dateInitAddPeriode = data.periodes[n - 1].finPeriode;
+          let d=moment(data.periodes[n - 1].finPeriode).add(1, 'days');
+          dateInitAddPeriode = d.format();
         } else {
           dateInitAddPeriode = data.annee.debut;
         }
@@ -219,8 +220,8 @@ let periodes = (function() {
     let finPeriode = moment(document.getElementById('finPeriode').value, 'DD/MM/YYYY').format();
     let description = document.getElementById('descriptionPeriode').value;
     let id = document.getElementById('addPeriodeForm').getAttribute("data-id");
-    idPrevious='';
-    idNext='';
+    let idPrevious='';
+    let idNext='';
     if (id !== '') {
       idPrevious = document.getElementById('addPeriodeForm').getAttribute("data-idprevious");
       idNext = document.getElementById('addPeriodeForm').getAttribute("data-idnext");
