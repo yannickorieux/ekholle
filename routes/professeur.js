@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const colleur = require('./professeur/colleur');
 const coordonnateur = require('./professeur/coordonnateur');
-
+const fs = require('fs');
 /*
 **************************
 page index professeur
@@ -29,6 +29,16 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
 });
 
 
+// =====================================
+// appel  du manuel
+// =====================================
+router.get('/pdf', login.isLoggedIn, function(req, res) {
+  let filePath = "/ekholle-professeur.pdf";
+  fs.readFile('./pdf' + filePath, function(err, data) {
+    res.contentType("application/pdf");
+    res.send(data);
+  });
+});
 
 /*
 **************************

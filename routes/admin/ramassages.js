@@ -206,7 +206,7 @@ module.exports = {
                   branches: [{
                       case: {
                         $and: [{
-                          $lte: ["$totalEleves", 36]
+                          $gt: ["$totalEleves", 35]
                         }, {
                           $eq: ["$niveau", 1]
                         }]
@@ -216,35 +216,63 @@ module.exports = {
                     {
                       case: {
                         $and: [{
-                          $gt: ["$totalEleves", 36]
-                        }, {
-                          $eq: ["$niveau", 1]
-                        }]
+                            $gte: ["$totalEleves", 20]
+                          },
+                          {
+                            $lte: ["$totalEleves", 35]
+                          }, {
+                            $eq: ["$niveau", 2]
+                          }
+                        ]
                       },
                       then: 2,
                     },
                     {
                       case: {
                         $and: [{
-                          $lte: ["$totalEleves", 36]
-                        }, {
-                          $eq: ["$niveau", 2]
-                        }]
+                            $gte: ["$totalEleves", 20]
+                          },
+                          {
+                            $lte: ["$totalEleves", 35]
+                          }, {
+                            $eq: ["$niveau", 1]
+                          }
+                        ]
                       },
                       then: 3,
                     },
                     {
                       case: {
                         $and: [{
-                          $gt: ["$totalEleves", 36]
+                          $lt: ["$totalEleves", 20]
                         }, {
                           $eq: ["$niveau", 2]
                         }]
                       },
                       then: 4,
-                    }
+                    },
+                    {
+                      case: {
+                        $and: [{
+                          $lt: ["$totalEleves", 20]
+                        }, {
+                          $eq: ["$niveau", 1]
+                        }]
+                      },
+                      then: 5,
+                    },
+                    {
+                      case: {
+                        $and: [{
+                          $gt: ["$totalEleves", 35]
+                        }, {
+                          $eq: ["$niveau", 2]
+                        }]
+                      },
+                      then: 6,
+                    },
                   ],
-                  default: "Did not match"
+                  default: "Niveau non renseigné"
                 }
               },
             },

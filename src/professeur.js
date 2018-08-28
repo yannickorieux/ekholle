@@ -30,6 +30,12 @@ let professeur = (function() {
       $("#modifyPassword").css("display", "block");
     });
 
+    $('#navHelp').on('click', function() {
+      $(".visible").css("display", "none");
+      $("#showHelp").css("display", "block");
+    });
+
+
   }
 
   /*
@@ -87,6 +93,7 @@ let professeur = (function() {
 
   self.init = function() {
     $('.summernote').summernote({
+      height: 100,
        dialogsInBody: true,
       toolbar: [
         ['style', ['bold', 'italic', 'underline', 'strike']],

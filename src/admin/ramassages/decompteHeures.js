@@ -132,33 +132,23 @@ let decompteHeures = (function() {
             if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
           },
         },
-        // {
-        //   data: 'count'
-        // },
-        // {
-        //   data: null,
-        //   render: function(data, type, row) {
-        //     // Combine the first and last names into a single table field
-        //     return Math.floor(data.heures / 60) + 'h' + data.heures % 60 + 'mn';
-        //   },
-        // },
-        // {
-        //   "className": 'details-control',
-        //   "orderable": false,
-        //   "data": null,
-        //   "defaultContent": ''
-        // },
-        // {
-        //   data: null,
-        //   render: function(data, type, row) {
-        //     // Combine the first and last names into a single table field
-        //     let detail = '';
-        //     for (let i = 0; i < data.bilan.length; i++) {
-        //       detail += data.bilan[i].classe + ' ( ' + data.bilan[i].duree + ' ) : ' + data.bilan[i].count + ' : ' + Math.floor(data.bilan[i].heures / 60) + 'h' + data.bilan[i].heures % 60 + 'mn' + ';'
-        //     }
-        //     return detail;
-        //   },
-        // },
+        {
+          data: null,
+          render: function(data, type, row) {
+            // Combine the first and last names into a single table field
+            let ind=data.bilan.findIndex(i =>i.taux === 5);
+            if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
+          },
+        },
+        {
+          data: null,
+          render: function(data, type, row) {
+            // Combine the first and last names into a single table field
+            let ind=data.bilan.findIndex(i =>i.taux === 6);
+            if(ind!==-1) return parseInt(data.bilan[ind].heures*100/60)/100;
+          },
+        },
+
       ],
 
       order: [
@@ -166,20 +156,6 @@ let decompteHeures = (function() {
       ],
     });
 
-    // $('#tableDecompte tbody').on('click', 'td.details-control', function() {
-    //   var tr = $(this).closest('tr');
-    //   var row = table.row(tr);
-    //   if (row.child.isShown()) {
-    //     // This row is already open - close it
-    //     row.child.hide();
-    //     tr.removeClass('shown');
-    //   } else {
-    //     // Open this row
-    //     row.child(formatDetailBilan(row.data())).show();
-    //     tr.addClass('shown');
-    //   }
-    // });
-    // table.columns(5).visible(false);
   };
 
 

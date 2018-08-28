@@ -44,10 +44,10 @@ let loginPassword = (function() {
   self.createLogin = function(prenom, nom) {
     let tab1 = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ";
     let tab2 = "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn";
-    rep2 = tab1.split('');
-    rep = tab2.split('');
-    myarray = new Array();
-    var i = -1;
+    let rep2 = tab1.split('');
+    let rep = tab2.split('');
+    let myarray = new Array();
+    let i = -1;
     while (rep2[++i]) {
       myarray[rep2[i]] = rep[i];
     }

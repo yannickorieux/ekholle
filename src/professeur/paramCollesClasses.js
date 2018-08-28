@@ -182,8 +182,6 @@ let paramCollesClasses = (function() {
   ************************************************************
     */
   function suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur) {
-    console.log(idClasseMatiere, idClasseMatiereColleur);
-
     $.post("/professeur/suppClasseMatiereColleur/", {
         "idClasseMatiere": idClasseMatiere,
         "idClasseMatiereColleur": idClasseMatiereColleur
@@ -202,6 +200,7 @@ let paramCollesClasses = (function() {
     $.post("/professeur/tableMesCollesClassesJSON/", {
       'idProfesseur': idProfesseur,
     }, (data) => {
+      console.log(data);
       let table = $('#tableMesCollesClasses').DataTable({  retrieve: true,})
       table.clear().draw();
       table.rows.add(data); // Add new data

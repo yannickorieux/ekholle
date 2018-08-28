@@ -325,9 +325,7 @@ module.exports = {
           $unwind: "$matieres"
         },
         {
-          $match: {
-            'matieres.colleurs._id': ObjectId(req.body.idProfesseur)
-          }
+              $unwind: "$matieres.colleurs"
         },
         {
           $project: {
@@ -338,6 +336,11 @@ module.exports = {
             matiere: "$matieres.matiere",
             professeur: "$matieres.professeur",
             colles: "$matieres.colleurs.colles",
+          }
+        },
+        {
+          $match: {
+            'idClasseMatiereColleur': ObjectId(req.body.idProfesseur)
           }
         },
         {
@@ -362,12 +365,7 @@ module.exports = {
         {
           $unwind: "$matiere"
         },
-        {
-          $unwind: "$idClasseMatiereColleur"
-        },
-        {
-          $unwind: "$colles"
-        },
+
         {
           $project: {
             idClasse: '$_id',
@@ -379,7 +377,7 @@ module.exports = {
             nom: '$professeur.nom',
             prenom: '$professeur.prenom',
             totalColles: {
-              $size: '$colles'
+              $size: '$colles._id'
             },
           }
         },

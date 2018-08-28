@@ -113,60 +113,87 @@ module.exports = {
   tableStructureJSON: function(req, res) {
     let Structure = require('../../models/structure')(req.session.etab);
     Structure.aggregate([{
-        $project: {
-          idClasse: "$_id",
-          nom : 1,
-          niveau: 1,
-          totalEleves : 1 ,
-          taux: {
-            $switch: {
-              branches: [{
-                  case: {
-                    $and: [{
-                      $lte: ["$totalEleves", 36]
-                    }, {
-                      $eq: ["$niveau", 1]
-                    }]
-                  },
-                  then: 'taux 91/08',
+      $project: {
+        idClasse: "$_id",
+        nom: 1,
+        niveau: 1,
+        totalEleves: 1,
+        taux: {
+          $switch: {
+            branches: [
+              {
+                case: {
+                  $and: [{
+                    $gt: ["$totalEleves", 35]
+                  }, {
+                    $eq: ["$niveau", 1]
+                  }]
                 },
-                {
-                  case: {
-                    $and: [{
-                      $gt: ["$totalEleves", 36]
-                    }, {
-                      $eq: ["$niveau", 1]
-                    }]
-                  },
-                  then: 'taux 90/07',
-                },
-                {
-                  case: {
-                    $and: [{
-                      $lte: ["$totalEleves", 36]
+                then: 'HI 1ère année plus de 35',
+              },
+              {
+                case: {
+                  $and: [{
+                      $gte: ["$totalEleves", 20]
+                    },
+                    {
+                      $lte: ["$totalEleves", 35]
                     }, {
                       $eq: ["$niveau", 2]
-                    }]
-                  },
-                  then: 'taux 01/06',
+                    }
+                  ]
                 },
-                {
-                  case: {
-                    $and: [{
-                      $gt: ["$totalEleves", 36]
+                then: 'HI 2ième année 20 à 35',
+              },
+              {
+                case: {
+                  $and: [{
+                      $gte: ["$totalEleves", 20]
+                    },
+                    {
+                      $lte: ["$totalEleves", 35]
                     }, {
-                      $eq: ["$niveau", 2]
-                    }]
-                  },
-                  then: 'taux 157/161',
-                }
-              ],
-              default: "Did not match"
-            }
+                      $eq: ["$niveau", 1]
+                    }
+                  ]
+                },
+                then: 'HI 1ère année 20 à 35',
+              },
+              {
+                case: {
+                  $and: [{
+                    $lt: ["$totalEleves", 20]
+                  }, {
+                    $eq: ["$niveau", 2]
+                  }]
+                },
+                then: 'HI 2ième année moins de 20',
+              },
+              {
+                case: {
+                  $and: [{
+                    $lt: ["$totalEleves", 20]
+                  }, {
+                    $eq: ["$niveau", 1]
+                  }]
+                },
+                then: 'HI 1ère moins de 20',
+              },
+              {
+                case: {
+                $and: [{
+                  $gt: ["$totalEleves", 35]
+                }, {
+                  $eq: ["$niveau", 2]
+                }]
+              },
+              then: 'HI 2ième année plus de 35',
+            }, ],
+            default: "Niveau non renseigné"
+          }
         }
       }
-    }
-    ]).exec(function(err, data) {
+    }]).exec(function(err, data) {
       if (err) return console.error(err);
       res.json(data);
     });

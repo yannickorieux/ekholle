@@ -28,16 +28,16 @@ let ProfesseurSchema = new mongoose.Schema({
     type: Boolean,
      default: false
    },
-   colles: [{
-     type: mongoose.Schema.Types.ObjectId,
-     ref: "ColleurMatiere",
-     required: true
-   }],
-   coordoMatieres : [{
-     type: mongoose.Schema.Types.ObjectId,
-     ref: "MatiereClasse",
-     required: true
-   }],
+   // colles: [{
+   //   type: mongoose.Schema.Types.ObjectId,
+   //   ref: "ColleurMatiere",
+   //   required: true
+   // }],
+   // coordoMatieres : [{
+   //   type: mongoose.Schema.Types.ObjectId,
+   //   ref: "MatiereClasse",
+   //   required: true
+   // }],
 
    grade : {
      type: String,
