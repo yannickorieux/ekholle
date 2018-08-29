@@ -93,7 +93,10 @@ function initDataTablesResultatsCoordo() {
   let table = $('#tableResultatsCoordo').DataTable({
     retrieve: true,
     data: liste,
-    // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
+    dom: 'Bfrtip',
+    buttons: [
+      'csv', 'excel', 'pdf'
+    ],
     language: {
       processing: "Traitement en cours...",
       search: "Rechercher&nbsp;:",
