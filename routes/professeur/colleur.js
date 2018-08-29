@@ -85,7 +85,7 @@ module.exports = {
 
   /*
   **************************
-   EN TEST
+   liste des classes matieres de l'établissement
   **************************
   */
 

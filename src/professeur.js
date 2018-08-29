@@ -2,6 +2,7 @@ let professeur = (function() {
 
   let self = {};
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
+  let profilProfesseur = document.body.getAttribute("data-profil");
   let dataListe = require('./misc/dataListe.js');
   /*
   **************************
@@ -10,9 +11,6 @@ let professeur = (function() {
    */
 
   function menu() {
-
-    //affichage du decompte
-    let decompteHeures = require('./professeur/decompteHeures.js');
 
     $('#navColles').on('click', function() {
       $(".visible").css("display", "none");
@@ -57,33 +55,6 @@ let professeur = (function() {
   }
 
 
-//   $('.summernote').summernote({
-//   minHeight: 150,
-//   placeholder: ' ...',
-//   focus: false,
-//   airMode: false,
-//   fontNames: ['Roboto', 'Calibri', 'Times New Roman', 'Arial'],
-//   fontNamesIgnoreCheck: ['Roboto', 'Calibri'],
-//   dialogsInBody: true,
-//   dialogsFade: true,
-//   disableDragAndDrop: false,
-//   toolbar: [
-//     // [groupName, [list of button]]
-//     ['para', ['style', 'ul', 'ol', 'paragraph']],
-//     ['fontsize', ['fontsize']],
-//     ['insert', ['link', 'hr']],
-//     ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
-//   ],
-//   popover: {
-//     air: [
-//       ['color', ['color']],
-//       ['font', ['bold', 'underline', 'clear']]
-//     ]
-//   },
-//   print: {
-//     //'stylesheetUrl': 'url_of_stylesheet_for_printing'
-//   }
-// });
 
   /*
   **************************
@@ -94,7 +65,7 @@ let professeur = (function() {
   self.init = function() {
     $('.summernote').summernote({
       height: 100,
-       dialogsInBody: true,
+      dialogsInBody: true,
       toolbar: [
         ['style', ['bold', 'italic', 'underline', 'strike']],
         ['para', ['ul', 'ol']],
@@ -112,7 +83,7 @@ let professeur = (function() {
     document.getElementById("buttonAddClasse").addEventListener('click', function() {
       document.getElementById('addClasseForm').reset();
       let el4 = document.querySelector('#dataListe4') //liste des matières   partialsParamColles/formAddColleClasse
-      dataListe.display(el4,false);
+      dataListe.display(el4, false);
       $('#addClasseProfesseur').modal();
     });
 
@@ -122,19 +93,29 @@ let professeur = (function() {
       let el2 = document.getElementById('dataListe2')
       dataListe.readOnly(el2, false);
       document.getElementById('addColleForm').reset();
-      $(document.getElementById('obsEleve')).summernote('code','');
+      $(document.getElementById('obsEleve')).summernote('code', '');
       $(document.getElementById('obsCoordo')).summernote('code', '');
-      document.getElementById('dateSaisie').innerHTML=moment().format('L')
+      document.getElementById('dateSaisie').innerHTML = moment().format('L')
       $('#addColleModal').modal();
     });
 
-    document.getElementById("buttonAddProgramme").addEventListener('click', function() {
-      document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
-      document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
-      document.getElementById('addProgrammeForm').reset();
-      $(document.getElementById('detailProg')).summernote('code','');
-      $('#addProgrammeModal').modal();
-    });
+    if (profilProfesseur === 'coordonnateur') {
+      // permet au coordo de déclencher l'ajout d'un colleur
+      document.getElementById("buttonAddColleur").addEventListener('click', function() {
+      document.getElementById('addColleurForm').reset();
+      $('#addColleurClasse').modal();
+      });
+
+      // permet de déclencher l'ajout d'un programme
+      document.getElementById("buttonAddProgramme").addEventListener('click', function() {
+        document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
+        document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
+        document.getElementById('addProgrammeForm').reset();
+        $(document.getElementById('detailProg')).summernote('code', '');
+        $('#addProgrammeModal').modal();
+      });
+
+    }
 
     //on initialise les dataListes
     let el1 = document.querySelector('#dataListe1') //liste des colles/classe  du professeur : addColles
@@ -154,51 +135,79 @@ let professeur = (function() {
       'display': false
     });
 
-    let el5 = document.querySelector('#dataListe5') //liste des classes matières du coordonateur de discipline
-    dataListe.set(el5, {
-      'form': true
-    });
+    if (profilProfesseur === 'coordonnateur') {
+      let el5 = document.querySelector('#dataListe5') //liste des classes matières du coordonateur de discipline
+      dataListe.set(el5, {
+        'form': true
+      });
+    }
 
     let el6 = document.querySelector('#dataListe6') //liste des notes
     dataListe.setNotes(el6);
 
-    let el7 = document.querySelector('#dataListe7') //liste des classes matières du coordonateur de discipline
-    dataListe.set(el7, {
-      'form': true
-    });
 
-    let el8 = document.querySelector('#dataListe8') //liste des classes matières du coordonateur de discipline
-    dataListe.set(el8, {
-      'form': true
-    });
+    if (profilProfesseur === 'coordonnateur') {
+      let el7 = document.querySelector('#dataListe7') //liste des classes matières du coordonateur de discipline
+      dataListe.set(el7, {
+        'form': true
+      });
 
+      let el8 = document.querySelector('#dataListe8') //liste des classes matières du coordonateur de discipline
+      dataListe.set(el8, {
+        'form': true
+      });
+    }
     //liste des Periodes
     let el9 = document.querySelector('#dataListe9')
     dataListe.set(el9, {
       'form': true
     });
 
+
+    // dataliste pour ajouter des colleurs à un coordo
+    if (profilProfesseur === 'coordonnateur') {
+      let el10 = document.querySelector('#dataListe10') //liste des professeurs
+      dataListe.set(el10);
+      let el11 = document.querySelector('#dataListe11') //liste des matières  du coordo de discipline
+      dataListe.set(el11);
+    }
+
+
     $('input').clearer(); //permet de réinitialiser les input
 
-    //remplir la dataliste du coordo
-    getListeClassesCoordo()
+
     //parametrage colleur - professeur
     let paramCollesClasses = require('./professeur/paramCollesClasses.js');
     paramCollesClasses.init();
-    //parametrage mesClasse
-    let paramMesClasses = require('./professeur/paramMesClasses.js');
-    paramMesClasses.init();
+
     //gestion des colles
     let colles = require('./professeur/colles.js');
     colles.init();
-    let synthese = require('./professeur/synthese.js');
-    synthese.init();
-    let resultats = require('./professeur/resultats.js');
-    resultats.init();
+
     let programme = require('./professeur/programme.js');
     programme.init();
+
     let decompteHeures = require('./professeur/decompteHeures.js');
     decompteHeures.init();
+
+
+    if (profilProfesseur === 'coordonnateur') {
+      //remplir la dataliste du coordo
+      getListeClassesCoordo()
+      //parametrage mesClasse
+      let paramMesClasses = require('./professeur/paramMesClasses.js');
+      // parametrage classes coordo
+      paramMesClasses.init();
+      //colles synthese coordo
+      let synthese = require('./professeur/synthese.js');
+      synthese.init();
+      //colles resultats coordo
+      let resultats = require('./professeur/resultats.js');
+      resultats.init();
+
+      let addProgramme = require('./professeur/addProgramme.js');
+      addProgramme.init();
+    }
 
     menu();
     //picker pour addColle

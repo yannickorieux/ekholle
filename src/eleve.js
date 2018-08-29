@@ -27,6 +27,7 @@ let eleve = (function() {
 
   self.init = function() {
     menu();
+    console.log(idEleve);
     let synthese = require('./eleve/synthese.js');
     synthese.init();
     let programme = require('./eleve/programme.js');

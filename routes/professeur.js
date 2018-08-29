@@ -14,13 +14,34 @@ page index professeur
 router.get('/', login.isLoggedIn, function(req, res, next) {
   console.log(req.session.role);
   if (req.session.role === 'professeur') {
-    res.render('professeur.ejs', {
-      title: 'e-khôlle - professeur',
-      user: req.prenom + '-' + req.nom,
-      role: req.session.role,
-      id: req._id,
-      etab: req.session.etab,
-      lycee: req.session.lycee,
+    //test simple colleur
+    let Structure = require('../models/structure')(req.session.etab);
+    Structure.aggregate([{
+        $unwind: "$matieres"
+      },
+      {
+        $match: {
+          'matieres.professeur': ObjectId(req._id)
+        }
+      },
+      {
+        $project: {
+          classe : 'nom'
+        }
+      },
+    ]).exec(function(err, data) {
+      if (err) return console.error(err);
+      let profilProfesseur='colleur'
+      if(data.length>0) {profilProfesseur='coordonnateur'}
+      res.render('professeur.ejs', {
+        title: 'e-khôlle - professeur',
+        user: req.prenom + '-' + req.nom,
+        role: req.session.role,
+        profilProfesseur : profilProfesseur,
+        id: req._id,
+        etab: req.session.etab,
+        lycee: req.session.lycee,
+      });
     });
   } else {
     res.redirect('/' + req.session.role);
@@ -46,27 +67,15 @@ TAB  COLLEUR
 **************************
 */
 
+
+
 /*
 **************************
- EN TEST
+liste des classes matieres pour ajouter au colleur
 **************************
 */
-
-
 router.get('/listeClassesMatieresJSON/', login.isLoggedIn, colleur.listeClassesMatieresJSON);
-/*
-**************************
-FIN TEST
-**************************
-*/
 
-/*
-**************************
-association matiere/classe avec le professeur coordo de discipline pour datalist
-**************************
-*/
-
-//router.post('/listeMatiereClasseJSON/', login.isLoggedIn, colleur.listeMatiereClasseJSON);
 
 /*
 **************************
@@ -139,6 +148,24 @@ router.post('/tableProgrammeColleurJSON/', login.isLoggedIn, colleur.tableProgra
  COORDO de discipline
 **************************
 */
+
+
+/*
+**************************
+association matiere/classe avec le professeur coordo de discipline pour datalist
+**************************
+*/
+
+router.post('/listeClassesMatieresCoordoJSON/', login.isLoggedIn, coordonnateur.listeClassesMatieresCoordoJSON);
+
+/*
+**************************
+ajout colleur
+**************************
+*/
+
+router.post('/addColleur/', login.isLoggedIn, coordonnateur.addColleur);
+
 
 /*
 **************************

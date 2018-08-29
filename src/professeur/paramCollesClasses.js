@@ -81,19 +81,11 @@ let paramCollesClasses = (function() {
   });
 
 
-  // function getListeClasses() {
-  //   //Mettre à jour la liste des classes
-  //
-  //   $.get("/admin/tableClassesJSON/", (data) => {
-  //     let el3 = document.getElementById('dataListe3')
-  //     dataListe.setDataListe(el3, data);
-  //   });
-  // }
 
 
   function getListeClassesMatieres() {
     $.get("/professeur/listeClassesMatieresJSON/", (data) => {
-      classesMatieres=data;
+      classesMatieres=data;  //Attention varaible globale
        let el3 = document.getElementById('dataListe3')
        dataListe.setDataListe(el3, classesMatieres);  //on peuple les classes
     });
@@ -150,16 +142,19 @@ let paramCollesClasses = (function() {
         },
         {
           data: null,
-          className: "center",
           render: function(data, type, row) {
             if (data.totalColles>0){
-              return ''
+              return 'X'
             }
             else{
             return '<a href="" class="editor_supp">Supp</a>'}
           },
         },
       ],
+      columnDefs: [{
+        className: 'text-center',
+        targets: [3, 4, 5]
+      }, ],
     });
 
     // Supp record
@@ -170,7 +165,7 @@ let paramCollesClasses = (function() {
       let element = row.data();
       let idClasseMatiereColleur = element.idClasseMatiereColleur;
       let idClasseMatiere = element.idClasseMatiere;
-      suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur );
+      suppClasseMatiereColleur(idClasseMatiere, idColleur );
     });
   };
 
@@ -178,7 +173,7 @@ let paramCollesClasses = (function() {
 
   /*
   ********************************************************************
-    Suppression d'une matiere
+    Suppression d'une matiere colleur
   ************************************************************
     */
   function suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur) {

@@ -72,6 +72,117 @@ function modifProgramme (req, res) {
 
 module.exports = {
 
+  /*
+  **************************
+  liste des matieres du coordo
+  **************************
+  */
+  listeClassesMatieresCoordoJSON: function(req, res) {
+    let Structure = require('../../models/structure')(req.session.etab);
+    let matiere = req.session.etab + '_matieres';
+    Structure.aggregate([{
+          $unwind: "$matieres"
+        },
+        {
+          $match: {
+            'matieres.professeur': ObjectId(req.body.idProfesseur)
+          }
+        },
+        {
+          $project: {
+            classe: "$nom",
+            idClasseMatiere: "$matieres._id",
+            matiere: "$matieres.matiere",
+          }
+        },
+        {
+          $lookup: {
+            from: matiere,
+            localField: "matiere",
+            foreignField: "_id",
+            as: "matiere"
+          }
+        },
+        {
+          $unwind: "$matiere"
+        },
+        {
+          $project: {
+            idClasse: '$_id',
+            classe: 1,
+            idClasseMatiere: 1,
+            matiere: '$matiere.nom',
+          }
+        },
+      ])
+      .exec(function(err, data) {
+        if (err) return console.error(err);
+        res.send(data);
+      });
+  },
+
+
+  /*
+  **************************
+  ajoute une colle à un professeur en l'associant à une matiere/classe
+  **************************
+  */
+  addColleur: function(req, res) {
+    let Matiere = require('../../models/matiere')(req.session.etab);
+    let Professeur = require('../../models/professeur')(req.session.etab);
+    let Structure = require('../../models/structure')(req.session.etab);
+    Structure.aggregate([
+      {
+        $unwind: "$matieres"
+      },
+      {
+        $unwind: "$matieres.colleurs"
+      },
+      {
+        $project: {
+          idMatiere: "$matieres._id",
+          idColleur: "$matieres.colleurs._id"
+        }
+      },
+      {
+        $match: {
+          $and: [{
+              idMatiere: ObjectId(req.body.idClasseMatiere)
+            },
+            {
+              idColleur: ObjectId(req.body.idProfesseur)
+            }
+          ]
+        }
+      },
+    ]).exec(function(err, data) {
+      if (data.length > 0) {
+        res.send({
+          "error": "Cette association Colleur/Matière est déjà créée"
+        });
+      } else {
+        Structure.update({
+          "matieres._id": ObjectId(req.body.idClasseMatiere)
+        }, {
+          $push: {
+            'matieres.$[element].colleurs': {
+              _id: ObjectId(req.body.idProfesseur)
+            }
+          }
+        }, {
+          arrayFilters: [{
+            'element._id': ObjectId(req.body.idClasseMatiere)
+          }]
+        }).exec(function(err, data) {
+          res.send({
+            "error": "ok"
+          });
+        });
+      }
+    });
+  },
+
+
 /*
 **************************
 table pour afficher la liste des colleurs du coordo
@@ -96,8 +207,10 @@ tableMesClassesJSON : function(req, res) {
     {
       $project: {
         classe: "$nom",
+        idClasseMatiere : "$matieres._id",
         idColleur: "$matieres.colleurs._id",
         idMatiere: "$matieres.matiere",
+        colles: "$matieres.colleurs.colles",
       }
     },
     {
@@ -122,6 +235,11 @@ tableMesClassesJSON : function(req, res) {
         nom: "$professeur.nom",
         prenom: "$professeur.prenom",
         matiere: "$matiere.nom",
+        idClasseMatiere : 1,
+        idColleur : 1,
+        totalColles: {
+          $size: '$colles._id'
+        },
       }
     },
   ]).exec(function(err, data) {

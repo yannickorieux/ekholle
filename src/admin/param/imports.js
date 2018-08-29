@@ -389,36 +389,8 @@ let imports = (function() {
       $('#error').html("Votre fichier de donées semble incorrect, vous ne pouvez pas poursuivre l'import ");
   })
 
-  /*
-     **************************
-          Opérations diverses sur la base
-      **************************
-  */
-  $("#nettoyer").click(function() {
-    document.getElementById('confirmerMessage').setAttribute("data-param", "nettoyer");
-    $('#message').empty();
-    $('#message').append('Les élèves non affectés à une classe seront supprimés de la base');
-  });
 
-  $("#rafraichir").click(function() {
-    document.getElementById('confirmerMessage').setAttribute("data-param", "rafraichir");
-    $('#message').empty();
-    $('#message').append('Recherche de nouvelles classes');
-  });
 
-  $("#actionConfirmee").click(function() {
-    let action = document.getElementById('confirmerMessage').getAttribute("data-param");
-    if(action==='nettoyer'){
-      $.get("/admin/nettoyerBaseEleve/",  () => {
-        // success
-      });
-    };
-    if(action==='rafraichir'){
-      $.get("/users/rafraichirBaseStructure/",  () => {
-        // success
-      });
-    };
-  });
 
   /*
   **************************

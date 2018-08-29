@@ -53,6 +53,7 @@ router.post('/login', function(req, res, next) {
       } else {
         req.session.userId = user._id;
         req.session.role = req.body.profil;
+        if (typeof user.classe!=='undefined') req.session.classe = user.classe; //pour eleve
         if (user.changePwd === false) {
           req.session.changePwd = false;
           res.redirect('/users');
@@ -61,7 +62,6 @@ router.post('/login', function(req, res, next) {
         } else if (req.body.profil === 'admin') {
           return res.redirect('/admin');
         } else if (req.body.profil === 'eleve') {
-          req.session.classe = user.classe;
           return res.redirect('/eleve');
         } else {
           return res.redirect('/');
@@ -110,6 +110,10 @@ router.post('/modifyPassword', login.isLoggedIn, function(req, res, next) {
   } else if (req.session.role === 'admin') {
     let Admin = require('../models/admin')(req.session.etab);
     Login = Admin;
+  }
+  else if (req.session.role === 'eleve') {
+    let Eleve = require('../models/eleve')(req.session.etab);
+    Login = Eleve;
   }
   Login.findById(req.session.userId)
     .exec(function(error, user) {

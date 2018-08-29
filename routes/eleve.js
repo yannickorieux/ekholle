@@ -102,7 +102,6 @@ router.post('/tableCollesJSON/', login.isLoggedIn, function(req, res) {
       }
     },
   ]).exec(function(err, data) {
-    console.log(data);
     if (err) return console.error(err);
     res.send(data);
   });
@@ -171,7 +170,6 @@ router.post('/tableProgrammeEleveJSON/', login.isLoggedIn, function(req, res) {
       }
     },
   ]).exec(function(err, data) {
-    console.log(data);
     if (err) return console.error(err);
     res.send(data);
   });

@@ -10,8 +10,9 @@ let decompteHeures = (function() {
   ************************************************************
 */
 
-let el9 = document.getElementById('dataListe9')
-dataListe.selectId(el9)
+let el9 = document.getElementById('dataListe9');
+dataListe.selectId(el9);
+
 $('#dataListe9Form').submit(function(e) {
   e.preventDefault();
   let idPeriode = dataListe.getId(el9);

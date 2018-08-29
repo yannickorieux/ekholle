@@ -16,6 +16,56 @@ let paramMesClasses = (function() {
         PRIVE
   ************************************************************
 */
+
+  let el10 = document.getElementById('dataListe10')
+  let el11 = document.getElementById('dataListe11')
+  dataListe.selectId(el11);
+  /*
+     **************************
+          daliste professeurs
+      **************************
+      */
+  $.get("/admin/tableProfesseursJSON/", (data) => {
+    //on met à jour les datalistes correspondantes
+    dataListe.setDataListe(el10, data);
+    dataListe.selectId(el10);
+  });
+
+
+
+  /*
+    ********************************************************************
+          Choix de la classe pour ensuite choisir la matière dans modal form
+    ************************************************************
+          */
+
+
+
+
+  $('#addColleurForm').submit(function(e) {
+    e.preventDefault();
+    let el10 = document.getElementById('dataListe10')
+    let el11 = document.getElementById('dataListe11')
+    let professeur = dataListe.getName(el10);
+    let idProfesseur = dataListe.getId(el10);
+    let idClasseMatiere = dataListe.getId(el11);
+    $.post("/professeur/addColleur/", {
+      'idProfesseur': idProfesseur,
+      'idClasseMatiere': idClasseMatiere,
+    }, (message) => {
+      if (message.error !== "ok") {
+        $('#error').html(message.error);
+        $('#erreur').modal();
+      } else {
+        $('#addColleurClasse').modal('hide');
+        refreshTableMesClasses();
+      }
+      $('#addColleurForm')[0].reset();
+      $("#addColleurForm input[type=hidden]").val('');
+    });
+  });
+
+
   function initDataTablesMesClasses() {
     let liste = []
     let table = $('#tableMesClasses').DataTable({
@@ -58,11 +108,53 @@ let paramMesClasses = (function() {
             return data.nom + ' ' + data.prenom;
           },
         },
-      ]
+        {
+          data: 'totalColles'
+        },
+        {
+          data: null,
+          render: function(data, type, row) {
+            if (data.totalColles > 0) {
+              return 'X'
+            } else {
+              return '<a href="" class="editor_supp">Supp</a>'
+            }
+          },
+        },
+      ],
+      columnDefs: [{
+        className: 'text-center',
+        targets: [3, 4]
+      }, ],
     });
 
-
+    // Supp record
+    $('#tableMesClasses').on('click', 'a.editor_supp', function(e) {
+      e.preventDefault();
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      let element = row.data();
+      let idClasseMatiereColleur = element.idColleur;
+      let idClasseMatiere = element.idClasseMatiere;
+      suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur);
+    });
   };
+
+
+
+  /*
+  ********************************************************************
+    Suppression d'une matiere colleur
+  ************************************************************
+    */
+  function suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur) {
+    $.post("/professeur/suppClasseMatiereColleur/", {
+      "idClasseMatiere": idClasseMatiere,
+      "idClasseMatiereColleur": idClasseMatiereColleur
+    }, (message) => {
+      refreshTableMesClasses();
+    })
+  }
 
 
   /*
@@ -81,6 +173,18 @@ let paramMesClasses = (function() {
   }
 
 
+
+
+  function getListeClassesMatieresCoordo() {
+    $.post("/professeur/listeClassesMatieresCoordoJSON/", {
+      'idProfesseur': idProfesseur
+    }, (data) => {
+      console.log(data);
+      let el11 = document.getElementById('dataListe11')
+      dataListe.setDataListe(el11, data); //on peuple les classes
+    });
+  }
+
   /*
   ********************************************************************
         PUBLIC
@@ -91,6 +195,7 @@ let paramMesClasses = (function() {
 
 
   self.init = () => {
+    getListeClassesMatieresCoordo()
     initDataTablesMesClasses();
     refreshTableMesClasses();
   }

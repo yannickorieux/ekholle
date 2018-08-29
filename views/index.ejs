@@ -5,7 +5,7 @@
     <% include partials/fastHead %>
 </head>
 
-<body>
+<body data-page="home">
   <div class="container-fluid">
     <header>
       <% include partials/header %>
@@ -15,22 +15,7 @@
         <h1>e-khôlle</h1>
         <p>e-khôlle est un outil de suivi pédagogique pour les interrogations orales en CPGE <br>
         </p>
-        <form id='selectEtab' action="/choixEtab" method="post">
-          <div class="form-group ">
-            <label>Votre établissement</label>
-            <div class="form-group">
-              <select name="etablissement">
-                <option value="bergson">bergson</option>
-                <option value="test">test</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-inline ">
-            <div>
-              <button type="submit" class="btn btn-primary">ENVOI</button>
-            </div>
-          </div>
-        </form>
+        <div id="dataListe1" class="dataListe" data-type="etablissement" data-message='Sélectionner un établissement dans la liste' data-placeholder='Choisir un établissement'></div>
       </div>
     </main>
     <footer>

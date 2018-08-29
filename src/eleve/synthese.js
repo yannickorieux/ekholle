@@ -133,6 +133,7 @@ let synthese = (function() {
       'idEleve': idEleve,
       'classe': classe,
     }, (data) => {
+      console.log(data);
       $('#tableColles').DataTable().clear().draw();
       $('#tableColles').DataTable().rows.add(data); // Add new data
       $('#tableColles').DataTable().columns.adjust().draw(); // Redraw the DataTable

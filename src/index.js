@@ -5,6 +5,7 @@ $(document).ready(() => {
   let eleve = require('./eleve.js');
   let admin = require('./admin.js');
   let login = require('./login.js');
+  let etablissement = require('./etablissement.js');
 
 
   //gestion password forgot
@@ -31,6 +32,9 @@ $(document).ready(() => {
   }
   if ($('body').data("page") === 'login') {
     login.init();
+  }
+  if ($('body').data("page") === 'home') {
+    etablissement.init();
   }
 
 });
