@@ -1,29 +1,29 @@
 <div class="container">
-  <h3>Ajouter une note pour la classe :</h3>
-
+  <h4>Mes colles pour la classe de : </h4>
   <div class="row">
     <div class="col-md-6">
-      <div id="dataListe1" class="dataListe" data-type="classematierecolleur" data-message='Sélectionner une discpline dans la liste' data-placeholder='Choisir une discipline'></div>
+      <div id="dataListe1" class="dataListe" data-type="classematierecolleur" data-message='Sélectionner une classe dans la liste' data-placeholder='Choisir votre classe'></div>
     </div>
+    <div class="col-md-6">
+      <button id="buttonAddColle" type="button" class="btn btn-primary float-right disabled" data-toggle="modal">Ajouter une interrogation orale </button>
+    </div>
+  </div>
+ <hr>
+  <h4>Récapitulatif des heures : </h3>
+  <div>
+    <table class="display table-striped table-bordered" style="width:100%" id="tableColles">
+      <thead>
+        <tr>
+          <th width="25%">Elève</th>
+          <th width="7%">Note</th>
+          <th width="20%">Inter. le </th>
+          <th width="30%">Sujet</th>
+          <th width="8%">Saisie le</th>
+          <th></th>
+          <th width="10%">Edit/Supp</th>
+        </tr>
+      </thead>
+    </table>
   </div>
 
-  <div id="tabGestionColles" style="display:none;">
-    <button id="buttonAddColle" type="button" class="btn btn-primary" data-toggle="modal" >Ajouter une interrogation orale </button>
-    <h3>Colles effectuées</h3>
-    <div>
-      <table class="display table-striped table-bordered"  style="width:100%" id="tableColles">
-        <thead>
-          <tr>
-            <th width="25%">Elève</th>
-            <th width="10%">Note</th>
-            <th width="10%">Date</th>
-            <th width="30%">Sujet</th>
-            <th width="10%">Saisie le</th>
-            <th></th>
-            <th width="10%">Edit/Supp</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-  </div>
 </div>

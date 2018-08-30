@@ -165,7 +165,7 @@ let paramCollesClasses = (function() {
       let element = row.data();
       let idClasseMatiereColleur = element.idClasseMatiereColleur;
       let idClasseMatiere = element.idClasseMatiere;
-      suppClasseMatiereColleur(idClasseMatiere, idColleur );
+      suppClasseMatiereColleur(idClasseMatiere, idClasseMatiereColleur );
     });
   };
 

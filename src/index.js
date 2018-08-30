@@ -1,5 +1,5 @@
 $(document).ready(() => {
-
+  $('[data-toggle="popover"]').popover();   
 
   let professeur = require('./professeur.js');
   let eleve = require('./eleve.js');

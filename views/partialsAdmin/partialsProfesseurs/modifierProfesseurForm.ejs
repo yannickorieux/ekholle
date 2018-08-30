@@ -1,24 +1,28 @@
-<div id="addModifierProfesseur" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addModifierProfesseur" aria-hidden="true">
+<div id="modifierProfesseur" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modifierProfesseur" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="AddModifierProfesseurForm" data-mode="ajouter" data-idprofesseur="" role="form">
+      <form id="modifierProfesseurForm"  data-idprofesseur="" role="form">
         <fieldset>
           <div class="modal-header">
-            <h4 class="modal-title">Ajouter ou Modifier un enseignant</h4>
+            <h4 class="modal-title">Modifier un enseignant</h4>
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
           </div>
           <div class="modal-body">
             <div class="form-group has-feedback has-clear">
               <label for="nom">Nom :</label>
-              <input class="form-control" type="text" required name="nom" />
+              <input class="form-control" type="text" readonly required name="nom" />
             </div>
             <div class="form-group has-feedback has-clear">
               <label for="prenom">Prénom:</label>
-              <input class="form-control" type="text" required name="prenom" />
+              <input class="form-control" type="text" readonly required name="prenom" />
             </div>
             <div class="form-group has-feedback has-clear">
               <label for="grade">Grade :</label>
               <input class="form-control" type="text" name="grade" />
+            </div>
+            <div class="form-group has-feedback has-clear">
+              <label for="email">Email :</label>
+              <input class="form-control" type="email" name="email" />
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">ENREGISTRER</button>

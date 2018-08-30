@@ -458,6 +458,17 @@ router.post('/validerProfesseur', login.isLoggedIn, function(req, res, next) {
 
 
 
+router.post('/modifierProfesseur', login.isLoggedIn, function(req, res, next) {
+  let Professeur = require('../models/professeur')(req.session.etab);
+  Professeur.findOneAndUpdate({'_id' : req.body.idProfesseur}, {$set :{ 'grade' : req.body.grade , 'email' : req.body.email}})
+  .exec(function(err) {
+    if (err) console.log(err);
+    return res.end();
+  });
+
+});
+
+
 
 
 /*

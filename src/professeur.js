@@ -87,17 +87,11 @@ let professeur = (function() {
       $('#addClasseProfesseur').modal();
     });
 
-    document.getElementById("buttonAddColle").addEventListener('click', function() {
-      document.getElementById('addColleForm').setAttribute("data-mode", "ajouter");
-      document.getElementById('addColleForm').setAttribute("data-idcolle", '');
-      let el2 = document.getElementById('dataListe2')
-      dataListe.readOnly(el2, false);
-      document.getElementById('addColleForm').reset();
-      $(document.getElementById('obsEleve')).summernote('code', '');
-      $(document.getElementById('obsCoordo')).summernote('code', '');
-      document.getElementById('dateSaisie').innerHTML = moment().format('L')
-      $('#addColleModal').modal();
-    });
+
+
+    /*
+    Gestion des events pour le coordo
+    */
 
     if (profilProfesseur === 'coordonnateur') {
       // permet au coordo de déclencher l'ajout d'un colleur
@@ -212,7 +206,8 @@ let professeur = (function() {
     menu();
     //picker pour addColle
     $('#datetimepicker1').datetimepicker({
-      format: 'L'
+      sideBySide: true,
+      stepping : 30,
     });
   }
 

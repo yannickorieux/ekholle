@@ -43,7 +43,7 @@ let professeurs = (function() {
     e.preventDefault();
     let nom = document.querySelector('#ajouterProfesseurForm input[name="nom"]').value.toLowerCase();
     let prenom = document.querySelector('#ajouterProfesseurForm input[name="prenom"]').value.toLowerCase();
-    let grade = document.querySelector('#ajouterProfesseurForm input[name="grade"]').value.toLowerCase();
+    let grade = document.querySelector('#ajouterProfesseurForm input[name="grade"]').value;
     let login = document.querySelector('#validerProfesseurForm input[name="login"]').value;
     let password = document.querySelector('#validerProfesseurForm input[name="password"]').value;
     $.post("/users/validerProfesseur", {
@@ -59,6 +59,30 @@ let professeurs = (function() {
       refreshProfesseurs();
     });
   });
+
+  /*
+  **************************
+        modifier un professeur
+   **************************
+   */
+
+
+  $('#modifierProfesseurForm').submit(function(e) {
+    e.preventDefault();
+        let idProfesseur = document.getElementById('modifierProfesseurForm').getAttribute("data-idprofesseur");
+        let grade = document.querySelector('#modifierProfesseurForm input[name="grade"]').value;
+        let email = document.querySelector('#modifierProfesseurForm input[name="email"]').value;
+        $.post("/users/modifierProfesseur", {
+          "grade": grade,
+          "email": email,
+          "idProfesseur" : idProfesseur,
+        }, () => {
+          $('#modifierProfesseurForm')[0].reset();
+          $('#modifierProfesseur').modal('hide');
+          refreshProfesseurs();
+        });
+  });
+
   /*
   **************************
         affichage de la table
@@ -75,7 +99,6 @@ let professeurs = (function() {
          '<td>' + d.colles[i].classe + '-' + d.colles[i].matiere + '</td>' +
          '</tr>' ;
      }
-
        table+='</table>';
        return table;
    };
@@ -158,13 +181,24 @@ let professeurs = (function() {
     // Edit record
     $('#tableProfesseurs').on('click', 'a.editor_edit', function(e) {
       e.preventDefault();
-      console.log($(this).closest('tr'));
+      let tr = $(this).closest('tr');
+      let row = table.row(tr);
+      let element = row.data();
+      let nom = element.nom;
+      let prenom = element.prenom;
+      let grade = element.grade;
+      let email = element.email;
+      $('#modifierProfesseurForm input[name="nom"]').val(nom);
+      $('#modifierProfesseurForm input[name="prenom"]').val(prenom);
+      $('#modifierProfesseurForm input[name="grade"]').val(grade);
+      $('#modifierProfesseurForm input[name="email"]').val(email);
+      document.getElementById('modifierProfesseurForm').setAttribute("data-idprofesseur", element._id);
       $('#modifierProfesseur').modal();
     });
 
     $('#tableProfesseurs tbody').on('click', 'td.details-control', function() {
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
+      let tr = $(this).closest('tr');
+      let row = table.row(tr);
       if (row.child.isShown()) {
         // This row is already open - close it
         row.child.hide();
@@ -175,7 +209,6 @@ let professeurs = (function() {
         tr.addClass('shown');
       }
     });
-
   };
 
   /*
@@ -185,12 +218,10 @@ let professeurs = (function() {
       */
   function refreshProfesseurs() {
     $.get("/admin/tableProfesseursJSON/", (data) => {
-
       //on met à jour les datalistes correspondantes
       let el3 = document.getElementById('dataListe3')
       dataListe.setDataListe(el3, data);
       let table=$('#tableProfesseurs').DataTable({retrieve: true,})
-
       table.clear().draw();
       table.rows.add(data); // Add new data
       table.columns.adjust().draw(); // Redraw the DataTable

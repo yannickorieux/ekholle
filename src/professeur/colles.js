@@ -15,6 +15,27 @@ let colles = (function() {
     */
 
 
+    /*
+    Gestion de l'event add colle
+    */
+     function showColleForm() {
+       document.getElementById('addColleForm').setAttribute("data-mode", "ajouter");
+       document.getElementById('addColleForm').setAttribute("data-idcolle", '');
+       let el2 = document.getElementById('dataListe2')
+       dataListe.readOnly(el2, false);
+       document.getElementById('addColleForm').reset();
+       $(document.getElementById('obsEleve')).summernote('code', '');
+       $(document.getElementById('obsCoordo')).summernote('code', '');
+       document.getElementById('dateSaisie').innerHTML = moment().format('L')
+       $('#addColleModal').modal();
+     }
+
+     const addColleButton=document.getElementById("buttonAddColle");
+
+
+
+
+
   let el1 = document.getElementById('dataListe1') //validation de la liste des collesClasse du professeur
   dataListe.selectId(el1)
   let el2 = document.getElementById('dataListe2') //validation de la  liste des élèves
@@ -41,10 +62,14 @@ let colles = (function() {
         let el2 = document.getElementById('dataListe2')
         dataListe.setDataListe(el2, data);
         if (colle != '') {
-          $('#tabGestionColles').css("display", "block");
+          // Enabled with:
+          $('#buttonAddColle').removeClass('disabled').prop('disabled', false);
+          addColleButton.addEventListener('click', showColleForm,false);
           refreshTableColle(idColle);
         } else {
-          $('#tabGestionColles').css("display", "none");
+          // Enabled with:
+          $('#buttonAddColle').addClass('disabled').prop('disabled', true);
+          addColleButton.removeEventListener('click', showColleForm,false);
         }
       });
     }
@@ -64,7 +89,7 @@ let colles = (function() {
     let idMatiereColle = dataListe.getId(el1);
     let el2 = document.getElementById('dataListe2')
     let idEleve = dataListe.getId(el2);
-    let date = moment(document.getElementById('dateColle').value,'DD/MM/YYYY').startOf('day');
+    let date = moment(document.getElementById('dateColle').value,'DD/MM/YYYY HH:mm');
     let dateSaisie = moment(document.getElementById('dateSaisie').innerHTML,'DD/MM/YYYY').startOf('day');
     let el6 = document.getElementById('dataListe6')
     let note = dataListe.getNote(el6);
@@ -182,7 +207,7 @@ function suppColle(idMatiereColle, idColle) {
 
   function initDataTables() {
     let liste = []
-    $.fn.dataTable.moment('DD/MM/YYYY');
+    $.fn.dataTable.moment('DD/MM/YYYY HH:mm');
     let table = $('#tableColles').DataTable({
       retrieve: true,
       data: liste,
@@ -230,9 +255,9 @@ function suppColle(idMatiereColle, idColle) {
           },
         },
         {
-          data: "date",
+          data: null,
            render: function(data, type, row){
-               return moment(data).format("DD/MM/YYYY");
+               return moment(data.date).format("DD/MM/YYYY HH:mm");
            },
         },
         {
@@ -240,9 +265,9 @@ function suppColle(idMatiereColle, idColle) {
           orderable : false,
         },
         {
-          data: "dateSaisie",
+          data: null,
            render: function(data, type, row){
-               return moment(data).format("DD/MM/YYYY");
+               return moment(data.dateSaisie).format("DD/MM/YYYY");
            }
         },
         {
@@ -282,7 +307,7 @@ function suppColle(idMatiereColle, idColle) {
       let el2 = document.getElementById('dataListe2')
       dataListe.readOnly(el2, true);
       dataListe.setName(el2, nom);
-      $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY'));
+      $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY HH:mm'));
       document.getElementById('dateSaisie').innerHTML=moment().format('L');
       $(document.getElementById('sujet')).val(sujet);
       $(document.getElementById('obsEleve')).summernote('code',obsEleve);

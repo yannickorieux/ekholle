@@ -133,12 +133,12 @@ let synthese = (function() {
         },
       },
         {
-          data: "date",
+          data: null,
            render: function(data, type, row){
                if(type === "sort" || type === "type"){
                    return data;
                }
-               return moment(data).format("DD/MM/YYYY");
+               return moment(data.date).format("DD/MM/YYYY HH:mm");
            }
         },
         {

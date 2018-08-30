@@ -156,7 +156,14 @@ let eleves = (function() {
           data: 'login'
         },
         {
-          data: 'password'
+          data: null,
+          render: function(data, type, row) {
+            if (data.changePwd === true) {
+              return '....';
+            } else {
+              return data.password;
+            }
+          }
         },
       ],
     });
