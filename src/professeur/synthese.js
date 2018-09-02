@@ -26,11 +26,8 @@ let synthese = (function() {
     let classeMatiere = dataListe.getName(el5);
     let idClasseMatiere = dataListe.getId(el5);
     if (idClasseMatiere != '') {
-      $('#tabCollesCoordo').css("display", "block");
       refreshTableCoordo(idClasseMatiere);
-    } else {
-      $('#tabCollesCoordo').css("display", "none");
-    }
+    } 
   });
 
 
@@ -164,6 +161,19 @@ let synthese = (function() {
       }
     });
   };
+
+
+  /*
+  ********************************************************************
+    Gestion des events change tab
+  ************************************************************
+    */
+  $('[href="#subtab2b1"]').on('hidden.bs.tab', function (e) {
+    let el5 = document.getElementById('dataListe5') //liste des collesClasse du professeur
+    $('#dataListe5Form')[0].reset();
+    $('#tableCollesCoordo').DataTable().clear().draw();
+  });
+
 
   /*
   ********************************************************************

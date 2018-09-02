@@ -12,7 +12,6 @@ page index professeur
 **************************
 */
 router.get('/', login.isLoggedIn, function(req, res, next) {
-  console.log(req.session.role);
   if (req.session.role === 'professeur') {
     //test simple colleur
     let Structure = require('../models/structure')(req.session.etab);
@@ -41,6 +40,7 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
         id: req._id,
         etab: req.session.etab,
         lycee: req.session.lycee,
+        maxAge : req.session.cookie.maxAge,
       });
     });
   } else {

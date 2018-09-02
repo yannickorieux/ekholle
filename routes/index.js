@@ -29,8 +29,8 @@ router.get('/', function(req, res, next) {
 router.get('/home', function(req, res, next) {
   let role = '';
   let lycee = '';
-  if (typeof req.session.role !== 'undefined') role = req.session.role;
-  if (typeof req.session.lycee !== 'undefined') role = req.session.lycee;
+  if (typeof req.session.role !== 'undefined') role = req.session.role; //important pour afficher dans header avec le bon role dans le cas ou on est connecte
+  if (typeof req.session.lycee !== 'undefined') lycee = req.session.lycee;
   res.render('index', {
     title: 'e-khôlle',
     role: role,

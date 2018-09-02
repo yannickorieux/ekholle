@@ -78,24 +78,6 @@ let admin = (function() {
 
 
 
-    // addEventListener pour les boutons déclenchement des modals
-
-    document.getElementById("buttonAddMatiere").addEventListener('click', function() {
-      document.getElementById('addMatiereForm').setAttribute("data-mode", "ajouter");
-      document.getElementById('addMatiereForm').setAttribute("data-idclassematiere", '');
-      //liste matiere on enleve l'attribut readonly
-      let el2 = document.querySelector('#dataListe2')
-      dataListe.readOnly(el2, false);
-      //liste professeur
-      let el3 = document.querySelector('#dataListe3')
-      dataListe.readOnly(el3, false);
-      //div formExtraPeriode doit être masquée
-      $('#formExtraPeriode').css("display", "none");
-      document.getElementById('addMatiereForm').reset();
-      $('#addMatiereClasse').modal();
-    });
-
-
 
   // les imports
     let structure = require('./admin/structure.js');

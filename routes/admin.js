@@ -10,7 +10,7 @@ const classes = require('./admin/classes');
 const professeurs = require('./admin/professeurs');
 const eleves = require('./admin/eleves');
 const ramassages = require('./admin/ramassages');
-
+const matieres = require('./admin/matieres');
 
 router.get('/', login.isLoggedIn, function(req, res, next) {
   if (req.session.role === 'admin') {
@@ -52,7 +52,7 @@ router.get('/tableStructureJSON/', login.isLoggedIn, classes.tableStructureJSON)
       Script pour afficher la table des matieres
  **************************
  */
-router.get('/tableMatieresJSON/', login.isLoggedIn, classes.tableMatieresJSON);
+router.get('/tableMatieresJSON/', login.isLoggedIn, matieres.tableMatieresJSON);
 
 
 
@@ -106,6 +106,14 @@ router.post('/suppClasseMatiere/', login.isLoggedIn, classes.suppClasseMatiere);
  **************************
  */
 
+
+ /*
+ **************************
+       GESTION MATIERES
+  **************************
+  */
+
+ router.post('/addOrModMatiere/', login.isLoggedIn, matieres.addOrModMatiere);
 
 /*
 **************************

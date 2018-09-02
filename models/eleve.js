@@ -35,6 +35,12 @@ let EleveSchema = new mongoose.Schema({
     type: Boolean,
      default: false
    },
+   email : {
+     type: String,
+     default: ''
+   },
+   resetPasswordToken: String,
+   resetPasswordExpires: Date,
 });
 
 //authenticate input against database

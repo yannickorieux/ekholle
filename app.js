@@ -31,7 +31,7 @@ const sessionMiddleware = session({
   secret: 'jeDetesteLeJardinage',
   resave: true,
   saveUninitialized: false,
-  cookie: {maxAge: 3600000},
+  cookie: {maxAge: 1800000},
   store: new MongoStore({
     mongooseConnection: db
   })
@@ -49,6 +49,9 @@ let sessionFlash = function(req, res, next) {
 
 app.use(flash());
 app.use(sessionFlash); //utile pour redirect
+
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

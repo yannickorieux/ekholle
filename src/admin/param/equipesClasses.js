@@ -9,6 +9,28 @@ let equipesClasses = (function() {
    */
 
 
+
+  // addEventListener pour les boutons déclenchement des modals
+
+  function showAddClasseMatiereForm() {
+    document.getElementById('addMatiereForm').setAttribute("data-mode", "ajouter");
+    document.getElementById('addMatiereForm').setAttribute("data-idclassematiere", '');
+    //liste matiere on enleve l'attribut readonly
+    let el2 = document.querySelector('#dataListe2')
+    dataListe.readOnly(el2, false);
+    //liste professeur
+    let el3 = document.querySelector('#dataListe3')
+    dataListe.readOnly(el3, false);
+    //div formExtraPeriode doit être masquée
+    $('#formExtraPeriode').css("display", "none");
+    document.getElementById('addMatiereForm').reset();
+    $('#addMatiereClasse').modal();
+  };
+
+
+  const buttonAddClasseMatiere = document.getElementById("buttonAddClasseMatiere");
+  buttonAddClasseMatiere.addEventListener('click', showAddClasseMatiereForm, false);
+
   let el1 = document.getElementById('dataListe1')
   dataListe.selectId(el1)
   let el2 = document.getElementById('dataListe2')
@@ -33,11 +55,11 @@ let equipesClasses = (function() {
 
 
 
-    /*
-    ********************************************************************
-    validation ajout ou modification matiere
-    ************************************************************
-      */
+  /*
+  ********************************************************************
+  validation ajout ou modification matiere
+  ************************************************************
+    */
   $('#addMatiereForm').submit(function(e) {
     e.preventDefault();
     let el1 = document.getElementById('dataListe1')
@@ -49,7 +71,7 @@ let equipesClasses = (function() {
     let idProfesseur = dataListe.getId(el3);
     let duree = document.getElementById('duree').value;
     let dureeExc = duree; //la duree exc est par defaut égale à la duree de la colle
-      let mode = document.getElementById('addMatiereForm').getAttribute("data-mode");
+    let mode = document.getElementById('addMatiereForm').getAttribute("data-mode");
     let idClasseMatiere = '';
     if (mode === 'modifier') {
       idClasseMatiere = document.getElementById('addMatiereForm').getAttribute("data-idclassematiere")
@@ -85,7 +107,7 @@ let equipesClasses = (function() {
     let el1 = document.getElementById('dataListe1')
     let classe = dataListe.getName(el1);
     $.post("/admin/suppClasseMatiere/", {
-        "idClasseMatiere": idClasseMatiere
+      "idClasseMatiere": idClasseMatiere
     }, (message) => {
       refreshTableEquipeClasse(classe);
     })
@@ -97,20 +119,20 @@ let equipesClasses = (function() {
         Script pour afficher une classe
    **************************
    */
-   function formatColleurs(d) {
-     // `d` is the original data object for the row
-     let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
-     for(let i=0;i<d.nomColleur.length;i++){
-       table+=
-         '<tr>' +
-         '<td>colleur :</td>' +
-         '<td>' + d.nomColleur[i] + ' ' + d.prenomColleur[i]+ '</td>' +
-         '</tr>' ;
-     }
+  function formatColleurs(d) {
+    // `d` is the original data object for the row
+    let table = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+    for (let i = 0; i < d.nomColleur.length; i++) {
+      table +=
+        '<tr>' +
+        '<td>colleur :</td>' +
+        '<td>' + d.nomColleur[i] + ' ' + d.prenomColleur[i] + '</td>' +
+        '</tr>';
+    }
 
-       table+='</table>';
-       return table;
-   };
+    table += '</table>';
+    return table;
+  };
 
   function initDataTablesEquipeClasse() {
     let liste = [];
@@ -167,7 +189,7 @@ let equipesClasses = (function() {
           data: null,
           className: "center",
           render: function(data, type, row) {
-            if (data.nomColleur.length>0){
+            if (data.nomColleur.length > 0) {
               return '<a href="" class="editor_modif">Edit</a>'
             }
             return '<a href="" class="editor_modif">Edit</a>/<a href="" class="editor_supp">Supp</a>'
@@ -184,11 +206,11 @@ let equipesClasses = (function() {
       let row = table.row(tr);
       let element = row.data();
       let idClasseMatiere = element.idClasseMatiere;
-      let duree = element.duree ;
-      let dureeExc = element.dureeExc ;
-      let nom = element.nom ;
-      let prenom = element.prenom ;
-      let matiere = element.matiere ;
+      let duree = element.duree;
+      let dureeExc = element.dureeExc;
+      let nom = element.nom;
+      let prenom = element.prenom;
+      let matiere = element.matiere;
       let extraPeriode = element.extraPeriode;
       // utiliser un data-action='modifier' ou data-action='supprimer'
       document.getElementById('addMatiereForm').setAttribute("data-mode", "modifier");
@@ -202,13 +224,12 @@ let equipesClasses = (function() {
       dataListe.setName(el3, nom + ' ' + prenom);
       $(document.getElementById('duree')).val(duree);
       $(document.getElementById('dureeExc')).val(dureeExc);
-      if(extraPeriode===true){
+      if (extraPeriode === true) {
         $('#formExtraPeriode').css("display", "block");
-      }
-      else{
+      } else {
         $('#formExtraPeriode').css("display", "none");
       }
-     $('#addMatiereClasse').modal();
+      $('#addMatiereClasse').modal();
     });
 
     // Supp record
@@ -252,8 +273,8 @@ let equipesClasses = (function() {
     }, (data) => {
       let table = $('#tableEquipeClasse').DataTable();
       let button = document.getElementById('buttonAddSuppPeriode');
-      if(data.length!==0){
-        if (data[0].extraPeriode === false ||  typeof data[0].extraPeriode==='undefined') {
+      if (data.length !== 0) {
+        if (data[0].extraPeriode === false || typeof data[0].extraPeriode === 'undefined') {
           table.columns(3).visible(false);
           button.setAttribute("data-action", "ajouter");
           button.innerHTML = 'Ajouter une période';
@@ -323,8 +344,8 @@ let equipesClasses = (function() {
 
   $('#defExtraPeriodeForm').submit(function(e) {
     e.preventDefault();
-    let debutPeriode=$('#datetimepicker7').find("input").val();
-    let finPeriode=$('#datetimepicker8').find("input").val();
+    let debutPeriode = $('#datetimepicker7').find("input").val();
+    let finPeriode = $('#datetimepicker8').find("input").val();
     let el1 = document.getElementById('dataListe1');
     let idClasse = dataListe.getId(el1);
     $.post("/admin/defExtraPeriode/", {

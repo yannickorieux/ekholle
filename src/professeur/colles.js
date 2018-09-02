@@ -26,7 +26,8 @@ let colles = (function() {
        document.getElementById('addColleForm').reset();
        $(document.getElementById('obsEleve')).summernote('code', '');
        $(document.getElementById('obsCoordo')).summernote('code', '');
-       document.getElementById('dateSaisie').innerHTML = moment().format('L')
+       document.getElementById('dateSaisie').innerHTML = moment().format('L');
+       $(document.getElementById('dateColle')).val(moment().format('DD/MM/YYYY HH'));
        $('#addColleModal').modal();
      }
 
@@ -67,7 +68,7 @@ let colles = (function() {
           addColleButton.addEventListener('click', showColleForm,false);
           refreshTableColle(idColle);
         } else {
-          // Enabled with:
+          // disabled with:
           $('#buttonAddColle').addClass('disabled').prop('disabled', true);
           addColleButton.removeEventListener('click', showColleForm,false);
         }
@@ -209,6 +210,7 @@ function suppColle(idMatiereColle, idColle) {
     let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY HH:mm');
     let table = $('#tableColles').DataTable({
+      responsive: true,
       retrieve: true,
       data: liste,
       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
@@ -342,6 +344,19 @@ function suppColle(idMatiereColle, idColle) {
     });
   };
 
+
+  /*
+  ********************************************************************
+    Gestion des events change tab
+  ************************************************************
+    */
+  $('[href="#1b"]').on('hidden.bs.tab', function (e) {
+    let el1 = document.getElementById('dataListe1') //liste des collesClasse du professeur
+    $('#dataListe1Form')[0].reset();
+    $('#tableColles').DataTable().clear().draw();
+    $('#buttonAddColle').addClass('disabled').prop('disabled', true);
+    addColleButton.removeEventListener('click', showColleForm,false);
+  });
 
   /*
   ********************************************************************

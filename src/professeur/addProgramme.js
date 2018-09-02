@@ -12,6 +12,21 @@ let addProgramme = (function() {
   ********************************************************************
         PRIVE
   ************************************************************
+*/
+
+
+  function showProgrammeForm() {
+      document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
+      document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
+      document.getElementById('addProgrammeForm').reset();
+      $(document.getElementById('detailProg')).summernote('code', '');
+      $('#addProgrammeModal').modal();
+    };
+
+     const addProgrammeButton=document.getElementById("buttonAddProgramme");
+
+
+
   /*
     Choix d 'une période '
   */
@@ -97,10 +112,12 @@ let addProgramme = (function() {
     let classeMatiere = dataListe.getName(el8);
     let idClasseMatiere = dataListe.getId(el8);
     if (idClasseMatiere != '') {
-      $('#tabProgrammeCoordo').css("display", "block");
+      $('#buttonAddProgramme').removeClass('disabled').prop('disabled', false);
+      addProgrammeButton.addEventListener('click', showProgrammeForm,false);
       refreshTableProgrammeCoordo(idClasseMatiere);
     } else {
-      $('#tabProgrammeCoordo').css("display", "none");
+      $('#buttonAddProgramme').addClass('disabled').prop('disabled', true);
+      addProgrammeButton.removeEventListener('click', showProgrammeForm,false);
     }
   });
 
@@ -242,113 +259,22 @@ let addProgramme = (function() {
     });
   };
 
+  
+
   /*
   ********************************************************************
-    Mise à jour de la table des colles
+    Gestion des events change tab
   ************************************************************
-  */
-  function refreshTableProgrammeColleur() {
-    $.post("/professeur/tableProgrammeColleurJSON/", {
-      'idProfesseur': idProfesseur,
-    }, (data) => {
-      $('#tableProgrammeColleur').DataTable().clear().draw();
-      $('#tableProgrammeColleur').DataTable().rows.add(data); // Add new data
-      $('#tableProgrammeColleur').DataTable().columns.adjust().draw(); // Redraw the DataTable
-    });
-  }
+    */
+  $('[href="#subtab2b3"]').on('hidden.bs.tab', function (e) {
+    console.log('test');
+    let el8 = document.getElementById('dataListe8') //liste des classes Matieres du coordo
+    $('#dataListe8Form')[0].reset();
+    $('#tableProgrammeCoordo').DataTable().clear().draw();
+    $('#buttonAddProgramme').addClass('disabled').prop('disabled', true);
+    addProgrammeButton.removeEventListener('click', showProgrammeForm,false);
+  });
 
-
-  function detailProgrammeColleur(d) {
-    // `d` is the original data object for the row
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
-      '<tr>' +
-      '<td>Détail:</td>' +
-      '<td>' + d.detail + '</td>' +
-      '</tr>' +
-      '</table>';
-  };
-
-
-  function initDataTablesProgrammeColleur() {
-    let liste = []
-    $.fn.dataTable.moment('DD/MM/YYYY');
-    let table = $('#tableProgrammeColleur').DataTable({
-      retrieve: true,
-      data: liste,
-      // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
-      language: {
-        processing: "Traitement en cours...",
-        search: "Rechercher&nbsp;:",
-        lengthMenu: "Afficher _MENU_ &eacute;l&eacute;ments",
-        info: "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-        infoEmpty: "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
-        infoFiltered: "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
-        infoPostFix: "",
-        loadingRecords: "Chargement en cours...",
-        zeroRecords: "Aucun &eacute;l&eacute;ment &agrave; afficher",
-        emptyTable: "Aucune donnée disponible dans le tableau",
-        paginate: {
-          first: "Premier",
-          previous: "Pr&eacute;c&eacute;dent",
-          next: "Suivant",
-          last: "Dernier"
-        },
-        aria: {
-          sortAscending: ": activer pour trier la colonne par ordre croissant",
-          sortDescending: ": activer pour trier la colonne par ordre décroissant"
-        }
-      },
-
-      columns: [
-        {
-          data : 'classe'
-        },
-        {
-          data: null,
-          render: function(data, type, row) {
-            // Combine the first and last names into a single table field
-            return data.nom + ' ' + data.prenom;
-          },
-        },
-        {
-          data: null,
-          render: function(data, type, row) {
-            return moment(data.debut).format("DD/MM/YYYY");
-          },
-        },
-        {
-          data: null,
-          render: function(data, type, row) {
-            return moment(data.fin).format("DD/MM/YYYY");
-          },
-        },
-        {
-          data: "titre",
-        },
-        {
-          "className": 'details-control',
-          "orderable": false,
-          "data": null,
-          "defaultContent": ''
-        },
-      ]
-    });
-
-    $('#tableProgrammeColleur tbody').on('click', 'td.details-control', function() {
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
-      if (row.child.isShown()) {
-        // This row is already open - close it
-        row.child.hide();
-        tr.removeClass('shown');
-      } else {
-        // Open this row
-        row.child(detailProgrammeColleur(row.data())).show();
-        tr.addClass('shown');
-      }
-    });
-
-  };
 
   /*
   ********************************************************************

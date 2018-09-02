@@ -41,7 +41,7 @@ let programme = (function() {
     let liste = []
     $.fn.dataTable.moment('DD/MM/YYYY');
     let table = $('#tableProgrammeColleur').DataTable({
-      retrieve: true,
+      responsive: true,
       data: liste,
       // dom : '<"top"Bif>rt<"bottom"lp><"clear">',
       language: {
@@ -118,6 +118,16 @@ let programme = (function() {
 
   };
 
+
+  /*
+  ********************************************************************
+    Afficher le programme colleur a l'ouverture de l'onglet
+  ************************************************************
+    */
+  $('[href="#subtab1b2"]').on('show.bs.tab', function (e) {
+    refreshTableProgrammeColleur();
+  });
+
   /*
   ********************************************************************
         PUBLIC
@@ -127,7 +137,6 @@ let programme = (function() {
 
   self.init = () => {
     initDataTablesProgrammeColleur()
-    refreshTableProgrammeColleur();
   };
 
 

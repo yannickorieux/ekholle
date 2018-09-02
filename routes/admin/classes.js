@@ -200,18 +200,7 @@ module.exports = {
   },
 
 
-  /*
-  **************************
-        Script pour afficher la table des matieres
-   **************************
-   */
-  tableMatieresJSON: function(req, res) {
-    let Matiere = require('../../models/matiere')(req.session.etab)
-    Matiere.find(function(err, matieres) {
-      if (err) return console.error(err);
-      res.json(matieres);
-    });
-  },
+
 
 
 

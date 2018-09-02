@@ -91,7 +91,7 @@ function initDataTablesResultatsCoordo() {
   let liste = []
   $.fn.dataTable.moment('DD/MM/YYYY');
   let table = $('#tableResultatsCoordo').DataTable({
-    retrieve: true,
+    responsive: true,
     data: liste,
     dom: 'Bfrtip',
     buttons: [
@@ -166,6 +166,22 @@ function initDataTablesResultatsCoordo() {
 
   });
 };
+
+
+/*
+********************************************************************
+  Gestion des events change tab
+************************************************************
+  */
+$('[href="#subtab2b2"]').on('hidden.bs.tab', function (e) {
+  let el7 = document.getElementById('dataListe7') //liste des collesClasse du professeur
+  $('#dataListe7Form')[0].reset();
+  $('#tableResultatsCoordo').DataTable().clear().draw();
+});
+
+
+
+
 /*
 ********************************************************************
       PUBLIC

@@ -204,6 +204,10 @@ router.post('/forgot', function(req, res, next) {
         let Admin = require('../models/admin')(req.session.etab);
         Login = Admin;
       }
+      else if (req.body.profil === 'eleve') {
+        let Admin = require('../models/eleve')(req.session.etab);
+        Login = Admin;
+      }
       Login.findOne({
         login: req.body.login
       }, function(err, user) {
@@ -218,17 +222,13 @@ router.post('/forgot', function(req, res, next) {
         user.email = req.body.logemail
         user.resetPasswordToken = token;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-
+        req.session.role=req.body.profil //on enregistre dans la session le role pour ensuite une fois connectée aprçs ch passwd afficher correct. le profil
         user.save(function(err) {
           done(err, token, user);
         });
       });
     },
     function(token, user, done) {
-      console.log(user.email);
-      console.log(req.body.profil);
-      console.log(req.headers.host);
-      console.log(token);
       var mailOptions = {
         to: user.email,
         from: config.email,
@@ -523,7 +523,7 @@ router.post('/validerEleve', login.isLoggedIn, function(req, res, next) {
     'changePwd': false,
   });
   eleve.save(function(err) {
-    if (err) console.log(error);;
+    if (err) console.log(error);
   });
   return res.end();
 });

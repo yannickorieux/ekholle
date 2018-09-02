@@ -56,6 +56,9 @@ let professeur = (function() {
 
 
 
+
+
+
   /*
   **************************
         PUBLIC
@@ -98,15 +101,6 @@ let professeur = (function() {
       document.getElementById("buttonAddColleur").addEventListener('click', function() {
       document.getElementById('addColleurForm').reset();
       $('#addColleurClasse').modal();
-      });
-
-      // permet de déclencher l'ajout d'un programme
-      document.getElementById("buttonAddProgramme").addEventListener('click', function() {
-        document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
-        document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
-        document.getElementById('addProgrammeForm').reset();
-        $(document.getElementById('detailProg')).summernote('code', '');
-        $('#addProgrammeModal').modal();
       });
 
     }
@@ -206,6 +200,8 @@ let professeur = (function() {
     menu();
     //picker pour addColle
     $('#datetimepicker1').datetimepicker({
+      format: 'L',
+      date: moment(),
       sideBySide: true,
       stepping : 30,
     });

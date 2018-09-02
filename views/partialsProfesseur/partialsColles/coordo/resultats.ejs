@@ -1,15 +1,13 @@
 <div class="container">
-  <h4>Choisir une classe :</h4>
+  <h4>Résultats de la classe  :</h4>
 
   <div id="dataListe7" class="dataListe" data-type="classematierecoordo" data-message='Sélectionner une classe dans la liste' data-placeholder='Choisir une classe'></div>
 
-
-  <div id="tabResultatsCoordo" style="display:none;">
-    <h3>Sélectionner une période</h3>
+    <h4>Sélectionner une période</h4>
     <form id="periodeResultatsForm" role="form">
       <fieldset>
         <div class="row">
-          <div class='col-md-4'>
+          <div class='col-md-6'>
             <div class="form-group">
               <div class="input-group date" id="datetimepickerRes1" data-target-input="nearest">
                 <input type="text" class="form-control datetimepicker-input" required data-target="#datetimepickerRes1" />
@@ -19,7 +17,7 @@
               </div>
             </div>
           </div>
-          <div class='col-md-4'>
+          <div class='col-md-6'>
             <div class="form-group">
               <div class="input-group date" id="datetimepickerRes2" data-target-input="nearest">
                 <input type="text" class="form-control datetimepicker-input" required data-target="#datetimepickerRes2" />
@@ -37,7 +35,7 @@
       </fieldset>
     </form>
     <div>
-      <table class="display table-striped table-bordered" style="width:100%" id="tableResultatsCoordo">
+      <table class="display no-wrap table-striped table-striped table-bordered" style="width:100%" id="tableResultatsCoordo">
         <thead>
           <tr>
             <th width="35%">Elève</th>
@@ -48,5 +46,4 @@
         </thead>
       </table>
     </div>
-  </div>
 </div>
