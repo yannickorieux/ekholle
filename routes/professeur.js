@@ -31,7 +31,7 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
     ]).exec(function(err, data) {
       if (err) return console.error(err);
       let profilProfesseur='colleur'
-      if(data.length>0) {profilProfesseur='coordonnateur'}
+      if(data.length>0) {profilProfesseur='coordonnateur'} //Si on trouve des mat dans la stru le prof est coordo
       res.render('professeur.ejs', {
         title: 'e-khôlle - professeur',
         user: req.prenom + '-' + req.nom,

@@ -143,6 +143,10 @@ let imports = (function() {
             data: data,
             type: 'post',
             success: function(data) {
+              $('#error').html(data);
+              $('#erreur').modal();
+              $.get("/users/rafraichirBaseStructure/",  () => {
+              });  //on rafraichit la structure
               $('#showTableImportEleves').css("display", "none");
             }
           });

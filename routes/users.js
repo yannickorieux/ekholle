@@ -10,6 +10,9 @@ const csv = require('fast-csv');
 const fs = require('fs');
 const config = require('../secret');
 
+const misc = require('./admin/misc'); //generer login + pass
+const professeurs = require('./admin/professeurs');
+const eleves = require('./admin/eleves');
 
 /* on renvoie la page de login */
 router.get('/', function(req, res, next) {
@@ -53,7 +56,7 @@ router.post('/login', function(req, res, next) {
       } else {
         req.session.userId = user._id;
         req.session.role = req.body.profil;
-        if (typeof user.classe!=='undefined') req.session.classe = user.classe; //pour eleve
+        if (typeof user.classe !== 'undefined') req.session.classe = user.classe; //pour l'eleve on recupere sa classe  
         if (user.changePwd === false) {
           req.session.changePwd = false;
           res.redirect('/users');
@@ -110,8 +113,7 @@ router.post('/modifyPassword', login.isLoggedIn, function(req, res, next) {
   } else if (req.session.role === 'admin') {
     let Admin = require('../models/admin')(req.session.etab);
     Login = Admin;
-  }
-  else if (req.session.role === 'eleve') {
+  } else if (req.session.role === 'eleve') {
     let Eleve = require('../models/eleve')(req.session.etab);
     Login = Eleve;
   }
@@ -203,8 +205,7 @@ router.post('/forgot', function(req, res, next) {
       } else if (req.body.profil === 'admin') {
         let Admin = require('../models/admin')(req.session.etab);
         Login = Admin;
-      }
-      else if (req.body.profil === 'eleve') {
+      } else if (req.body.profil === 'eleve') {
         let Admin = require('../models/eleve')(req.session.etab);
         Login = Admin;
       }
@@ -222,7 +223,7 @@ router.post('/forgot', function(req, res, next) {
         user.email = req.body.logemail
         user.resetPasswordToken = token;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-        req.session.role=req.body.profil //on enregistre dans la session le role pour ensuite une fois connectée aprçs ch passwd afficher correct. le profil
+        req.session.role = req.body.profil //on enregistre dans la session le role pour ensuite une fois connectée aprçs ch passwd afficher correct. le profil
         user.save(function(err) {
           done(err, token, user);
         });
@@ -364,109 +365,14 @@ router.post('/reset/', function(req, res) {
 
 /*
 **************************
- création login
-**************************
-*/
-
-function genereLogin(prenom, nom) {
-  let tab1 = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ";
-  let tab2 = "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn";
-  rep2 = tab1.split('');
-  rep = tab2.split('');
-  myarray = new Array();
-  var i = -1;
-  while (rep2[++i]) {
-    myarray[rep2[i]] = rep[i];
-  }
-  myarray['Œ'] = 'OE';
-  myarray['œ'] = 'oe';
-  myarray[' '] = '-';
-  let p = prenom.replace(/./g, function($0) {
-    return (myarray[$0]) ? myarray[$0] : $0
-  });
-  let n = nom.replace(/./g, function($0) {
-    return (myarray[$0]) ? myarray[$0] : $0
-  });
-  return p + '.' + n
-};
-
-
-/*
-**************************
- création pwd
-**************************
-*/
-function generePassword() {
-  let c = 'abcdefghijknopqrstuvwxyzACDEFGHJKLMNPQRSTUVWXYZ12345679';
-  let r = ''
-  for (i = 0; i < 8; i++) {
-    r += c.charAt(Math.floor(Math.random() * c.length));
-  }
-  return r
-}
-
-
-
-
-/*
-**************************
 ajouter un professeur
 **************************
 */
-router.post('/creerProfesseur', login.isLoggedIn, function(req, res, next) {
-  let Professeur = require('../models/professeur')(req.session.etab);
-  let login = req.body.login;
-  Professeur.find({
-      'login': {
-        $regex: login + '.*'
-      }
-    })
-    .exec(function(error, professeur) {
-      let message = '';
-      if (professeur.length > 0) {
-        login = login + String(professeur.length)
-        message = "Un professeur avec un prénom et nom quasi identique est présent dans la base, vérifiez dans la liste professeur que ce n'est pas un doublon "
-      }
-      let password = generePassword();
-      return res.send({
-        'message': message,
-        'password': password,
-        'login': login
-      });
-    });
-});
+router.post('/creerProfesseur', login.isLoggedIn, professeurs.creerProfesseur);
 
+router.post('/validerProfesseur', login.isLoggedIn, professeurs.validerProfesseur);
 
-
-
-
-router.post('/validerProfesseur', login.isLoggedIn, function(req, res, next) {
-  let Professeur = require('../models/professeur')(req.session.etab);
-  let professeur = new Professeur({
-    'prenom': req.body.prenom,
-    'nom': req.body.nom,
-    'login': req.body.login,
-    'password': req.body.password,
-    'grade': req.body.grade,
-    'changePwd': false,
-  });
-  professeur.save(function(err) {
-    if (err) return handleError(err);
-  });
-  return res.end();
-});
-
-
-
-router.post('/modifierProfesseur', login.isLoggedIn, function(req, res, next) {
-  let Professeur = require('../models/professeur')(req.session.etab);
-  Professeur.findOneAndUpdate({'_id' : req.body.idProfesseur}, {$set :{ 'grade' : req.body.grade , 'email' : req.body.email}})
-  .exec(function(err) {
-    if (err) console.log(err);
-    return res.end();
-  });
-
-});
+router.post('/modifierProfesseur', login.isLoggedIn, professeurs.modifierProfesseur);
 
 
 
@@ -476,57 +382,9 @@ router.post('/modifierProfesseur', login.isLoggedIn, function(req, res, next) {
 ajouter un eleve
 **************************
 */
-router.post('/creerEleve', login.isLoggedIn, function(req, res, next) {
-  let Eleve = require('../models/eleve')(req.session.etab);
-  let login = req.body.login;
-  Eleve.findOne({
-      'ine': req.body.ine
-    })
-    .exec(function(error, eleve) {
-      let message = '';
-      if (eleve !== null) {
-        message = "l'élève est déjà présent dans la base"
-        return res.send({
-          'message': message,
-        });
-      } else {
-        Eleve.find({
-            'login': {
-              $regex: login + '.*'
-            }
-          })
-          .exec(function(error, eleve) {
-            if (eleve.length > 0) {
-              login = login + String(eleve.length);
-            }
-            let password = generePassword();
-            return res.send({
-              'message': message,
-              'password': password,
-              'login': login
-            });
-          });
-      }
-    });
-});
+router.post('/creerEleve', login.isLoggedIn, eleves.creerEleve);
 
-
-router.post('/validerEleve', login.isLoggedIn, function(req, res, next) {
-  let Eleve = require('../models/eleve')(req.session.etab);
-  let eleve = new Eleve({
-    'prenom': req.body.prenom,
-    'nom': req.body.nom,
-    'login': req.body.login,
-    'password': req.body.password,
-    'ine': req.body.ine,
-    'classe': req.body.classe,
-    'changePwd': false,
-  });
-  eleve.save(function(err) {
-    if (err) console.log(error);
-  });
-  return res.end();
-});
+router.post('/validerEleve', login.isLoggedIn, eleves.validerEleve);
 
 
 
@@ -558,7 +416,7 @@ testEtCreationLogin = function(profil, csvData, dataExists) {
       value.login = dataExists[index].login;
     } else {
       value.present = false;
-      let login = genereLogin(value.prenom.toLowerCase(), value.nom.toLowerCase())
+      let login = misc.genereLogin(value.prenom.toLowerCase(), value.nom.toLowerCase())
       let re = new RegExp('^' + login);
       //on verifie dans la table login les doublons
       let n = 0;
@@ -571,7 +429,7 @@ testEtCreationLogin = function(profil, csvData, dataExists) {
       });
       if (n > 0) login += String(Math.max.apply(Math, num) + 1);
       value.login = login;
-      value.password = generePassword();
+      value.password = misc.generePassword();
       testLogin.push(login);
     }
   });
@@ -638,13 +496,15 @@ testPresenceBase = function(req, res, profil, csvData, callback) {
 };
 
 
+
+
 let upload = multer({
   dest: 'tmp/csv/'
 });
 
 
 
-router.post('/csvData', upload.single('file'), function(req, res, next) {
+router.post('/csvData', login.isLoggedIn, upload.single('file'), function(req, res, next) {
   let profil = req.body.profil;
   let csvData = [],
     fileHeader;
@@ -672,9 +532,10 @@ router.post('/csvData', upload.single('file'), function(req, res, next) {
 
 
 
-router.post('/importEleves', function(req, res, next) {
+router.post('/importEleves', login.isLoggedIn, function(req, res, next) {
   let Eleve = require('../models/eleve')(req.session.etab);
   let Structure = require('../models/structure')(req.session.etab);
+  let message = '';
   if (req.body.importAnnuel === 'true' || req.body.importAnnuel === true) {
     //on nettoie la structure
     Structure.update({}, {
@@ -682,13 +543,16 @@ router.post('/importEleves', function(req, res, next) {
           matieres: 1,
           periode: 1,
           extraPeriode: 1
+        },
+        $set: {
+          totalEleves: 0
         }
       }, {
         multi: true
       })
       .exec(function(err, results) {
 
-        //on supprime les classes pour chaque eleves
+        //on supprime les classes pour chaque eleve
         Eleve.update({}, {
             $unset: {
               classe: 1,
@@ -710,36 +574,44 @@ router.post('/importEleves', function(req, res, next) {
             }, function allDone(err) {
               //puis on ajoute les nouveaux
               let data = JSON.parse(req.body.dataAdd);
-              Eleve.collection.insertMany(data, function(err, docs) {
-                if (err) {
-                  return console.error(err);
-                } else {
-                  console.log("Multiple documents inserted to Collection");
-                }
-                res.end();
-              });
+              if (data.length !== 0) {
+                Eleve.collection.insertMany(data, function(err, docs) {
+                  if (err) {
+                    message = err;
+                  } else {
+                    message = 'les élèves sont importés dans la base';
+                  }
+                  res.send(message);
+                });
+              } else {
+                message = 'pas d eleves à ajouter';
+                res.send(message);
+              };
             })
           });
       });
   } else {
     // mise à jour standard on ajoute les nouveaux (modifie les autres)
     let data = JSON.parse(req.body.dataAdd);
-    if (dataAdd.length !== 0) {
+    if (data.length !== 0) {
       Eleve.collection.insertMany(data, function(err, docs) {
         if (err) {
-          return console.error(err);
+          message = err;
         } else {
-          console.log("Multiple documents inserted to Collection");
+          message = 'les élèves sont importés dans la base';
         }
-        res.end();
+        res.send(message);
       });
     }
-    res.end();
+    else{
+      message = 'pas d eleves à ajouter';
+      res.send(message);
+    };
   }
 });
 
 
-router.post('/importProfesseurs', function(req, res, next) {
+router.post('/importProfesseurs', login.isLoggedIn, function(req, res, next) {
   let Professeur = require('../models/professeur')(req.session.etab);
   let data = JSON.parse(req.body.dataAdd);
   if (data.length > 0) {
@@ -758,7 +630,7 @@ router.post('/importProfesseurs', function(req, res, next) {
 
 
 
-router.post('/importMatieres', function(req, res, next) {
+router.post('/importMatieres', login.isLoggedIn, function(req, res, next) {
   let Matiere = require('../models/matiere')(req.session.etab);
   let data = JSON.parse(req.body.dataAdd);
   if (data.length > 0) {
@@ -803,18 +675,20 @@ router.get('/rafraichirBaseStructure/', login.isLoggedIn, function(req, res) {
       }
     ])
     .exec(function(err, classes) {
+      console.log(classes);
       if (err) return console.error(err);
       Structure.distinct('nom')
         .exec(function(err, classesExist) {
           if (err) return console.error(err);
           newClasses = [];
           classes.forEach((value) => {
-            if (classesExist.indexOf(value.nom) === -1) {
+            if (classesExist.indexOf(value.nom) === -1 && value.nom !=='null') { //null les eleves sans classes font partie de la classe null
               newClasses.push({
-                'nom': value
+                'nom': value.nom
               })
             }
           });
+          console.log(newClasses);
           Structure.collection.insertMany(newClasses, function(err, docs) {
             if (err) {
               console.error(err);

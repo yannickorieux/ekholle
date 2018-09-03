@@ -1,7 +1,7 @@
 let structure = (function() {
 
   let self = {};
-
+  let dataListe = require('../misc/dataListe.js');
   /*
   **************************
         PRIVATE
@@ -102,6 +102,15 @@ let structure = (function() {
       table.clear().draw();
       table.rows.add(data); // Add new data
       table.columns.adjust().draw(); // Redraw the DataTable
+
+      $.get("/admin/tableClassesJSON/", (data) => {
+        let el1 = document.querySelector('#dataListe1');
+        dataListe.setDataListe(el1, data);
+        let el4 = document.querySelector('#dataListe4')
+        dataListe.setDataListe(el4, data);
+        let el6 = document.querySelector('#dataListe6')
+        dataListe.setDataListe(el6, data);
+      });
     });
   };
 

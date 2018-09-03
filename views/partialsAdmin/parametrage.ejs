@@ -7,7 +7,9 @@
 				<li class="nav-item pill-1"><a class="nav-link"  href="#2a" data-toggle="tab">Les matières</a></li>
 			<li class="nav-item pill-1" ><a class="nav-link" href="#3a" data-toggle="tab">Les professeurs</a></li>
 			<li class="nav-item pill-1"><a class="nav-link" href="#4a" data-toggle="tab">Les élèves</a></li>
+			<%if (profilAdmin === 'root') { %>
 			<li class="nav-item pill-1"><a class="nav-link" href="#5a" data-toggle="tab">Imports</a></li>
+			<% } %>
 		</ul>
 
 		<div class="tab-content">
@@ -63,25 +65,31 @@
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane" id="5a">
-				<ul class="nav nav-pills">
-					<li class="nav-item pill-1 "><a class="nav-link active" data-toggle="tab" href="#5a1sa">Eleves</a></li>
-					<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#5a2sa">Professeurs</a></li>
-						<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#5a3sa">Matieres</a></li>
-				</ul>
-				<div class="tab-content">
-					<div id="5a1sa" class="tab-pane active fade show">
-						<% include partialsImports/eleves %>
-					</div>
-					<div id="5a2sa" class="tab-pane fade">
-							<% include partialsImports/professeurs %>
-					</div>
-					<div id="5a3sa" class="tab-pane fade">
-							<% include partialsImports/matieres %>
-					</div>
 
+			<%if (profilAdmin === 'root') { %>
+				<div class="tab-pane" id="5a">
+					<ul class="nav nav-pills">
+						<li class="nav-item pill-1 "><a class="nav-link active" data-toggle="tab" href="#5a1sa">Eleves</a></li>
+						<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#5a2sa">Professeurs</a></li>
+							<li class="nav-item pill-1 "><a class="nav-link" data-toggle="tab" href="#5a3sa">Matieres</a></li>
+					</ul>
+					<div class="tab-content">
+						<div id="5a1sa" class="tab-pane active fade show">
+							<% include partialsImports/eleves %>
+						</div>
+						<div id="5a2sa" class="tab-pane fade">
+								<% include partialsImports/professeurs %>
+						</div>
+						<div id="5a3sa" class="tab-pane fade">
+								<% include partialsImports/matieres %>
+						</div>
+
+					</div>
 				</div>
-			</div>
+					<% } %>
+
+
+
 		</div>
 	</div>
 </div>

@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-
+const misc = require('./misc')
 
 module.exports={
-
+  /*
+  ***********************************
+table professeur
+  ***********************************
+  */
   tableProfesseursJSON:  function(req, res) {
     let Professeur = require('../../models/professeur')(req.session.etab);
     Professeur.aggregate([{
@@ -66,4 +70,64 @@ module.exports={
       });
   },
 
+  /*
+  ***********************************
+  creer professeur
+  ***********************************
+  */
+
+  creerProfesseur : function(req, res, next) {
+    let Professeur = require('../../models/professeur')(req.session.etab);
+    let login = req.body.login;
+    Professeur.find({
+        'login': {
+          $regex: login + '.*'
+        }
+      })
+      .exec(function(error, professeur) {
+        let message = '';
+        if (professeur.length > 0) {
+          login = login + String(professeur.length)
+          message = "Un professeur avec un prénom et nom quasi identique est présent dans la base, vérifiez dans la liste professeur que ce n'est pas un doublon "
+        }
+        let password = misc.generePassword();
+        return res.send({
+          'message': message,
+          'password': password,
+          'login': login
+        });
+      });
+  },
+
+
+
+
+
+  validerProfesseur : function(req, res, next) {
+    let Professeur = require('../../models/professeur')(req.session.etab);
+    let professeur = new Professeur({
+      'prenom': req.body.prenom,
+      'nom': req.body.nom,
+      'login': req.body.login,
+      'password': req.body.password,
+      'grade': req.body.grade,
+      'changePwd': false,
+    });
+    professeur.save(function(err) {
+      if (err) console.log(err);
+    });
+    return res.end();
+  },
+
+
+
+  modifierProfesseur : function(req, res, next) {
+    let Professeur = require('../../models/professeur')(req.session.etab);
+    Professeur.findOneAndUpdate({'_id' : req.body.idProfesseur}, {$set :{ 'grade' : req.body.grade , 'email' : req.body.email}})
+    .exec(function(err) {
+      if (err) console.log(err);
+      return res.end();
+    });
+
+  },
 }

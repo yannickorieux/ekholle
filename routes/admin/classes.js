@@ -378,6 +378,7 @@ module.exports = {
             "prenom": value.prenom,
             "login": value.login,
             "password": value.password,
+            "changePwd": value.changePwd,
           });
         });
       }

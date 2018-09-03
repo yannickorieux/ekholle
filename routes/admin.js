@@ -13,12 +13,17 @@ const ramassages = require('./admin/ramassages');
 const matieres = require('./admin/matieres');
 
 router.get('/', login.isLoggedIn, function(req, res, next) {
+  let profilAdmin='admin';
+  if(req.nom==='root'){
+    profilAdmin='root'
+  }
   if (req.session.role === 'admin') {
     res.render('admin.ejs', {
       title: 'e-khôlle - administration',
       user: req.prenom + '-' + req.nom,
       role: req.session.role,
       lycee: req.session.lycee,
+      profilAdmin : profilAdmin,
     });
   } else {
     res.redirect('/' + req.session.role);
