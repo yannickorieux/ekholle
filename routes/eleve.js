@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const login = require('./login');
+const login = require('./users/login');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 

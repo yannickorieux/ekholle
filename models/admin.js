@@ -28,10 +28,6 @@ let AdminSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
    },
-   povoir :{
-     type: String,
-     required: true,
-   },
    annee :{
      debut : {
        type: Date

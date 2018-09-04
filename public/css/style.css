@@ -6334,7 +6334,7 @@ tr.shown td.details-control {
     display: block; }
 
 .cookie-inform-and-ask {
-  background-color: rgba(128, 128, 128, 0.5);
+  background-color: gray;
   display: none;
   height: 100%;
   left: 0;
