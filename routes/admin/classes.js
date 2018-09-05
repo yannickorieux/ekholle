@@ -334,7 +334,7 @@ module.exports = {
       }
     }).exec(function(err, structure) {
       if (err) return console.error(err);
-      res.json();
+      res.end();
     });
   },
 

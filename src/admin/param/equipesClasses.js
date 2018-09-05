@@ -46,10 +46,15 @@ let equipesClasses = (function() {
     let classe = dataListe.getName(el1)
     let id = dataListe.getId(el1)
     if (classe !== '') {
-      $('#showTableEquipeClasse').css("display", "block");
+      // Enabled with:
+      $('#buttonAddClasseMatiere').removeClass('disabled').prop('disabled', false);
+      buttonAddClasseMatiere.addEventListener('click',showAddClasseMatiereForm,false);
       refreshTableEquipeClasse(classe);
+      document.getElementById("showExtra").style.display = "block";
     } else {
-      $('#showTableEquipeClasse').css("display", "none");
+      $('#buttonAddClasseMatiere').removeClass('disabled').prop('disabled', true);
+      buttonAddClasseMatiere.removeEventListener('click',showAddClasseMatiereForm,false);
+      document.getElementById("showExtra").style.display = "none";
     }
   });
 
@@ -212,6 +217,7 @@ let equipesClasses = (function() {
       let prenom = element.prenom;
       let matiere = element.matiere;
       let extraPeriode = element.extraPeriode;
+      console.log('edit',  extraPeriode);
       // utiliser un data-action='modifier' ou data-action='supprimer'
       document.getElementById('addMatiereForm').setAttribute("data-mode", "modifier");
       document.getElementById('addMatiereForm').setAttribute("data-idclassematiere", idClasseMatiere);
@@ -224,6 +230,7 @@ let equipesClasses = (function() {
       dataListe.setName(el3, nom + ' ' + prenom);
       $(document.getElementById('duree')).val(duree);
       $(document.getElementById('dureeExc')).val(dureeExc);
+      console.log(extraPeriode);
       if (extraPeriode === true) {
         $('#formExtraPeriode').css("display", "block");
       } else {
@@ -279,6 +286,7 @@ let equipesClasses = (function() {
           button.setAttribute("data-action", "ajouter");
           button.innerHTML = 'Ajouter une période';
           document.getElementById("defExtraPeriode").style.display = "none";
+
         } else {
           table.columns(3).visible(true);
           button.setAttribute("data-action", "supprimer");
@@ -308,12 +316,16 @@ let equipesClasses = (function() {
       table.columns(3).visible(true);
       extraPeriode = true;
       document.getElementById("defExtraPeriode").style.display = "block";
+      console.log('app');
+      document.getElementById("formExtraPeriode").style.display = "block";
       this.setAttribute("data-action", "supprimer");
       this.innerHTML = 'Supprimer la période';
     } else {
       table.columns(3).visible(false);
       extraPeriode = false;
       document.getElementById("defExtraPeriode").style.display = "none";
+      console.log('disp');
+      document.getElementById("formExtraPeriode").style.display = "none";
       this.setAttribute("data-action", "ajouter");
       this.innerHTML = 'Ajouter une période';
     }
@@ -322,7 +334,12 @@ let equipesClasses = (function() {
     $.post("/admin/changeExtraPeriode/", {
       'idClasse': idClasse,
       'extraPeriode': extraPeriode,
-    }, () => {});
+    }, () => {
+      //on remet a jour la table pour prendre en compte le nouveau statut extraPeriode
+      let el1 = document.getElementById('dataListe1')
+      let classe = dataListe.getName(el1);
+      refreshTableEquipeClasse(classe)
+    });
   });
 
 
@@ -342,6 +359,7 @@ let equipesClasses = (function() {
   });
 
 
+// validation des dates
   $('#defExtraPeriodeForm').submit(function(e) {
     e.preventDefault();
     let debutPeriode = $('#datetimepicker7').find("input").val();
@@ -354,6 +372,24 @@ let equipesClasses = (function() {
       'finPeriode': finPeriode,
     }, () => {});
   });
+
+
+  /*
+  ********************************************************************
+    Gestion des events change tab
+  ************************************************************
+    */
+  $('[href="#1a2sa"]').on('hidden.bs.tab', function (e) {
+    let el1 = document.getElementById('dataListe1') //liste des Classes
+    $('#dataListe1Form')[0].reset();
+    $('#tableEquipeClasse').DataTable().clear().draw();
+    $('#buttonAddClasseMatiere').removeClass('disabled').prop('disabled', true);
+    buttonAddClasseMatiere.removeEventListener('click',showAddClasseMatiereForm,false);
+    document.getElementById("showExtra").style.display = "none";
+  });
+
+
+
   /*
   **************************
         PUBLIC

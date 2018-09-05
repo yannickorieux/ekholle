@@ -210,6 +210,7 @@ module.exports = {
           user.save(function(err, user) {
             Login.authenticate(Login, user.login, req.body.password, function(err, user) {
               req.session.userId = user._id;
+              if (typeof user.classe !== 'undefined') req.session.classe = user.classe; //pour l'eleve on recupere sa classe
               done(err, user);
             });
           });

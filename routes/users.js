@@ -100,18 +100,9 @@ router.get('/logout', function(req, res, next) {
 });
 
 
-/*
-**************************
-modifier le mot de passe
-**************************
-*/
-router.post('/modifyPassword', login.isLoggedIn, password.modifyPassword);
-
-
-
 
 // =====================================
-// Mot de passe oublié
+// Mot de passe oublié 
 // =====================================
 router.get('/forgot', function(req, res) {
   res.render('forgot.ejs', {
@@ -122,15 +113,13 @@ router.get('/forgot', function(req, res) {
   });
 });
 
+// =====================================
+// Mot de passe  reset envoi d'un token par mail
+// =====================================
+
 
 router.post('/forgot', password.sendMail );
 
-
-
-
-// =====================================
-// Mot de passe  reset
-// =====================================
 
 // =====================================
 // Au chargement de l'url on recupere l'etab, le token et le profil pour activer le form reset
@@ -139,13 +128,18 @@ router.post('/forgot', password.sendMail );
 router.get('/reset/', password.testToken);
 
 
-
-
 // =====================================
-// validation du  form reset
+// validation du  form reset pour enregistrer le mdp
 // ===
 router.post('/reset/', password.savePassword);
 
+
+/*
+**************************
+modifier le mot de passe une fois connecté
+**************************
+*/
+router.post('/modifyPassword', login.isLoggedIn, password.modifyPassword);
 
 
 // =====================================
