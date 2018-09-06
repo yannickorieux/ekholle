@@ -1,10 +1,29 @@
 let colles = (function() {
 
   let self = {};
-  let idProfesseur =  document.body.getAttribute("data-idprofesseur");
+  let idProfesseur = document.body.getAttribute("data-idprofesseur");
   let dataListe = require('../misc/dataListe.js');
 
 
+  $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+    icons: {
+      time: 'far fa-clock',
+      date: 'far fa-calendar',
+      up: 'far fa-arrow-up',
+      down: 'far fa-arrow-down',
+      previous: 'far fa-chevron-left',
+      next: 'far fa-chevron-right',
+      today: 'far fa-calendar-check-o',
+      clear: 'far fa-trash',
+      close: 'far fa-times'
+    }
+  });
+  //picker pour addColle
+  $('#datetimepicker1').datetimepicker({
+    date: moment(),
+    sideBySide: true,
+    stepping: 30,
+  });
   /*
   ********************************************************************
         PRIVE
@@ -15,23 +34,23 @@ let colles = (function() {
     */
 
 
-    /*
-    Gestion de l'event add colle
-    */
-     function showColleForm() {
-       document.getElementById('addColleForm').setAttribute("data-mode", "ajouter");
-       document.getElementById('addColleForm').setAttribute("data-idcolle", '');
-       let el2 = document.getElementById('dataListe2')
-       dataListe.readOnly(el2, false);
-       document.getElementById('addColleForm').reset();
-       $(document.getElementById('obsEleve')).summernote('code', '');
-       $(document.getElementById('obsCoordo')).summernote('code', '');
-       document.getElementById('dateSaisie').innerHTML = moment().format('L');
-       $(document.getElementById('dateColle')).val(moment().format('DD/MM/YYYY HH'));
-       $('#addColleModal').modal();
-     }
+  /*
+  Gestion de l'event add colle
+  */
+  function showColleForm() {
+    document.getElementById('addColleForm').setAttribute("data-mode", "ajouter");
+    document.getElementById('addColleForm').setAttribute("data-idcolle", '');
+    let el2 = document.getElementById('dataListe2')
+    dataListe.readOnly(el2, false);
+    document.getElementById('addColleForm').reset();
+    $(document.getElementById('obsEleve')).summernote('code', '');
+    $(document.getElementById('obsCoordo')).summernote('code', '');
+    document.getElementById('dateSaisie').innerHTML = moment().format('L');
+    $(document.getElementById('dateColle')).val(moment().format('DD/MM/YYYY HH'));
+    $('#addColleModal').modal();
+  }
 
-     const addColleButton=document.getElementById("buttonAddColle");
+  const addColleButton = document.getElementById("buttonAddColle");
 
 
 
@@ -65,12 +84,12 @@ let colles = (function() {
         if (colle != '') {
           // Enabled with:
           $('#buttonAddColle').removeClass('disabled').prop('disabled', false);
-          addColleButton.addEventListener('click', showColleForm,false);
+          addColleButton.addEventListener('click', showColleForm, false);
           refreshTableColle(idColle);
         } else {
           // disabled with:
           $('#buttonAddColle').addClass('disabled').prop('disabled', true);
-          addColleButton.removeEventListener('click', showColleForm,false);
+          addColleButton.removeEventListener('click', showColleForm, false);
         }
       });
     }
@@ -84,62 +103,68 @@ let colles = (function() {
   ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
   */
 
-  $('#addColleForm').submit(function(e) {
-    e.preventDefault();
-    let el1 = document.getElementById('dataListe1')
-    let idMatiereColle = dataListe.getId(el1);
-    let el2 = document.getElementById('dataListe2')
-    let idEleve = dataListe.getId(el2);
-    let date = moment(document.getElementById('dateColle').value,'DD/MM/YYYY HH:mm');
-    let dateSaisie = moment(document.getElementById('dateSaisie').innerHTML,'DD/MM/YYYY').startOf('day');
-    let el6 = document.getElementById('dataListe6')
-    let note = dataListe.getNote(el6);
-    let noNote='';
-    if(isNaN(parseInt(note))){
-      noNote=note;
-      note=null;
-    }
-    else{
-      note=parseInt(note);
-    }
-    let sujet = document.getElementById('sujet').value;
-    let obsCoordo = $('#obsCoordo').summernote('code');
-    let obsEleve = $('#obsEleve').summernote('code');
-    let mode = document.getElementById('addColleForm').getAttribute("data-mode");
-    let idColle = '';
-    if (mode === 'modifier') {
-      idColle = document.getElementById('addColleForm').getAttribute("data-idcolle")
-    }
-    $.post("/professeur/addOrModColle/", {
-      "date": moment(date).format(),
-      "dateSaisie": moment(dateSaisie).format(),
-      "idEleve": idEleve,
-      "idMatiereColle": idMatiereColle,
-      "idProfesseur": idProfesseur,
-      "note": note,
-      "noNote": noNote,
-      "sujet": sujet,
-      "obsCoordo": obsCoordo,
-      "obsEleve": obsEleve,
-      "mode": mode, // mode : ajout ou modification d'une colle
-      "idColle": idColle //utile en cas de modif
-    }, () => {
-      let el1 = document.getElementById('dataListe1');
-      let idColle = dataListe.getId(el1);
-      $('#addColleModal').modal('hide');
-      //on rafraichit la table
-      refreshTableColle(idMatiereColle);
-    });
-  });
+  // $('#addColleForm').submit(function(e) {
+  //
+  // });
 
 
+ function saveColleForm(e){
+   e.preventDefault();
+   console.log('testoooo');
+   let el1 = document.getElementById('dataListe1')
+   let idMatiereColle = dataListe.getId(el1);
+   let el2 = document.getElementById('dataListe2')
+   let idEleve = dataListe.getId(el2);
+   let date = moment(document.getElementById('dateColle').value, 'DD/MM/YYYY HH:mm');
+   let dateSaisie = moment(document.getElementById('dateSaisie').innerHTML, 'DD/MM/YYYY').startOf('day');
+   let el6 = document.getElementById('dataListe6')
+   let note = dataListe.getNote(el6);
+   let noNote = '';
+   if (isNaN(parseInt(note))) {
+     noNote = note;
+     note = null;
+   } else {
+     note = parseInt(note);
+   }
+   let sujet = document.getElementById('sujet').value;
+   let obsCoordo = $('#obsCoordo').summernote('code');
+   let obsEleve = $('#obsEleve').summernote('code');
+   let mode = document.getElementById('addColleForm').getAttribute("data-mode");
+   let idColle = '';
+   if (mode === 'modifier') {
+     idColle = document.getElementById('addColleForm').getAttribute("data-idcolle")
+   }
+   $.post("/professeur/addOrModColle/", {
+     "date": moment(date).format(),
+     "dateSaisie": moment(dateSaisie).format(),
+     "idEleve": idEleve,
+     "idMatiereColle": idMatiereColle,
+     "idProfesseur": idProfesseur,
+     "note": note,
+     "noNote": noNote,
+     "sujet": sujet,
+     "obsCoordo": obsCoordo,
+     "obsEleve": obsEleve,
+     "mode": mode, // mode : ajout ou modification d'une colle
+     "idColle": idColle //utile en cas de modif
+   }, () => {
+     let el1 = document.getElementById('dataListe1');
+     let idColle = dataListe.getId(el1);
+     $('#addColleModal').modal('hide');
+     //on rafraichit la table
+     refreshTableColle(idMatiereColle);
+   });
+ }
+
+  const saveColleButton = document.getElementById("saveColleButton");
+  saveColleButton.addEventListener('click', saveColleForm, false);
 
   /*
   ********************************************************************
     Mise à jour de la table des colles
   ************************************************************
     */
-   function refreshTableColle(idMatiereColle) {
+  function refreshTableColle(idMatiereColle) {
     $.post("/professeur/tableCollesJSON/", {
       'idMatiereColle': idMatiereColle,
       'idProfesseur': idProfesseur,
@@ -157,11 +182,11 @@ let colles = (function() {
     Suppression d'une colle
   ************************************************************
     */
-function suppColle(idMatiereColle, idColle) {
+  function suppColle(idMatiereColle, idColle) {
     $.post("/professeur/suppColle/", {
       "idColle": idColle,
-        "idProfesseur": idProfesseur,
-        "idMatiereColle": idMatiereColle
+      "idProfesseur": idProfesseur,
+      "idMatiereColle": idMatiereColle
     }, () => {
       refreshTableColle(idMatiereColle);
     })
@@ -236,11 +261,10 @@ function suppColle(idMatiereColle, idColle) {
           sortDescending: ": activer pour trier la colonne par ordre décroissant"
         }
       },
-     order: [],
-      columns: [
-        {
+      order: [],
+      columns: [{
           data: null,
-          orderable : false,
+          orderable: false,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
             return data.nom + ' ' + data.prenom;
@@ -248,9 +272,9 @@ function suppColle(idMatiereColle, idColle) {
         },
         {
           data: null,
-          orderable : false,
+          orderable: false,
           render: function(data, type, row) {
-            if(data.note===null){
+            if (data.note === null) {
               return data.noNote;
             }
             return data.note;
@@ -258,19 +282,19 @@ function suppColle(idMatiereColle, idColle) {
         },
         {
           data: null,
-           render: function(data, type, row){
-               return moment(data.date).format("DD/MM/YYYY HH:mm");
-           },
+          render: function(data, type, row) {
+            return moment(data.date).format("DD/MM/YYYY HH:mm");
+          },
         },
         {
           data: 'sujet',
-          orderable : false,
+          orderable: false,
         },
         {
           data: null,
-           render: function(data, type, row){
-               return moment(data.dateSaisie).format("DD/MM/YYYY");
-           }
+          render: function(data, type, row) {
+            return moment(data.dateSaisie).format("DD/MM/YYYY");
+          }
         },
         {
           "className": 'details-control',
@@ -284,8 +308,7 @@ function suppColle(idMatiereColle, idColle) {
           defaultContent: '<a href="" class="editor_modif">Edit</a>/<a href="" class="editor_supp">Supp</a>'
         }
       ],
-    },
-  );
+    }, );
 
 
     // Edit record
@@ -295,9 +318,11 @@ function suppColle(idMatiereColle, idColle) {
       var row = table.row(tr);
       let element = row.data();
       let idColle = element.idColle;
-      let nom = element.nom + ' ' + element.prenom ;
+      let nom = element.nom + ' ' + element.prenom;
       let note = element.note;
-      if(element.note===null){note =element.noNote;}
+      if (element.note === null) {
+        note = element.noNote;
+      }
       let date = element.date;
       let dateSaisie = element.dateSaisie;
       let sujet = element.sujet;
@@ -310,12 +335,12 @@ function suppColle(idMatiereColle, idColle) {
       dataListe.readOnly(el2, true);
       dataListe.setName(el2, nom);
       $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY HH:mm'));
-      document.getElementById('dateSaisie').innerHTML=moment().format('L');
+      document.getElementById('dateSaisie').innerHTML = moment().format('L');
       $(document.getElementById('sujet')).val(sujet);
-      $(document.getElementById('obsEleve')).summernote('code',obsEleve);
+      $(document.getElementById('obsEleve')).summernote('code', obsEleve);
       $(document.getElementById('obsCoordo')).summernote('code', obsCoordo);
       let el6 = document.getElementById('dataListe6')
-      dataListe.setLaNote(el6,note);
+      dataListe.setLaNote(el6, note);
 
       $('#addColleModal').modal();
     });
@@ -326,7 +351,7 @@ function suppColle(idMatiereColle, idColle) {
       var tr = $(this).closest('tr');
       var row = table.row(tr);
       let element = row.data();
-      suppColle(element.idMatiereColle,  element.idColle);
+      suppColle(element.idMatiereColle, element.idColle);
     });
 
     $('#tableColles tbody').on('click', 'td.details-control', function() {
@@ -350,12 +375,12 @@ function suppColle(idMatiereColle, idColle) {
     Gestion des events change tab
   ************************************************************
     */
-  $('[href="#1b"]').on('hidden.bs.tab', function (e) {
+  $('[href="#1b"]').on('hidden.bs.tab', function(e) {
     let el1 = document.getElementById('dataListe1') //liste des collesClasse du professeur
     $('#dataListe1Form')[0].reset();
     $('#tableColles').DataTable().clear().draw();
     $('#buttonAddColle').addClass('disabled').prop('disabled', true);
-    addColleButton.removeEventListener('click', showColleForm,false);
+    addColleButton.removeEventListener('click', showColleForm, false);
   });
 
   /*

@@ -31,7 +31,7 @@ const sessionMiddleware = session({
   secret: 'jeDetesteLeJardinage',
   resave: true,
   saveUninitialized: false,
-  cookie: {maxAge: 1800000},
+  cookie: {maxAge: 3600000},
   store: new MongoStore({
     mongooseConnection: db
   })

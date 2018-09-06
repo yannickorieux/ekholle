@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-
+const moment=require('moment')
 const login = require('./users/login');
 const colleur = require('./professeur/colleur');
 const coordonnateur = require('./professeur/coordonnateur');
@@ -41,7 +41,6 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
         id: req._id,
         etab: req.session.etab,
         lycee: req.session.lycee,
-        maxAge : req.session.cookie.maxAge,
       });
     });
   } else {

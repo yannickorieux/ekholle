@@ -74,6 +74,7 @@ let admin = (function() {
       'form': true
     });
 
+    
     $('input[type=text]').clearer(); //permet de réinitialiser les input
 
 

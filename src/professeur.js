@@ -4,6 +4,7 @@ let professeur = (function() {
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
   let profilProfesseur = document.body.getAttribute("data-profil");
   let dataListe = require('./misc/dataListe.js');
+
   /*
   **************************
         PRIVATE
@@ -198,13 +199,9 @@ let professeur = (function() {
     }
 
     menu();
-    //picker pour addColle
-    $('#datetimepicker1').datetimepicker({
-      format: 'L',
-      date: moment(),
-      sideBySide: true,
-      stepping : 30,
-    });
+
+
+
   }
 
   return self;

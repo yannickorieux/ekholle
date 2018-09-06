@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const async = require('async');
 const queryString = require('query-string');
 const multer = require('multer');
 const csv = require('fast-csv');
@@ -92,7 +92,7 @@ router.get('/logout', function(req, res, next) {
       if (err) {
         return next(err);
       } else {
-        // on peut de nouveau creer une session
+        // on crée une nouvelle session pour l'établissement mais avec un utilisateur non connecté
         return res.redirect('/' + etab);
       }
     });
@@ -101,8 +101,9 @@ router.get('/logout', function(req, res, next) {
 
 
 
+
 // =====================================
-// Mot de passe oublié 
+// Mot de passe oublié
 // =====================================
 router.get('/forgot', function(req, res) {
   res.render('forgot.ejs', {
