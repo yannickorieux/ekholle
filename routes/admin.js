@@ -4,7 +4,7 @@ const login = require('./login');
 const moment = require('moment')
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
-
+const fs = require('fs');
 
 const classes = require('./admin/classes');
 const professeurs = require('./admin/professeurs');
@@ -31,6 +31,16 @@ router.get('/', login.isLoggedIn, function(req, res, next) {
 });
 
 
+// =====================================
+// appel  du manuel
+// =====================================
+router.get('/pdf', login.isLoggedIn, function(req, res) {
+  let filePath = "/ekholle-administration.pdf";
+  fs.readFile('./pdf' + filePath, function(err, data) {
+    res.contentType("application/pdf");
+    res.send(data);
+  });
+});
 
 /*
 **************************

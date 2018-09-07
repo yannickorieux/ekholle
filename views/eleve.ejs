@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <% include partials/head %>
 
-  </head>
-  <body data-page="eleve" data-ideleve = <%= id %> data-classe = <%= classe %> >
+<head>
+  <% include partials/head %>
+
+</head>
+
+<body data-page="eleve" data-ideleve=<%= id %> data-classe =
+  <%= classe %> >
     <div class="container">
       <header>
         <% include partials/header %>
       </header>
       <main>
-        <% include partialsEleve/colles%>
-        <% include partials/password %>
+        <div class="tab-content">
+          <% include partialsEleve/colles%>
+            <% include partials/password %>
+        </div>
         <% include partials/erreur %>
-        <% include partials/formContact %>
+          <% include partials/formContact %>
       </main>
       <footer>
         <% include partials/footer %>
       </footer>
     </div>
-  </body>
+</body>
+
 </html>

@@ -504,8 +504,12 @@ Suppression d'un programme de colle
 
 
 suppProgramme : function(req, res) {
+
   let Structure = require('../../models/structure')(req.session.etab);
-  Structure.update({}, {
+
+  Structure.update({
+      'matieres._id': req.body.idClasseMatiere
+    }, {
     $pull: {
       'matieres.$[].programme': {
         '_id': ObjectId(req.body.idProgramme)

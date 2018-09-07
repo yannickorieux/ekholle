@@ -1,5 +1,5 @@
-<div id='showColles' class='visible' style="display:block">
-	<div id="TabColle">
+
+	<div class="tab-pane active" id="tabColle">
 		<ul class="nav nav-pills">
 			<li class="nav-item active pill-1">
 				<a class="nav-link active" href="#1b" data-toggle="tab">Mes colles</a>
@@ -54,7 +54,6 @@
 					<% include partialsColles/decompteHeures%>
 			</div>
 		</div>
+		<% include partialsColles/colleur/formAddColle%>
+		<% include partialsColles/coordo/formAddProgramme%>
 	</div>
-	<% include partialsColles/colleur/formAddColle%>
-	<% include partialsColles/coordo/formAddProgramme%>
-</div>

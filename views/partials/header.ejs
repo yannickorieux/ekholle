@@ -16,6 +16,9 @@
             <%if (role === 'professeur') { %>
               <% include ../partialsProfesseur/navProfesseur %>
                 <% } %>
+                <%if (role === 'eleve') { %>
+                  <% include ../partialsEleve/navEleve %>
+                    <% } %>
     </ul>
     <ul class="nav navbar-nav ml-auto">
       <% if (typeof user!='undefined') { %>

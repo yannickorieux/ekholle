@@ -207,6 +207,9 @@ Ajout ou modification du programme de colle
 
 router.post('/addOrModProgramme/', login.isLoggedIn, coordonnateur.addOrModProgramme);
 
+
+router.post('/suppProgramme/', login.isLoggedIn, coordonnateur.suppProgramme);
+
 /*
 **************************
 table pour afficher le programme du coordo

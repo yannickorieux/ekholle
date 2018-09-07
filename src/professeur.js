@@ -11,31 +11,6 @@ let professeur = (function() {
    **************************
    */
 
-  function menu() {
-
-    $('#navColles').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#showColles").css("display", "block");
-    });
-
-    $('#navParam').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#showParam").css("display", "block");
-    });
-
-
-    $('#navCompte').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#modifyPassword").css("display", "block");
-    });
-
-    $('#navHelp').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#showHelp").css("display", "block");
-    });
-
-
-  }
 
   /*
   ********************************************************************
@@ -54,11 +29,6 @@ let professeur = (function() {
       dataListe.setDataListe(el8, data);
     });
   }
-
-
-
-
-
 
   /*
   **************************
@@ -197,10 +167,6 @@ let professeur = (function() {
       let addProgramme = require('./professeur/addProgramme.js');
       addProgramme.init();
     }
-
-    menu();
-
-
 
   }
 

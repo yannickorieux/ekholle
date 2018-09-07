@@ -10,14 +10,6 @@ let eleve = (function() {
    **************************
    */
 
-  function menu() {
-
-    $('#navCompte').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#modifyPassword").css("display", "block");
-    });
-
-  }
 
   /*
   **************************
@@ -26,8 +18,6 @@ let eleve = (function() {
    */
 
   self.init = function() {
-    menu();
-    console.log(idEleve);
     let synthese = require('./eleve/synthese.js');
     synthese.init();
     let programme = require('./eleve/programme.js');

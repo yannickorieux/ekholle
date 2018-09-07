@@ -8,24 +8,6 @@ let admin = (function() {
    **************************
    */
 
-  function menu() {
-
-    $('#navBilan').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#showBilan").css("display", "block");
-    });
-
-    $('#navParam').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#showParam").css("display", "block");
-    });
-
-    $('#navCompte').on('click', function() {
-      $(".visible").css("display", "none");
-      $("#modifyPassword").css("display", "block");
-    });
-
-  }
 
   /*
   **************************
@@ -74,7 +56,7 @@ let admin = (function() {
       'form': true
     });
 
-    
+
     $('input[type=text]').clearer(); //permet de réinitialiser les input
 
 
@@ -99,7 +81,7 @@ let admin = (function() {
     decompteHeures.init();
     periodes.init();
     imports.init()
-    menu();
+
   }
   return self;
 })();
