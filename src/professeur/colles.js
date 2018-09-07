@@ -4,6 +4,7 @@ let colles = (function() {
   let idProfesseur = document.body.getAttribute("data-idprofesseur");
   let dataListe = require('../misc/dataListe.js');
 
+  const addColleButton = document.getElementById("buttonAddColle");
 
   $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
     icons: {
@@ -50,7 +51,6 @@ let colles = (function() {
     $('#addColleModal').modal();
   }
 
-  const addColleButton = document.getElementById("buttonAddColle");
 
 
 
@@ -107,10 +107,14 @@ let colles = (function() {
   //
   // });
 
+  $('#addColleForm').on("submit", function(event){
+      $(this).children('button[type=submit]').prop('disabled', true);
+      return true;
+  });
 
- function saveColleForm(e){
+ $('#addColleForm').submit(function(e) {
    e.preventDefault();
-   console.log('testoooo');
+   $('#addColleModal').modal('hide');
    let el1 = document.getElementById('dataListe1')
    let idMatiereColle = dataListe.getId(el1);
    let el2 = document.getElementById('dataListe2')
@@ -150,14 +154,12 @@ let colles = (function() {
    }, () => {
      let el1 = document.getElementById('dataListe1');
      let idColle = dataListe.getId(el1);
-     $('#addColleModal').modal('hide');
      //on rafraichit la table
      refreshTableColle(idMatiereColle);
    });
- }
+ });
 
-  const saveColleButton = document.getElementById("saveColleButton");
-  saveColleButton.addEventListener('click', saveColleForm, false);
+
 
   /*
   ********************************************************************

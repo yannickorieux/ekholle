@@ -6,36 +6,38 @@
 </head>
 
 <body data-page="login">
-  <header>
-    <% include partials/header %>
-  </header>
-  <main>
 
-    <div class="container-fluid">
+  <div class="container">
+    <header>
+      <% include partials/header %>
+    </header>
+    <main>
+
       <div>
         <% if (locals.messages) { %>
           <p style="color:red">
             <%=  locals.messages.msg  %>
           </p>
           <% } %>
-     </div>
-     <div>
-          <%if (page === 'login') { %>
-                   <% include partials/login %>
-              <% } %>
+      </div>
+      <div>
+        <%if (page === 'login') { %>
+          <% include partials/login %>
+            <% } %>
 
               <%if (page === 'password') { %>
-                 <% include partials/password %>
+                <% include partials/password %>
                   <% } %>
-                <% include partials/cookie %>
+                    <% include partials/cookie %>
       </div>
       <% include partials/erreur %>
-      <hr>
-    </div>
-  </main>
-  <footer>
-    <% include partials/footer %>
-  </footer>
+        <hr>
+
+    </main>
+    <footer>
+      <% include partials/footer %>
+    </footer>
+  </div>
 </body>
 
 </html>
