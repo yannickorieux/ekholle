@@ -228,11 +228,12 @@ let imports = (function() {
               'nom': d.body[i][0],
               'prenom': d.body[i][1].toLowerCase(),
               'grade': d.body[i][2],
-              'login': d.body[i][3],
-              'password': d.body[i][4],
+              'email': d.body[i][3],
+              'login': d.body[i][4],
+              'password': d.body[i][5],
               'changePwd': false,
             }
-            if (d.body[i][5] === 'Oui') {
+            if (d.body[i][6] === 'Oui') {
               dataAdd.push(row);
             }
           }
@@ -258,6 +259,9 @@ let imports = (function() {
         },
         {
           data: 'grade'
+        },
+        {
+          data: 'email'
         },
         {
           data: 'login'

@@ -8,6 +8,11 @@ let addProgramme = (function() {
   let el8 = document.getElementById('dataListe8') //liste des classes matieres
   dataListe.selectId(el8)
 
+
+  const editProgButton = document.getElementById("buttonEditProg");
+  const validProgButton = document.getElementById("buttonValidProg");
+
+
   /*
   ********************************************************************
         PRIVE
@@ -15,11 +20,44 @@ let addProgramme = (function() {
 */
 
 
+ function editProgSummernote(){
+   $('#detailProg').summernote({
+     height: 100,
+     dialogsInBody: true,
+     dialogsFade: true,
+     toolbar: [
+       ['style', ['bold', 'italic', 'underline', 'strike']],
+       ['para', ['ul', 'ol']],
+       ['color', ['color']],
+       ['para', ['ul', 'ol', 'paragraph']],
+       ['insert', ['link', 'hr']],
+       ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
+     ],
+     focus: true,
+   });
+  };
+
+  function validProgSummernote(){
+    let programme = $('#detailProg').summernote('code');
+    $('#detailProg').html(programme);
+     $('#detailProg').summernote('destroy');
+   };
+
+
+
+editProgButton.addEventListener('click', editProgSummernote, false);
+validProgButton.addEventListener('click', validProgSummernote, false);
+
+
+
+
+
+
+
   function showProgrammeForm() {
       document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
       document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
       document.getElementById('addProgrammeForm').reset();
-      $(document.getElementById('detailProg')).summernote('code', '');
       $('#addProgrammeModal').modal();
     };
 
@@ -64,7 +102,7 @@ let addProgramme = (function() {
     let debut = moment($('#datetimepickerProg1').find("input").val(), 'DD/MM/YYYY').format();
     let fin = moment($('#datetimepickerProg2').find("input").val(), 'DD/MM/YYYY').format();
     let titre = document.getElementById('titre').value;
-    let detail = $(document.getElementById('detailProg')).summernote('code');
+    let detail = document.getElementById('detailProg').innerHTML;
     let mode = document.getElementById('addProgrammeForm').getAttribute("data-mode");
     let idProgramme = '';
     if (mode === 'modifier') {
@@ -245,7 +283,7 @@ let addProgramme = (function() {
       $(document.getElementById('debutProg')).val(moment(element.debut).format('DD/MM/YYYY'));
       $(document.getElementById('finProg')).val(moment(element.fin).format('DD/MM/YYYY'));
       $(document.getElementById('titre')).val(titre);
-      $(document.getElementById('detailProg')).summernote('code',detail);
+      $(document.getElementById('detailProg')).html(detail);
       $('#addProgrammeModal').modal();
     });
 
@@ -259,7 +297,7 @@ let addProgramme = (function() {
     });
   };
 
-  
+
 
   /*
   ********************************************************************
@@ -267,7 +305,6 @@ let addProgramme = (function() {
   ************************************************************
     */
   $('[href="#subtab2b3"]').on('hidden.bs.tab', function (e) {
-    console.log('test');
     let el8 = document.getElementById('dataListe8') //liste des classes Matieres du coordo
     $('#dataListe8Form')[0].reset();
     $('#tableProgrammeCoordo').DataTable().clear().draw();

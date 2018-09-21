@@ -119,8 +119,12 @@ let eleves = (function() {
     let table = $('#tableEleves').DataTable({
       data: liste,
       dom: 'Bfrtip',
+      lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
       buttons: [
-        'csv', 'excel', 'pdf'
+        'csv', 'excel', 'pdf' , 'pageLength'
       ],
       language: {
         processing: "Traitement en cours...",
@@ -145,7 +149,11 @@ let eleves = (function() {
         }
       },
 
-      columns: [{
+      columns: [
+        {
+          data: 'ine'
+        },
+        {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field

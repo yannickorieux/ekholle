@@ -109,8 +109,12 @@ let professeurs = (function() {
     let table = $('#tableProfesseurs').DataTable({
       data: liste,
       dom: 'Bfrtip',
+      lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
       buttons: [
-        'csv', 'excel', 'pdf'
+        'csv', 'excel', 'pdf' , 'pageLength'
       ],
       language: {
         processing: "Traitement en cours...",

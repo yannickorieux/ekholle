@@ -57,13 +57,26 @@
                         <input class="form-control" type="text" id="sujet" name="sujet">
                       </div>
                     </div>
-                    <div class="col-md-12">
-                      <label for="obsCoordo">Commentaires à destination du coordonnateur de la discipline :</label>
-                      <textarea class="form-control summernote" id="obsCoordo"></textarea>
+
+                    <div class="col-md-8">
+                      <label for="obsCoordo">Commentaires à destination du coordonnateur de la discipline :    </label>
+                    </div>
+                    <div class="col-md-4">
+                      <button id="buttonValidCoo" class="btn btn-secondary float-right" type="button"><i class='fa fa-check' style='font-size:18px'></i></button>
+                      <button id="buttonEditCoo" class="btn btn-primary float-right" type="button"><i class='fa fa-edit' style='font-size:18px'></i></button>
                     </div>
                     <div class="col-md-12">
+                      <div class='summernote' id="obsCoordo"></div>
+                    </div>
+                    <div class="col-md-8">
                       <label for="obsEleve">Commentaires à destination de l'élève :</label>
-                      <textarea class="form-control summernote" id="obsEleve"></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <button id="buttonValidEleve" class="btn btn-secondary float-right" type="button"><i class='fa fa-check' style='font-size:18px'></i></button>
+                      <button id="buttonEditEleve" class="btn btn-primary float-right" type="button"><i class='fa fa-edit' style='font-size:18px'></i></button>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="summernote" id="obsEleve"></div>
                     </div>
                   </div>
                 </div>
@@ -72,10 +85,18 @@
           </div>
 
           <div class="modal-footer">
-            <button id='saveColleButton' type='submit'  class="btn btn-primary">ENREGISTRER</button>
+            <button id='saveColleButton' type='submit' class="btn btn-primary">ENREGISTRER</button>
           </div>
         </fieldset>
       </form>
     </div>
   </div>
 </div>
+<style>
+  .summernote {
+    border: thin #CCC solid;
+    min-height: 25px;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+</style>

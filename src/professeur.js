@@ -30,6 +30,12 @@ let professeur = (function() {
     });
   }
 
+
+
+
+
+
+
   /*
   **************************
         PUBLIC
@@ -37,19 +43,6 @@ let professeur = (function() {
    */
 
   self.init = function() {
-    $('.summernote').summernote({
-      height: 100,
-      dialogsInBody: true,
-      toolbar: [
-        ['style', ['bold', 'italic', 'underline', 'strike']],
-        ['para', ['ul', 'ol']],
-        ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
-        ['insert', ['link', 'hr']],
-        ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
-      ],
-      styleWithSpan: false,
-    });
 
 
     // addEventListener pour les boutons déclenchant les modals

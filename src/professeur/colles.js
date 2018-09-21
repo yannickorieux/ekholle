@@ -6,6 +6,11 @@ let colles = (function() {
 
   const addColleButton = document.getElementById("buttonAddColle");
 
+  const editCoordoButton = document.getElementById("buttonEditCoo");
+  const editEleveButton = document.getElementById("buttonEditEleve");
+  const validCoordoButton = document.getElementById("buttonValidCoo");
+  const validEleveButton = document.getElementById("buttonValidEleve");
+
   $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
     icons: {
       time: 'far fa-clock',
@@ -35,6 +40,62 @@ let colles = (function() {
     */
 
 
+
+function editCoordoSummernote(){
+  $('#obsCoordo').summernote({
+    height: 100,
+    dialogsInBody: true,
+    dialogsFade: true,
+    toolbar: [
+      ['style', ['bold', 'italic', 'underline', 'strike']],
+      ['para', ['ul', 'ol']],
+      ['color', ['color']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['insert', ['link', 'hr']],
+      ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
+    ],
+    focus: true,
+  });
+ };
+
+
+ function editEleveSummernote(){
+   $('#obsEleve').summernote({
+     height: 100,
+     dialogsInBody: true,
+     dialogsFade: true,
+     toolbar: [
+       ['style', ['bold', 'italic', 'underline', 'strike']],
+       ['para', ['ul', 'ol']],
+       ['color', ['color']],
+       ['para', ['ul', 'ol', 'paragraph']],
+       ['insert', ['link', 'hr']],
+       ['misc', ['undo', 'redo', 'print', 'help', 'fullscreen']]
+     ],
+     focus: true,
+      tabSize: 2 ,
+   });
+  };
+
+  function validEleveSummernote(){
+    let obsEleve = $('#obsEleve').summernote('code');
+    $('#obsEleve').html(obsEleve);
+     $('#obsEleve').summernote('destroy');
+   };
+
+  function validCoordoSummernote(){
+    let obsCoordo = $('#obsCoordo').summernote('code');
+    $('#obsCoordo').html(obsCoordo);
+     $('#obsCoordo').summernote('destroy');
+  };
+
+
+
+editCoordoButton.addEventListener('click', editCoordoSummernote, false);
+editEleveButton.addEventListener('click', editEleveSummernote, false);
+validCoordoButton.addEventListener('click', validCoordoSummernote, false);
+validEleveButton.addEventListener('click', validEleveSummernote, false);
+
   /*
   Gestion de l'event add colle
   */
@@ -44,8 +105,8 @@ let colles = (function() {
     let el2 = document.getElementById('dataListe2')
     dataListe.readOnly(el2, false);
     document.getElementById('addColleForm').reset();
-    $(document.getElementById('obsEleve')).summernote('code', '');
-    $(document.getElementById('obsCoordo')).summernote('code', '');
+    //$(document.getElementById('obsEleve')).summernote('code', '');
+    //$(document.getElementById('obsCoordo')).summernote('code', '');
     document.getElementById('dateSaisie').innerHTML = moment().format('L');
     $(document.getElementById('dateColle')).val(moment().format('DD/MM/YYYY HH'));
     $('#addColleModal').modal();
@@ -131,8 +192,8 @@ let colles = (function() {
      note = parseInt(note);
    }
    let sujet = document.getElementById('sujet').value;
-   let obsCoordo = $('#obsCoordo').summernote('code');
-   let obsEleve = $('#obsEleve').summernote('code');
+   let obsCoordo = document.getElementById('obsCoordo').innerHTML;
+   let obsEleve = document.getElementById('obsEleve').innerHTML;
    let mode = document.getElementById('addColleForm').getAttribute("data-mode");
    let idColle = '';
    if (mode === 'modifier') {
@@ -339,8 +400,8 @@ let colles = (function() {
       $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY HH:mm'));
       document.getElementById('dateSaisie').innerHTML = moment().format('L');
       $(document.getElementById('sujet')).val(sujet);
-      $(document.getElementById('obsEleve')).summernote('code', obsEleve);
-      $(document.getElementById('obsCoordo')).summernote('code', obsCoordo);
+      $(document.getElementById('obsEleve')).html(obsEleve);
+      $(document.getElementById('obsCoordo')).html(obsCoordo);
       let el6 = document.getElementById('dataListe6')
       dataListe.setLaNote(el6, note);
 

@@ -198,7 +198,7 @@ testEtCreationLogin = function(profil, csvData, dataExists) {
     if (profil === 'eleve') {
       index = dataExists.findIndex(item => item.ine === value.ine);
     } else {
-      index = dataExists.findIndex(item => item.nom.toLowerCase() === value.nom.toLowerCase() && item.nom.toLowerCase() === value.prenom.toLowerCase());
+      index = dataExists.findIndex(item => item.nom.toLowerCase() === value.nom.toLowerCase() && item.prenom.toLowerCase() === value.prenom.toLowerCase());
     }
     if (index !== -1) {
       value.present = true;

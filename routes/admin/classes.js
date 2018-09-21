@@ -374,6 +374,7 @@ module.exports = {
       if (classe != null) {
         classe.forEach(function(value) {
           data.push({
+            'ine' : value.ine,
             "nom": value.nom,
             "prenom": value.prenom,
             "login": value.login,
