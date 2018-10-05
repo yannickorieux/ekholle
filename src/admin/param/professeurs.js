@@ -143,7 +143,7 @@ let professeurs = (function() {
           data: null,
           render: function(data, type, row) {
             // Combine the first and last names into a single table field
-            return data.prenom + ' ' + data.nom;
+            return data.nom + ' ' + data.prenom;
           },
         },
         {
@@ -174,7 +174,7 @@ let professeurs = (function() {
         {
           data: null,
           className: "center",
-          defaultContent: '<a href="" class="editor_edit">Edit</a>'
+          defaultContent: "<button class='btn btn-primary editor_edit' data-toggle='tooltip' title='Editer les données professeurs.'><i class='fa fa-pen' style='font-size:10px'></i></button> / <button class='btn btn-primary genereCode' data-toggle='tooltip' title='Générer un nouveau code d activation.'><i class='fa fa-key' style='font-size:10px'></i></button>"
         }
       ],
       order: [
@@ -183,7 +183,7 @@ let professeurs = (function() {
     });
 
     // Edit record
-    $('#tableProfesseurs').on('click', 'a.editor_edit', function(e) {
+    $('#tableProfesseurs').on('click', '.editor_edit', function(e) {
       e.preventDefault();
       let tr = $(this).closest('tr');
       let row = table.row(tr);
@@ -199,6 +199,19 @@ let professeurs = (function() {
       document.getElementById('modifierProfesseurForm').setAttribute("data-idprofesseur", element._id);
       $('#modifierProfesseur').modal();
     });
+
+    $('#tableProfesseurs').on('click', '.genereCode', function(e) {
+      let data = table.row($(this).parents('tr')).data();
+      $.post("/users/genererNewCodeProfesseur", {
+        "login": data.login,
+      }, () => {
+        refreshProfesseurs();
+      });
+    });
+
+
+
+
 
     $('#tableProfesseurs tbody').on('click', 'td.details-control', function() {
       let tr = $(this).closest('tr');

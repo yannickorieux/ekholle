@@ -173,6 +173,17 @@ let eleves = (function() {
             }
           }
         },
+        {data: null,
+        },
+      ],
+      columnDefs: [{
+        targets: [-1],
+        render: function(a, b, data, d) {
+          return "<button class='btn btn-primary genereCode' data-toggle='tooltip' title='Générer un nouveau code d activation.'><i class='fa fa-key' style='font-size:10px'></i></button>";
+        }
+      }],
+      order: [
+        [1, "asc"]
       ],
     });
 
@@ -181,6 +192,19 @@ let eleves = (function() {
       e.preventDefault();
       console.log($(this).closest('tr'));
       //$('#modifierEleve').modal();
+    });
+
+
+    $('#tableEleves').on('click', '.genereCode', function(e) {
+      let data = table.row($(this).parents('tr')).data();
+      $.post("/users/genererNewCodeEleve", {
+        "login": data.login,
+        "classe": data.classe,
+      }, () => {
+        let el4 = document.getElementById('dataListe4');
+        let classe = dataListe.getName(el4)
+        refreshEleves(classe);
+      });
     });
 
   };

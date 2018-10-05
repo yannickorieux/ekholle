@@ -35,11 +35,15 @@ let addProgramme = (function() {
      ],
      focus: true,
    });
+   $(editProgButton).css("display", "none");
+   $(validProgButton).css("display", "block");
   };
 
   function validProgSummernote(){
     let programme = $('#detailProg').summernote('code');
     $('#detailProg').html(programme);
+    $(validProgButton).css("display", "none");
+    $(editProgButton).css("display", "block");
      $('#detailProg').summernote('destroy');
    };
 
@@ -58,6 +62,7 @@ validProgButton.addEventListener('click', validProgSummernote, false);
       document.getElementById('addProgrammeForm').setAttribute("data-mode", "ajouter");
       document.getElementById('addProgrammeForm').setAttribute("data-idprogramme", '');
       document.getElementById('addProgrammeForm').reset();
+      $(document.getElementById('detailProg')).empty();
       $('#addProgrammeModal').modal();
     };
 
@@ -102,6 +107,7 @@ validProgButton.addEventListener('click', validProgSummernote, false);
     let debut = moment($('#datetimepickerProg1').find("input").val(), 'DD/MM/YYYY').format();
     let fin = moment($('#datetimepickerProg2').find("input").val(), 'DD/MM/YYYY').format();
     let titre = document.getElementById('titre').value;
+    validProgSummernote(); //on recupere les obs, on detruit summernote et on remet les icones
     let detail = document.getElementById('detailProg').innerHTML;
     let mode = document.getElementById('addProgrammeForm').getAttribute("data-mode");
     let idProgramme = '';
@@ -283,6 +289,7 @@ validProgButton.addEventListener('click', validProgSummernote, false);
       $(document.getElementById('debutProg')).val(moment(element.debut).format('DD/MM/YYYY'));
       $(document.getElementById('finProg')).val(moment(element.fin).format('DD/MM/YYYY'));
       $(document.getElementById('titre')).val(titre);
+      validProgSummernote(); // on detruit summernote si exist et on remet les icones
       $(document.getElementById('detailProg')).html(detail);
       $('#addProgrammeModal').modal();
     });

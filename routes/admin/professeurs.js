@@ -130,4 +130,28 @@ table professeur
     });
 
   },
+
+
+
+  /*
+  **************************
+  generer un nouveau code
+  **************************
+  */
+
+  genererNewCode: function(req, res, next) {
+    let Professeur = require('../../models/professeur')(req.session.etab);
+    let login=req.body.login;
+    let password = misc.generePassword();
+    Professeur.findOneAndUpdate({
+        'login': login
+      } , {$set :{ 'password' : password , 'changePwd' : false}})
+      .exec(function(err) {
+        if (err) console.log(err);
+        return res.end();
+      });
+  },
+
+
+
 }

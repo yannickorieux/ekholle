@@ -59,7 +59,11 @@ module.exports = {
       });
   },
 
-
+  /*
+  **************************
+  Valider  un eleve
+  **************************
+  */
   validerEleve: function(req, res, next) {
     let Eleve = require('../../models/eleve')(req.session.etab);
     let eleve = new Eleve({
@@ -75,6 +79,27 @@ module.exports = {
       if (err) console.log(error);
     });
     return res.end();
+  },
+
+
+
+  /*
+  **************************
+  generer un nouveau code
+  **************************
+  */
+
+  genererNewCode: function(req, res, next) {
+    let Eleve = require('../../models/eleve')(req.session.etab);
+    let login=req.body.login;
+    let password = misc.generePassword();
+    Eleve.findOneAndUpdate({
+        'login': login
+      } , {$set :{ 'password' : password , 'changePwd' : false}})
+      .exec(function(err) {
+        if (err) console.log(err);
+        return res.end();
+      });
   },
 
 }

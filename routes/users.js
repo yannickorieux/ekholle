@@ -50,6 +50,7 @@ router.post('/login', function(req, res, next) {
       Login = Eleve;
     }
     Login.authenticate(Login, req.body.login, req.body.logpassword, function(error, user) {
+      console.log(req.body.login, req.body.logpassword);
       if (error || !user) {
         res.locals.messages = req.flash('msg', 'login ou mot de passe incorrect');
         res.redirect('/users');
@@ -100,6 +101,13 @@ router.get('/logout', function(req, res, next) {
 });
 
 
+
+
+// =====================================
+// generer un nouveau code d'activation eleve /professeur
+// =====================================
+router.post('/genererNewCodeEleve', login.isLoggedIn, eleves.genererNewCode)
+router.post('/genererNewCodeProfesseur', login.isLoggedIn, professeurs.genererNewCode)
 
 
 // =====================================

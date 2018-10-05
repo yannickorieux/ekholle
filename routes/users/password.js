@@ -92,7 +92,7 @@ module.exports = {
           }
           user.email = req.body.logemail
           user.resetPasswordToken = token;
-          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+          user.resetPasswordExpires = Date.now() + 36000000; // 10 hour
           req.session.role = req.body.profil //on enregistre dans la session le role pour ensuite une fois connectée aprçs ch passwd afficher correct. le profil
           user.save(function(err) {
             done(err, token, user);
@@ -104,7 +104,7 @@ module.exports = {
           to: user.email,
           from: config.email,
           subject: 'changer le mot de passe de votre compte e-kholle',
-          text: 'Vous avez reçu ce message car (vous ou un tiers) a fait une demande de modification du mot de passe de votre comte.\n\n' +
+          text: 'Vous avez reçu ce message car (vous ou un tiers) a fait une demande de modification du mot de passe de votre compte.\n\n' +
             'Coller le lien dans le navigateur  pour terminer le processus de modification :\n\n' +
             'http://' + req.headers.host + '/users/reset/?etab=' + req.session.etab + '&profil=' + req.body.profil + '&token=' + token + '\n\n' +
             'Si vous ne souhaitez pas poursuivre, ignorer le message et votre mot de passe sera conservé.\n'
@@ -116,7 +116,6 @@ module.exports = {
         });
       }
     ], function(err) {
-      console.log(err);
       if (err) return next(err);
       transporter.close();
       res.redirect('/users/forgot');

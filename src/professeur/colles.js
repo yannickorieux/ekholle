@@ -56,6 +56,8 @@ function editCoordoSummernote(){
     ],
     focus: true,
   });
+  $(editCoordoButton).css("display", "none");
+  $(validCoordoButton).css("display", "block");
  };
 
 
@@ -75,17 +77,23 @@ function editCoordoSummernote(){
      focus: true,
       tabSize: 2 ,
    });
+   $(editEleveButton).css("display", "none");
+   $(validEleveButton).css("display", "block");
   };
 
   function validEleveSummernote(){
     let obsEleve = $('#obsEleve').summernote('code');
     $('#obsEleve').html(obsEleve);
-     $('#obsEleve').summernote('destroy');
+    $(validEleveButton).css("display", "none");
+    $(editEleveButton).css("display", "block");
+    $('#obsEleve').summernote('destroy');
    };
 
   function validCoordoSummernote(){
     let obsCoordo = $('#obsCoordo').summernote('code');
     $('#obsCoordo').html(obsCoordo);
+    $(validCoordoButton).css("display", "none");
+    $(editCoordoButton).css("display", "block");
      $('#obsCoordo').summernote('destroy');
   };
 
@@ -105,10 +113,12 @@ validEleveButton.addEventListener('click', validEleveSummernote, false);
     let el2 = document.getElementById('dataListe2')
     dataListe.readOnly(el2, false);
     document.getElementById('addColleForm').reset();
-    //$(document.getElementById('obsEleve')).summernote('code', '');
-    //$(document.getElementById('obsCoordo')).summernote('code', '');
+    $(document.getElementById('obsEleve')).empty();
+    $(document.getElementById('obsCoordo')).empty();
     document.getElementById('dateSaisie').innerHTML = moment().format('L');
     $(document.getElementById('dateColle')).val(moment().format('DD/MM/YYYY HH'));
+    $('#collapseOne').collapse('show')
+    $('#collapseTwo').collapse('hide')
     $('#addColleModal').modal();
   }
 
@@ -192,6 +202,8 @@ validEleveButton.addEventListener('click', validEleveSummernote, false);
      note = parseInt(note);
    }
    let sujet = document.getElementById('sujet').value;
+   validCoordoSummernote(); //on recupere les obs, on detruit summernote et on remet les icones
+   validEleveSummernote();
    let obsCoordo = document.getElementById('obsCoordo').innerHTML;
    let obsEleve = document.getElementById('obsEleve').innerHTML;
    let mode = document.getElementById('addColleForm').getAttribute("data-mode");
@@ -398,8 +410,10 @@ validEleveButton.addEventListener('click', validEleveSummernote, false);
       dataListe.readOnly(el2, true);
       dataListe.setName(el2, nom);
       $(document.getElementById('dateColle')).val(moment(date).format('DD/MM/YYYY HH:mm'));
-      document.getElementById('dateSaisie').innerHTML = moment().format('L');
+      document.getElementById('dateSaisie').innerHTML = moment(dateSaisie).format('L');
       $(document.getElementById('sujet')).val(sujet);
+      validCoordoSummernote(); //on detrruit au prealable summernote et on remet les icones
+      validEleveSummernote();
       $(document.getElementById('obsEleve')).html(obsEleve);
       $(document.getElementById('obsCoordo')).html(obsCoordo);
       let el6 = document.getElementById('dataListe6')
