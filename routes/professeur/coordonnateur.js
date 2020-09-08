@@ -474,6 +474,12 @@ tableResultatsCoordoJSON : function(req, res) {
     },
   ]).exec(function(err, data) {
     if (err) return console.error(err);
+    data.forEach(function(value) {
+      console.log(value);
+      if (value.moyenne!=null){
+        value.moyenne=value.moyenne.toFixed(2);
+      }
+    })
     res.send(data);
   });
 },

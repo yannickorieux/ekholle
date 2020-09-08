@@ -14,14 +14,19 @@ module.exports = {
    **************************
    */
   defAnnee: function(req, res) {
+    console.log(req.body.debutAnnee);
+    let deb= moment(req.body.debutAnnee, 'DD/MM/YYYY').format()
+    let fin= moment(req.body.finAnnee, 'DD/MM/YYYY').format()
+    deb = moment(deb).add(4, 'hours').format()
+    fin = moment(fin).add(4, 'hours').format()
     let Admin = require('../../models/admin')(req.session.etab)
     Admin.findOneAndUpdate({
       _id: req._id
     }, {
       $set: {
         'annee': {
-          'debut': moment(req.body.debutAnnee, 'DD/MM/YYYY').startOf('day'),
-          'fin': moment(req.body.finAnnee, 'DD/MM/YYYY').startOf('day')
+          'debut': new Date(deb),
+          'fin': new Date(fin)
         }
       }
     }).exec(function(err, data) {
@@ -55,6 +60,10 @@ module.exports = {
    **************************
    */
   sauvePeriode: function(req, res) {
+    console.log(req.body.debutPeriode);
+    console.log(req.body.finPeriode);
+    deb = moment(req.body.debutPeriode).add(4, 'hours').format()
+    fin = moment(req.body.finPeriode).add(4, 'hours').format()
     let Admin = require('../../models/admin')(req.session.etab)
     if (req.body.id === '') {
       //on ajoute une periode
@@ -63,8 +72,8 @@ module.exports = {
       }, {
         $addToSet: {
           'periodes': {
-            debutPeriode: req.body.debutPeriode,
-            finPeriode: req.body.finPeriode,
+            debutPeriode: new Date(deb),
+            finPeriode: new Date(fin),
             description: req.body.description,
           }
         }
@@ -77,8 +86,8 @@ module.exports = {
         _id: req._id
       }, {
         $set: {
-          'periodes.$[el].debutPeriode': req.body.debutPeriode,
-          'periodes.$[el].finPeriode': req.body.finPeriode,
+          'periodes.$[el].debutPeriode': new Date(deb),
+          'periodes.$[el].finPeriode': new Date(fin),
           'periodes.$[el].description': req.body.description,
         }
       }, {
@@ -281,7 +290,7 @@ module.exports = {
             $match: {
               dateSaisie: {
                 $gte: debutPeriode,
-                $lt: finPeriode
+                $lte: finPeriode  //modification septembre 2019
               }
             }
           },

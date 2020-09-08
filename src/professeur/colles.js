@@ -13,15 +13,15 @@ let colles = (function() {
 
   $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
     icons: {
-      time: 'far fa-clock',
-      date: 'far fa-calendar',
-      up: 'far fa-arrow-up',
-      down: 'far fa-arrow-down',
-      previous: 'far fa-chevron-left',
-      next: 'far fa-chevron-right',
-      today: 'far fa-calendar-check-o',
-      clear: 'far fa-trash',
-      close: 'far fa-times'
+      time: 'fa fa-clock',
+      date: 'fa fa-calendar',
+      up: 'fa fa-arrow-up',
+      down: 'fa fa-arrow-down',
+      previous: 'fa fa-chevron-left',
+      next: 'fa fa-chevron-right',
+      today: 'fa fa-calendar-check-o',
+      clear: 'fa fa-trash',
+      close: 'fa fa-times'
     }
   });
   //picker pour addColle

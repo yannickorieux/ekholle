@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const moment = require('moment')
 
 
 
@@ -11,6 +12,12 @@ ajout colle
 function ajoutColle(req, res) {
   let Structure = require('../../models/structure')(req.session.etab);
   // il faut au prealable filtrer sur la matiere de la colle
+  console.log(req.body.date);
+
+  let dateSaisie =moment(req.body.dateSaisie).format();
+  console.log(dateSaisie);
+  dateSaisie = moment(req.body.dateSaisie).add(4, 'hours').format();
+  console.log(dateSaisie);
   Structure.update({
       'matieres._id': req.body.idMatiereColle
     }, {
@@ -20,7 +27,7 @@ function ajoutColle(req, res) {
           'noNote': req.body.noNote,
           'sujet': req.body.sujet,
           'date': req.body.date,
-          'dateSaisie': req.body.dateSaisie,
+          'dateSaisie': new Date(dateSaisie),
           'obsCoordo': req.body.obsCoordo,
           'obsEleve': req.body.obsEleve,
           'eleve': {
@@ -741,7 +748,7 @@ module.exports = {
               $match: {
                 dateSaisie: {
                   $gte: debutPeriode,
-                  $lt: finPeriode
+                  $lte: finPeriode
                 }
               }
             },
