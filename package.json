@@ -9,7 +9,7 @@
     "scss": "node-sass  ./scss -o ./public/css/"
   },
   "dependencies": {
-    "bcrypt": "^3.0.0",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.3.1",
     "connect-flash": "^0.1.1",
